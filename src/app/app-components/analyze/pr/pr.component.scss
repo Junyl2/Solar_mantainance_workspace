@@ -1,0 +1,212 @@
+@import "src/theme/flosys";
+
+.main {
+  padding: 10px 10px 0 10px;
+  position:  relative;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px 10px 10px;
+}
+
+.box1 {
+  padding: 5px 5px 5px 5px;
+}
+
+.box1_header {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: bold;
+  width: 180px;
+}
+
+.radio_box {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.radio_input1 {
+  width: 85px;
+  padding: 3px 0px 0px 0px;
+}
+
+.radio_input2 {
+  width: 75px;
+  padding: 3px 0px 0px 0px;
+}
+
+.radio_input3 {
+  width: 100px;
+  padding: 3px 0px 0px 0px;
+}
+
+.padding_text {
+  display: flex;
+  align-items: center;
+  width: 80px;
+}
+
+.date_box {
+  display: flex;
+  flex-direction: row;
+  padding-left: 10px;
+}
+
+.date_space {
+  display: none;
+  align-items: center;
+  padding: 0px 10px 0px 10px
+}
+
+.search_box {
+  display: flex;
+  align-items: center;
+  padding: 0px 0px 0px 20px;
+}
+
+.search_btn {
+  padding: 2px 0px 0px 0px;
+  border: none;
+  width: 80px;
+  height: 30px;
+  color: white;
+  background: #4e4e4e;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+.table_box {
+  padding: 0px 15px 0px 0px
+}
+
+.table_btn {
+  padding: 2px 0px 0px 0px;
+  border: none;
+  width: 60px;
+  color: white;
+  background: #4e4e4e;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+.chart_box {
+  padding: 0px 15px 0px 0px
+}
+
+.chart_btn {
+  padding: 2px 0px 0px 0px;
+  border: none;
+  width: 60px;
+  color: white;
+  background: #4e4e4e;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+.download_box {
+  display: flex;
+  align-items: center;
+  padding: 0px 15px 0px 0px
+}
+
+.download_btn {
+  padding: 2px 0px 0px 0px;
+  border: none;
+  width:100px;
+  height: 30px;
+  color: white;
+  background: #4e4e4e;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+.box1_header_1 {
+  display: flex;
+  flex-direction: row;
+  width: 70%;
+}
+
+.box1_header_2 {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 30%;
+}
+
+.box2 {
+  padding: 40px 0px 0px 0px;
+}
+
+.box2_chart_box {
+  display: flex;
+  padding: 10px 10px 10px 10px;
+  justify-content: center;
+}
+
+.chart {
+  width: 85%;
+}
+
+.box2_table_box {
+  display: flex;
+  padding: 10px 10px 10px 10px;
+  overflow: auto;
+  white-space: nowrap;
+}
+
+.table {
+  width: 100%;
+}
+
+.table_td_header {
+  background: #4e4e4e;
+  color: white;
+  text-align: center;
+  padding: 5px 5px 5px 5px;
+  border: 1px solid white;
+}
+
+.table_tr {
+  border: 1px solid black;
+}
+
+.table_td {
+  border: 1px solid black;
+  text-align: center;
+  padding: 5px 5px 5px 5px;
+}
+
+.data_box1 {
+  display: flex;
+  align-items: center;
+  background: rgba(0,0,0,.04);
+}
+
+.data_box2 {
+  display: none;
+  align-items: center;
+  background: rgba(0,0,0,.04);
+}
+
+.data_month_box {
+  display: none;
+  align-items: center;
+  background: rgba(0,0,0,.04);
+}
+
+.data_input {
+  border: none;
+  background: rgb(0 0 0 / 0%);
+  padding-left: 20px;
+  width: 140px;
+}

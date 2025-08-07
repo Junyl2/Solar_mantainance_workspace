@@ -1,0 +1,10 @@
+{
+  // base urls
+//  "urlBase": "http://3.36.44.16",
+  "urlBase": "http://localhost",
+  "urlApiBase": "/public/api/v1",
+
+  // service apis
+  "urlWeatherHistory": "/weather/history",
+  "urlWeather": "/weather/real"
+}

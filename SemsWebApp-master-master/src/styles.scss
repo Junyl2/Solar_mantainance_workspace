@@ -1,0 +1,99 @@
+
+@import "~bootstrap/dist/css/bootstrap.css";
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+
+@import "./theme/flosys.scss";
+@import "./theme/flosys-theme-light.scss";
+
+html, body { height: 100%; }
+body {
+    display:flex;
+    height:100%;
+    width:100%;
+    margin: 0;
+    font-family: NotoSansKR-Medium;
+}
+app-root {
+  display:flex;
+  flex-direction:column;
+  height:100%;
+  width:100%;
+}
+
+@font-face {
+    font-family: NotoSansKR-Medium;
+    src:url("/src/assets/fonts/NotoSansKR-Medium.otf") format("truetype");
+}
+
+
+@include tablet {
+  .dashboard-etitle {
+    margin: 5px;
+    font-size: 14px;
+    color: white;
+  } 
+  .dashboard-ktitle {
+    margin: 5px;
+    font-size: 30px;
+    color: white;
+  }   
+}
+
+@include desktop-1024 {
+  .dashboard-etitle {
+    margin: 5px;
+    font-size: 14px;
+    color: white;
+  } 
+  .dashboard-ktitle {
+    margin: 5px;
+    font-size: 25px;
+    color: white;
+  }   
+
+  // 
+  .dashboard-info-main {
+      margin: 5px;
+      font-size: 18px;
+      color: rgb(150,150,150);
+  }
+  .dashboard-info-mainvalue {
+      margin: 10px;
+      font-size: 28px;
+      color: black;
+  }
+
+  .dashboard-info-sub {
+    margin: 5px;
+    font-size: 18px;
+    color: rgb(150,150,150);
+  }
+
+  .dashboard-info-subvalue {
+    margin: 5px;
+    font-size: 24px;
+    color: black;
+  }
+
+  .dashboard-status-label {
+    font-size: 22px;
+    color: RGB(150,150,150);
+  }
+  .dashboard-status-value {
+      font-size: 30px;
+      color: black;
+  }
+  .dashboard-status-icon {
+
+  }
+  
+  .dashboard-weather-label {
+    font-size: 22px;
+    color: RGB(150,150,150);
+
+  }
+  .dashboard-weather-value {
+    font-size: 30px;
+    color: black;
+  }
+}

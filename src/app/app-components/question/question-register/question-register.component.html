@@ -1,0 +1,35 @@
+<div class="main">
+
+  <div class="container">
+    <h1 class="mt-4 mb-2">문의사항 등록</h1>
+    <div class="row">
+      <div class="col-8 align-self-center pt-4">
+        <input mdbInput type="text" class="form-control" [(ngModel)]="data.title" placeholder="제목" />
+      </div>
+      <div class="col-8 align-self-center pt-4">
+        <input mdbInput type="text" class="form-control" [(ngModel)]="data.name" placeholder="이름" />
+      </div>
+      <div class="col-8 align-self-center pt-4">
+        <input mdbInput type="text" class="form-control" [(ngModel)]="data.tel" placeholder="연락처" />
+      </div>
+      <div class="col-8 align-self-center pt-4">
+        <input mdbInput type="text" class="form-control" [(ngModel)]="data.email" placeholder="이메일" />
+      </div>
+      <div class="col-8 align-self-center pt-4">
+        <input mdbInput type="text" class="form-control" [(ngModel)]="data.user.customer" readonly placeholder="소속기관" />
+      </div>
+      <div class="col-8 align-self-center pt-4">
+        <textarea matInput rows="10" class="form-control" [(ngModel)]="data.content" placeholder="문의내용"></textarea>
+      </div>
+    </div>
+
+    <div class="row justify-content-right pt-4">
+      <div class="col-1">
+          <button mat-raised-button color="primary" (click)="register()">등록</button>
+      </div>
+      <div class="col-1">
+          <button mat-raised-button color="primary" routerLink="..">취소</button>
+      </div>
+    </div>
+  </div>
+</div>

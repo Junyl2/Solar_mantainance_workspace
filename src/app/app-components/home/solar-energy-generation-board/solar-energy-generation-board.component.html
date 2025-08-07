@@ -1,0 +1,17 @@
+<div>
+  <div class="title-wrap cursor-pointer">
+    <h2 class="title">{{config.title}}</h2>
+    <span class="title-description">{{config.subTitle}}</span>
+
+    <ul style="display: flex; justify-content: flex-end; flex-wrap: wrap;">
+      <li *ngFor="let facility of facilities" style="margin-bottom: 4px;">
+        <button class="f-mat-tab-button"
+                (click)="changeData(facility)"
+                mat-stroked-button
+                color="{{selectedFacility == facility.id? 'accent' : ''}}"
+                style="margin-left: 8px;">{{facility.title}}</button>
+      </li>
+    </ul>
+  </div>
+  <bar-chart #barChart [labels]="chartLabels" [showLegend]="showLegend" [animation]="this.animation" width="300" height="100%"></bar-chart>
+</div>

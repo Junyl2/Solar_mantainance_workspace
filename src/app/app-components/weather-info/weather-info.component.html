@@ -1,0 +1,83 @@
+<mat-tab-group>
+
+  <!--  -------------------------------------------------------------------------------------->
+  <mat-tab label="월별 누적일사량">
+    <div>
+      <mat-form-field appearance="fill">
+        <mat-label>시작년월 선택</mat-label>
+        <input matInput [matDatepicker]="startMonthlyPicker" [value]="startMonthlyDate"
+               [min]="startMinMonthlyDate"
+               [max]="startMaxMonthlyDate">
+        <mat-datepicker-toggle matSuffix [for]="startMonthlyPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startMonthlyPicker
+                        startView="multi-year"
+                        (yearSelected)="onStartMonthlyYearSelected($event)"
+                        (monthSelected)="onStartMonthlyMonthSelected($event,startMonthlyPicker)"
+                        panelClass="example-month-picker">
+        </mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>끝년월 선택</mat-label>
+        <input matInput [matDatepicker]="endMonthlyPicker" [value]="endMonthlyDate"
+               [min]="endMinMonthlyDate"
+               [max]="endMaxMonthlyDate">
+        <mat-datepicker-toggle matSuffix [for]="endMonthlyPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endMonthlyPicker
+                        startView="multi-year"
+                        (yearSelected)="onEndMonthlyYearSelected($event)"
+                        (monthSelected)="onEndMonthlyMonthSelected($event,endMonthlyPicker)"
+                        panelClass="example-month-picker">
+        </mat-datepicker>
+      </mat-form-field>
+    </div>
+    <bar-chart [labels]="monthlyLabels"></bar-chart>
+  </mat-tab>
+
+  <!--  -------------------------------------------------------------------------------------->
+  <mat-tab label="일별 누적일사량">
+
+    <mat-form-field appearance="fill">
+      <mat-label>시작일 선택</mat-label>
+      <input matInput [matDatepicker]="startDailyPicker" [value]="startDailyDate"
+             [min]="startMinDailyDate"
+             [max]="startMaxDailyDate"
+             (dateChange)="onStartDailyDaySelected($event.value)">
+      <mat-datepicker-toggle matSuffix [for]="startDailyPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startDailyPicker
+                      panelClass="example-month-picker">
+
+      </mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>끝일 선택</mat-label>
+      <input matInput [matDatepicker]="endDailyPicker" [value]="endDailyDate"
+             [min]="endMinDailyDate"
+             [max]="endMaxDailyDate"
+             (dateChange)="onEndDailyDaySelected($event.value)">
+      <mat-datepicker-toggle matSuffix [for]="endDailyPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endDailyPicker
+                      panelClass="example-month-picker">
+      </mat-datepicker>
+    </mat-form-field>
+    <bar-chart [labels]="dailyLabels"></bar-chart>
+  </mat-tab>
+
+  <!--  -------------------------------------------------------------------------------------->
+  <mat-tab label="시간별 누적일사량">
+    <mat-form-field appearance="fill">
+      <mat-label>일 선택</mat-label>
+      <input matInput [matDatepicker]="timePicker" [value]="timeDate"
+             [min]="minTimeDate"
+             [max]="maxTimeDate"
+             (dateChange)="onTimeDateSelected($event.value)">
+      <mat-datepicker-toggle matSuffix [for]="startDailyPicker"></mat-datepicker-toggle>
+      <mat-datepicker #timePicker
+                      panelClass="example-month-picker">
+      </mat-datepicker>
+    </mat-form-field>
+    <bar-chart [labels]="timeLabels"></bar-chart>
+  </mat-tab>
+
+</mat-tab-group>
+

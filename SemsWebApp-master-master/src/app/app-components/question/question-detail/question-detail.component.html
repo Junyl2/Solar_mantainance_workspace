@@ -1,0 +1,62 @@
+<div class="main">
+  <h2 class="f-page-title">문의사항 상세</h2>
+
+  <div style="width: 80vw; height: 80vh; padding-left: 100px; padding-top: 20px; padding-right: 100px;">
+    <div class="row">
+      <div class="col-5">
+        {{data?.title}}
+      </div>
+      <div class="col-5">
+        {{data?.reply == null ? '대기중' : '답변완료'}}
+      </div>
+      <div class="col-2">
+        {{data?.createDate | date}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <hr />
+      </div>
+      <div class="col-12">
+        <table class="table table-borderless">
+          <tr>
+            <td style='width: 10%'>이름</td>
+            <td>{{data?.name}}</td>
+          </tr>
+          <tr>
+            <td>소속</td>
+            <td>{{data?.user.customer}}</td>
+          </tr>
+          <tr>
+            <td>연락처</td>
+            <td>{{data?.tel}}</td>
+          </tr>
+          <tr>
+            <td>이메일</td>
+            <td>{{data?.email}}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-12">
+        <hr />
+      </div>
+      <div class="col-12" style="white-space: pre-wrap; word-wrap: break-word">
+        {{data?.content}}
+      </div>
+      <div class="col-12">
+        <hr />
+      </div>
+      <div class="col-12 reply">
+        {{data?.reply}}
+      </div>
+      <div class="row pt-4">
+        <div class="col-1">
+          <button mat-raised-button color="primary" routerLink="..">목록</button>
+          </div>
+          <div class="col-1">
+          <button mat-raised-button style="margin-left: 20px" color="secondary" (click)="delete()">삭제</button>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>

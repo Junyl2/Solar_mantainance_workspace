@@ -1,0 +1,131 @@
+<!-- <div *ngIf="themeService.layout == 'layout1'" class="grid">
+  <div class="item1">
+    <div>
+      <div class="dashboard-etitle">Status of Communication</div>
+      <div class="dashboard-ktitle">변환정보</div>
+    </div>
+    <fa-icon class="icon" [icon]="faBolt" size="5x" [styles]="{'stroke': 'red', 'color': 'white'}"></fa-icon>
+  </div>
+  <div class="item2">
+    test1
+  </div>
+</div>
+
+<div *ngIf="themeService.layout == 'original'" class="card1">
+  <div class="card1-header">
+    <i class="card1-header-icon bi bi-activity"></i>
+    <div class="card1-header-title">Status of Communication 변환현황</div>
+  </div>
+  <div class="card1-body flex-col-jspa-act">
+
+    <div class="flex-row-jspb-act f-w100 f-flex-grow-1">
+      <div class="f-flex-grow-1 f-item-vhct">
+        <i class="icon bi bi-border-all"></i>
+      </div>
+
+      <div class="f-flex-grow-5 flex-col-jct-act">
+        <mat-progress-bar class="transfer" mode="buffer"></mat-progress-bar>
+      </div>
+
+      <div class="f-flex-grow-1 f-item-vhct">
+        <i class="icon bi bi-hdd"></i>
+      </div>
+
+      <div class="f-flex-grow-5 flex-col-jct-act">
+        <mat-progress-bar class="transfer" mode="buffer"></mat-progress-bar>
+      </div>
+
+      <div class="f-flex-grow-1 f-item-vhct">
+        <i class="icon bi bi-building"></i>
+      </div>
+    </div>
+
+    <div class="flex-row-jspb-act f-w100 f-flex-grow-4">
+      <div class="f-flex-glow-1">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>기기</th>
+              <th scope="col">전압(V)</th>
+              <th scope="col">전류(A)</th>
+              <th scope="col">전력(kW)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let instance of instances; index as i">
+              <td>{{instance.name}}</td>
+              <td>{{instance.dcv | number:'.2'}}</td>
+              <td>{{instance.dca | number:'.2'}}</td>
+              <td>{{instance.dcv * instance.dca | number:'.2'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="f-flex-glow-2">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">주파수(Hz)</th>
+              <th scope="col">변환효율(%)</th>
+              <th scope="col">동작상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let instance of instances; index as i">
+              <td>{{instance.frequency}}</td>
+              <td>{{instance.efficiency || 0}}</td>
+              <td>{{instance.status}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="f-flex-glow-1">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">실시간전력(kW)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let instance of instances; index as i">
+              <td>{{instance.power}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div> -->
+
+<section class="conversion-efficiency-status">
+  <div class="title-wrap" [routerLink]="['efficiency']">
+    <span class="title">변환효율 현황</span>
+    <span class="title-description">DC-AC CONVERSION DATA</span>
+  </div>
+
+  <ul>
+    <li *ngFor="let instance of instances; index as i">
+      <div class="list-title">{{instance.name || ''}}</div>
+      <div class="list-contents">
+        <div class="list-num">
+          <strong>{{instance.efficiency || 0}}</strong>
+          <span>%</span>
+        </div>
+        <div *ngIf="instance.efficiency >= 0.1" class="icon-status">
+          <img [src]="'assets/Images/icon-round-good.svg'" alt="양호 아이콘" />
+          <span>양호</span>
+        </div>
+        <div *ngIf="instance.efficiency &lt; 0.1 && instance.efficiency >= 0.01" class="icon-status">
+          <img [src]="'assets/Images/icon-round-normal.svg'" alt="보통 아이콘" />
+          <span>양호</span>
+        </div>
+        <div *ngIf="instance.efficiency &lt; 0.01" class="icon-status">
+          <img [src]="'assets/Images/icon-round-bad.svg'" alt="부족 아이콘" />
+          <span>양호</span>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+</section>

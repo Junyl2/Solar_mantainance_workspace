@@ -1,0 +1,149 @@
+<div>
+  <div class="title-wrap">
+    <h2 class="title"></h2>
+    <span class="title-description"></span>
+  </div>
+
+  <table style="height: 190px;">
+    <tr>
+      <td style="width: 40%">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; margin-bottom: 4px;">
+          <div class="color-grey" style="width: 100%; margin-bottom: 4px">오늘 {{config.title}}</div>
+          <div class="num" style="width: 60%; display: flex; align-items: center; justify-content: center;">
+            <strong>{{data['DAILY'] ? (data['DAILY']?.summary[0]?.[config.fieldName] | number : '1.1') : 0}}</strong>
+            <span style="margin-left: 8px"> {{config.unit}}</span>
+          </div>
+        </div>
+      </td>
+      <td style="display: flex; height: 100%; align-items: center;">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; margin-bottom: 4px;">
+          <div class="color-grey" style="margin-bottom: 4px">어제의</div>
+          <div class="progress purple" style="width: 100%">
+            <div class="progress-percent">{{data ? ((data['DAILY']?.compValue) | number : '1.0-0') : 0}}%
+            </div>
+            <div class="progress-bar"
+                 style="max-width: {{data ? ((data['DAILY']?.compValue) | number : '1.0-0') : 0}}%">
+            </div>
+          </div>
+        </div>
+      </td>
+      <td style="width: 15%; padding-left: 14px;">
+        <div class="color-grey" style="margin-bottom: 4px; height: 22px; "></div>
+        <div *ngIf="data != null && data['DAILY'] != null && data['DAILY']?.compValue2 >= 90"
+             style="display: flex" class="icon-status">
+          <img [src]="'assets/Images/icon-round-good.svg'" alt="양호 아이콘"/>
+          <span>양호</span>
+        </div>
+        <div
+          *ngIf="data != null && data['DAILY'] != null && (data['DAILY']?.compValue2 >= 60 && data['DAILY']?.compValue2 < 90)"
+          style="display: flex" class="icon-status">
+          <img [src]="'assets/Images/icon-round-normal.svg'" alt="보통 아이콘"/>
+          <span>보통</span>
+        </div>
+        <div
+          *ngIf="data != null && data['DAILY'] != null && data['DAILY']?.compValue2< 60"
+          style="display: flex" class="icon-status">
+          <img [src]="'assets/Images/icon-round-bad.svg'" alt="부족 아이콘"/>
+          <span>부족</span>
+        </div>
+        <div *ngIf="data == null || data['DAILY'] == null" style="display: flex" class="icon-status">
+          <span>비교불가</span>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td style="width: 40%">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; margin-bottom: 4px;">
+          <div class="color-grey" style="width: 100%; margin-bottom: 4px">이번주 {{config.title}}</div>
+          <div class="num" style="width: 60%; display: flex; align-items: center; justify-content: center;">
+            <strong>{{data['WEEKLY'] ? (data['WEEKLY']?.summary[0]?.[config.fieldName] | number : '1.1') : 0}}</strong>
+            <span style="margin-left: 8px"> {{config.unit}}</span>
+          </div>
+        </div>
+      </td>
+      <td style="display: flex; height: 100%; align-items: center;">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; margin-bottom: 4px;">
+          <div class="color-grey" style="margin-bottom: 4px;">지난주의</div>
+          <div class="progress purple" style="width: 100%">
+            <div class="progress-percent">{{data ? ((data['WEEKLY']?.compValue) | number : '1.0-0') : 0}}%
+            </div>
+            <div class="progress-bar"
+                 style="max-width: {{data ? ((data['WEEKLY']?.compValue) | number : '1.0-0') : 0}}%">
+            </div>
+          </div>
+        </div>
+      </td>
+      <td style="width: 15%; padding-left: 14px;">
+        <div class="color-grey" style="margin-bottom: 4px; height: 22px; "></div>
+        <div *ngIf="data != null && data['WEEKLY'] != null && data['WEEKLY']?.compValue2 >= 90"
+             style="display: flex" class="icon-status">
+          <img [src]="'assets/Images/icon-round-good.svg'" alt="양호 아이콘"/>
+          <span>양호</span>
+        </div>
+        <div
+          *ngIf="data != null && data['WEEKLY'] != null && (data['WEEKLY']?.compValue2 >= 60 && data['WEEKLY']?.compValue2 < 90)"
+          style="display: flex" class="icon-status">
+          <img [src]="'assets/Images/icon-round-normal.svg'" alt="보통 아이콘"/>
+          <span>보통</span>
+        </div>
+        <div
+          *ngIf="data != null && data['WEEKLY'] != null && data['WEEKLY']?.compValue2< 60"
+          style="display: flex" class="icon-status">
+          <img [src]="'assets/Images/icon-round-bad.svg'" alt="부족 아이콘"/>
+          <span>부족</span>
+        </div>
+        <div *ngIf="data == null || data['WEEKLY'] == null" style="display: flex" class="icon-status">
+          <span>비교불가</span>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td style="width: 40%">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; margin-bottom: 4px;">
+          <div class="color-grey" style="width: 100%; margin-bottom: 4px">이번달 {{config.title}}</div>
+          <div class="num" style="width: 60%; display: flex; align-items: center; justify-content: center;">
+            <strong>{{data['MONTHLY'] ? (data['MONTHLY']?.summary[0]?.[config.fieldName] | number : '1.1') : 0}}</strong>
+            <span style="margin-left: 8px"> {{config.unit}}</span>
+          </div>
+        </div>
+      </td>
+      <td style="display: flex; height: 100%; align-items: center;">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; margin-bottom: 4px;">
+          <div class="color-grey" style="margin-bottom: 4px; ">지난달의 </div>
+          <div class="progress purple" style="width: 100%">
+            <div class="progress-percent">{{data ? ((data['MONTHLY']?.compValue) | number : '1.0-0') : 0}}%
+            </div>
+            <div class="progress-bar"
+                 style="max-width: {{data ? ((data['MONTHLY']?.compValue) | number : '1.0-0') : 0}}%">
+            </div>
+          </div>
+        </div>
+      </td>
+      <td style="width: 15%; padding-left: 14px;">
+        <div class="color-grey" style="margin-bottom: 4px; height: 22px; "></div>
+        <div *ngIf="data != null && data['MONTHLY'] != null && data['MONTHLY']?.compValue2 >= 90"
+             style="display: flex" class="icon-status">
+          <img [src]="'assets/Images/icon-round-good.svg'" alt="양호 아이콘"/>
+          <span>양호</span>
+        </div>
+        <div
+          *ngIf="data != null && data['MONTHLY'] != null && (data['MONTHLY']?.compValue2 >= 60 && data['MONTHLY']?.compValue2 < 90)"
+          style="display: flex" class="icon-status">
+          <img [src]="'assets/Images/icon-round-normal.svg'" alt="보통 아이콘"/>
+          <span>보통</span>
+        </div>
+        <div
+          *ngIf="data != null && data['MONTHLY'] != null && data['MONTHLY']?.compValue2< 60"
+          style="display: flex" class="icon-status">
+          <img [src]="'assets/Images/icon-round-bad.svg'" alt="부족 아이콘"/>
+          <span>부족</span>
+        </div>
+        <div *ngIf="data == null || data['MONTHLY'] == null" style="display: flex" class="icon-status">
+          <span>비교불가</span>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>

@@ -1,0 +1,127 @@
+<div class="main">
+
+  <ng-container *ngFor="let data of resultList">
+    <ng-container *ngIf="data.inv.length != 0">
+      <div class="box">
+        <div class="box1">
+          <div class="box1_header">
+            <div class="title">{{ data.inv[0][12] }} - {{ data.inv[0][13] }}</div>
+            <div class="state">좋음</div>
+            <div class="stop"><button class="stop_btn">STOP</button></div>
+          </div>
+
+          <div class="box1_main1">
+            <div class="box1_main_text">입력(DC)</div>
+            <div class="box1_main_text">출력(AC)</div>
+          </div>
+
+          <div class="box1_main2">
+            <div class="box1_main_table1">
+              <table>
+                <tr>
+                  <td class="vertical_text" rowspan="2">MPPT1</td>
+                  <td class="table_text">{{ data.inv[0][0] || '0' }} V</td>
+                </tr>
+                <tr>
+                  <td class="table_text">{{ data.inv[0][1] || '0' }} A</td>
+                </tr>
+              </table>
+
+              <table class="box1_main_table2">
+                <tr>
+                  <td class="vertical_text" rowspan="2">MPPT2</td>
+                  <td class="table_text">{{ data.inv[0][2] || '0' }} V</td>
+                </tr>
+                <tr>
+                  <td class="table_text">{{ data.inv[0][3] || '0' }} A</td>
+                </tr>
+              </table>
+
+              <table class="box1_main_table2">
+                <tr>
+                  <td class="vertical_text" rowspan="2">MPPT3</td>
+                  <td class="table_text">{{ data.inv[0][4] || '0' }} V</td>
+                </tr>
+                <tr>
+                  <td class="table_text">{{ data.inv[0][5] || '0' }} A</td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="box1_main_table3">
+              <table>
+                <tr>
+                  <td class="table3_text">전압 RS</td>
+                  <td class="table_text">{{ data.inv[0][6] || '0' }} V</td>
+                </tr>
+                <tr>
+                  <td class="table3_text">전압 ST</td>
+                  <td class="table_text">{{ data.inv[0][7] || '0' }} V</td>
+                </tr>
+                <tr>
+                  <td class="table3_text">전압 TR</td>
+                  <td class="table_text">{{ data.inv[0][8] || '0' }} V</td>
+                </tr>
+                <tr>
+                  <td class="table3_text">전류 R</td>
+                  <td class="table_text">{{ data.inv[0][9] || '0' }} A</td>
+                </tr>
+                <tr>
+                  <td class="table3_text">전류 S</td>
+                  <td class="table_text">{{ data.inv[0][10] || '0' }} A</td>
+                </tr>
+                <tr>
+                  <td class="table3_text">전류 T</td>
+                  <td class="table_text">{{ data.inv[0][11] || '0' }} A</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <div class="footer">
+            <div class="footer_btn"><button class="pv_map_btn" (click)="imageShow(data.inv[0][14])">PV map</button></div>
+            <div class="footer_btn"><button class="pv_map_btn" [routerLink]="'/module-generation/' + data.inv[0][15]">Details</button></div>
+          </div>
+
+        </div>
+
+        <div class="box2">
+          <div class="box2_row1">
+            <ng-container *ngFor="let item1 of data.opt[1] | keyvalue">
+              <div class="box2_row_pv">
+                <div>#{{ item1.key }}</div>
+                <img class="box2_row_img" [src]="'assets/Images/white-gray-pv.png'"/>
+                <div class="box2_row_img_text">{{ item1.value || '0' }} kWh</div>
+              </div>
+            </ng-container>
+          </div>
+          <div class="box2_row2">
+            <ng-container *ngFor="let item2 of data.opt[2] | keyvalue">
+              <div class="box2_row_pv">
+                <div>#{{ item2.key }}</div>
+                <img class="box2_row_img" [src]="'assets/Images/dark-gray-pv.png'"/>
+                <div class="box2_row_img_text">{{ item2.value || '0' }} kWh</div>
+              </div>
+            </ng-container>
+          </div>
+          <div class="box2_row2">
+            <ng-container *ngFor="let item3 of data.opt[3] | keyvalue">
+              <div class="box2_row_pv">
+                <div>#{{ item3.key }}</div>
+                <img class="box2_row_img" [src]="'assets/Images/terra-cotta-pv.png'"/>
+                <div class="box2_row_img_text">{{ item3.value || '0' }} kWh</div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <div class="img_box">
+    <div class="img_box_cancle_box"><button class="img_box_cancle" (click)="imageClose()">X</button></div>
+    <div class="img_box_main">
+      <img id="img_box_main_img" class="img_box_main_img" src="" />
+    </div>
+  </div>
+</div>

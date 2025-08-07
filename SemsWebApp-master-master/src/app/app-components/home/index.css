@@ -1,0 +1,112 @@
+.chart-container {
+  height: 22vh;
+  width: 100%;
+  position: relative;
+}
+
+.weather-info ul {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.weather-info li {
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.weather-info li strong {
+  font-size: 24px;
+}
+
+.power-comparison table td:nth-child(even),
+.radiation-comparison table td:nth-child(even) {
+  width: 40%;
+}
+
+.power-comparison table td .color-grey,
+.radiation-comparison table td .color-grey {
+  float: left;
+}
+
+
+.power-comparison table td .num,
+.radiation-comparison table td .num {
+  float: right;
+}
+
+
+.conversion-efficiency-status li {
+  width: 49%;
+  height: 65px;
+  overflow: hidden;
+  border: 1px solid #E5EAF3;
+  box-sizing: border-box;
+  float: left;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.conversion-efficiency-status li:nth-child(even) {
+  float: right;
+}
+
+.conversion-efficiency-status li .list-title {
+  background-color: #F4F8FD;
+  float: left;
+  width: 30%;
+  color: #8593A7;
+  padding: 20px;
+  box-sizing: border-box;
+  border-right: 1px solid #E5EAF3;
+  margin-right: 20px;
+  letter-spacing: 0;
+  font-size: 12px;
+  text-align: center;
+}
+
+.conversion-efficiency-status li .list-contents {
+  float: right;
+  width: 60%;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 10px;
+}
+
+.conversion-efficiency-status li .list-contents .list-num {
+  float: left;
+}
+
+.conversion-efficiency-status li .list-contents .list-num strong {
+  font-size: 24px;
+}
+
+.conversion-efficiency-status li .list-contents .icon-status {
+  float: right;
+  padding: 5px;
+}
+
+@media (min-width: 1366px) and (max-width: 1700px) {
+  .weather-info li img {
+    width: 85px;
+    height: 85px;
+  }
+
+  .weather-info li strong {
+    font-size: 18px;
+  }
+
+  .power-comparison .icon-status img,
+  .radiation-comparison .icon-status img {
+    width: 20px;
+  }
+
+  .power-comparison .icon-status span,
+  .radiation-comparison .icon-status span {
+    font-size: 12px;
+  }
+}
