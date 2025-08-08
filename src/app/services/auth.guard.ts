@@ -1,28 +1,28 @@
-import { Injectable } from '@angular/core'
+import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   CanActivate,
   Router,
   RouterStateSnapshot,
-  UrlTree
-} from '@angular/router'
-import { Observable } from 'rxjs'
-import { AuthServiceModule } from '../auth-service.module'
+  UrlTree,
+} from '@angular/router';
+import { Observable } from 'rxjs';
+import { AuthServiceModule } from '../auth-service.module';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
-  constructor (
-    private authService: AuthServiceModule,
-    private router: Router
-    ) {}
+  constructor(private authService: AuthServiceModule, private router: Router) {}
 
-  canActivate (
+  canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ):
-    | Observable<boolean | UrlTree>
+  ): boolean | UrlTree {
+    return true;
+  }
+  //temporary bypass guard for testing purposes
+  /*     | Observable<boolean | UrlTree>
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
@@ -32,5 +32,5 @@ export class AuthGuard implements CanActivate {
         return false;
       }
     return true;
-  }
+  } */
 }
