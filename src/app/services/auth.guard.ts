@@ -18,11 +18,13 @@ export class AuthGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ): boolean | UrlTree {
+
+  )/*
+  //temporary bypass
+  : boolean | UrlTree {
     return true;
-  }
-  //temporary bypass guard for testing purposes
-  /*     | Observable<boolean | UrlTree>
+  } */
+  : | Observable<boolean | UrlTree>
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
@@ -32,5 +34,5 @@ export class AuthGuard implements CanActivate {
         return false;
       }
     return true;
-  } */
+  }
 }

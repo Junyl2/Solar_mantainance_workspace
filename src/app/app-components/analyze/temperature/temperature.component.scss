@@ -13,6 +13,9 @@
 
 .box1 {
   padding: 5px 5px 5px 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .box1_header {
@@ -238,3 +241,10 @@
 ::ng-deep .mat-select-arrow-wrapper {
   padding: 10px 10px 0px 0px;
 }
+
+@media(max-width:1024px){
+  .box1_header {
+    flex-direction: column;
+  }
+}
+

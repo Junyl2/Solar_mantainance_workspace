@@ -54,21 +54,19 @@ export class TotalGenerationBoardComponent implements OnInit {
 
   ngOnInit(): void {
     // ===== MOCK DATA BLOCK START - REMOVE WHEN BACKEND IS READY =====
-    this.loadMockData();
+    /* this.loadMockData(); */
     // ===== MOCK DATA BLOCK END - REMOVE WHEN BACKEND IS READY =====
 
-    /*
     // ===== REAL API CALL BLOCK - ENABLE WHEN BACKEND IS READY =====
-    this.timer = timer(0, 10000);
+   this.timer = timer(0, 10000);
     this.subscription = this.timer.subscribe(() => {
       this.getTotalData();
     });
     // ===== REAL API CALL BLOCK END =====
-    */
   }
 
   // ===== MOCK DATA BLOCK START - REMOVE WHEN BACKEND IS READY =====
-  private loadMockData(): void {
+ /*  private loadMockData(): void {
     this.config = {
       title: '발전량',
       subTitle: '발전 테스트',
@@ -88,7 +86,7 @@ export class TotalGenerationBoardComponent implements OnInit {
       WEEKLY_AVG: null,
       MONTHLY_AVG: null,
     };
-  }
+  } */
   // ===== MOCK DATA BLOCK END - REMOVE WHEN BACKEND IS READY =====
 
   public getTotalData() {

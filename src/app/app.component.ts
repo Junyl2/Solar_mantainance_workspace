@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 import {
   faTh,
@@ -39,6 +40,10 @@ import { ThemeService } from './services/theme-service';
 export class AppComponent implements AfterViewInit {
   @ViewChild('homeComponent') homeComponent!: HomeComponent;
 
+  isMobile = false;
+  readonly MOBILE_BREAKPOINT = '(max-width: 767px)';
+
+
   // Login
   login = false;
   user: UserEntity | undefined;
@@ -77,10 +82,9 @@ export class AppComponent implements AfterViewInit {
   showFiller = true;
   sidenavOpened = true;
 
-  constructor(
-    public themeService: ThemeService,
-    public authService: AuthServiceModule,
-    private router: Router
+
+  constructor(public themeService: ThemeService, public authService: AuthServiceModule, private router: Router,
+      private breakpointObserver: BreakpointObserver
   ) {
     const today = new Date();
     const expirationDate = authService.getExpiration().toDate();
@@ -98,7 +102,14 @@ export class AppComponent implements AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {}
+
+
+  ngAfterViewInit() {
+       this.breakpointObserver.observe([this.MOBILE_BREAKPOINT])
+      .subscribe(result => {
+        this.isMobile = result.matches;
+      });
+  }
 
   logout() {
     console.log('logout');

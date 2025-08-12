@@ -32,7 +32,7 @@
           class="card-top"
         ></app-solar-power-board>
         <app-total-generation-board
-          style="width: 100%"
+          class="max-width"
           [config]="config.utilizationRate"
         ></app-total-generation-board>
       </div>
@@ -45,7 +45,7 @@
           #solarEnergyGenerationBarChart
         ></app-solar-power-board>
         <app-total-generation-board
-          style="width: 100%"
+          class="max-width"
           [config]="config.performanceRatio"
         ></app-total-generation-board>
       </div>
@@ -65,6 +65,8 @@
           [solar]="solar"
         ></app-weather-board>
       </div>
+
+
 
       <!-- Conversion efficiency -->
       <div class="card-container">

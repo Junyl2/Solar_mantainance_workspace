@@ -21,6 +21,12 @@ section {
   overflow: hidden;
 }
 
+.solar-bar-chart {
+  display: flex;
+  align-items: center;
+  max-width: 100%;
+}
+
 .grid {
   display: grid;
   height:100%;
@@ -43,7 +49,7 @@ section {
   grid-column: 1 / 2;
   grid-row: 1;
 }
-  
+
 .item2 {
   display: flex;
   align-items: stretch;

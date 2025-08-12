@@ -42,6 +42,10 @@ section {
   overflow: hidden;
 }
 
+strong {
+  font-size: clamp(1rem, 2vw, 1.8rem) !important;
+}
+
 .grid {
   display: grid;
   height: 100%;
