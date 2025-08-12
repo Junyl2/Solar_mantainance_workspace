@@ -16,7 +16,13 @@ import {
   faSlidersH,
   faCommentDots,
   faClipboard,
-  faTable, faClone, faUser, faInbox, faRadiation, faEthernet, faSitemap
+  faTable,
+  faClone,
+  faUser,
+  faInbox,
+  faRadiation,
+  faEthernet,
+  faSitemap,
 } from '@fortawesome/free-solid-svg-icons';
 import { HomeComponent } from './app-components/home/home.component';
 import { AuthServiceModule } from './auth-service.module';
@@ -28,7 +34,7 @@ import { ThemeService } from './services/theme-service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements AfterViewInit {
   @ViewChild('homeComponent') homeComponent!: HomeComponent;
@@ -38,10 +44,10 @@ export class AppComponent implements AfterViewInit {
   user: UserEntity | undefined;
 
   // Theme
-  theme = "original";
+  theme = 'original';
 
   // Layout
-  layout = "original";
+  layout = 'original';
 
   // Font awesome --------------------
   faTh = faTh;
@@ -71,8 +77,11 @@ export class AppComponent implements AfterViewInit {
   showFiller = true;
   sidenavOpened = true;
 
-
-  constructor(public themeService: ThemeService, public authService: AuthServiceModule, private router: Router) {
+  constructor(
+    public themeService: ThemeService,
+    public authService: AuthServiceModule,
+    private router: Router
+  ) {
     const today = new Date();
     const expirationDate = authService.getExpiration().toDate();
 
@@ -86,11 +95,10 @@ export class AppComponent implements AfterViewInit {
     authService.changeEmitted$.subscribe((data) => {
       this.login = data;
       this.user = JSON.parse(localStorage.getItem('account'));
-    })
+    });
   }
 
-  ngAfterViewInit() {
-  }
+  ngAfterViewInit() {}
 
   logout() {
     console.log('logout');
@@ -100,10 +108,8 @@ export class AppComponent implements AfterViewInit {
   }
 
   onMenuToggle() {
-    if (this.sidenavOpened)
-      this.sidenavOpened = false;
-    else
-      this.sidenavOpened = true;
+    if (this.sidenavOpened) this.sidenavOpened = false;
+    else this.sidenavOpened = true;
   }
 
   onThemeChange(event: any) {

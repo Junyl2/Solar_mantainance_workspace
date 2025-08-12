@@ -4,12 +4,14 @@
 
 export const environment = {
   production: false,
-  baseAdminUrl: 'http://127.0.0.1:9001',
-  baseUserUrl: 'http://127.0.0.1:9001',
+  baseAdminUrl: 'http://211.107.13.167:9001',
+  baseUserUrl: 'http://211.107.13.167:9001',
+  // baseAdminUrl: 'http://127.0.0.1:9001',
+  // baseUserUrl: 'http://127.0.0.1:9001',
   // baseAdminUrl: 'http://3.36.44.16:9001',
   // baseUserUrl: 'http://3.36.44.16:9001',
   imageUrl: 'https://bipv-dev.s3.ap-northeast-2.amazonaws.com/',
-  imagePath: 'D:/DEV/ONTEST/BIPV/SemsWebApp-Admin/public/image/'
+  imagePath: 'D:/DEV/ONTEST/BIPV/SemsWebApp-Admin/public/image/',
 };
 
 /*
