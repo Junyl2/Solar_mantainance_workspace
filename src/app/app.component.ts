@@ -40,8 +40,8 @@ import { ThemeService } from './services/theme-service';
 export class AppComponent implements AfterViewInit {
   @ViewChild('homeComponent') homeComponent!: HomeComponent;
 
-  isMobile = false;
-  readonly MOBILE_BREAKPOINT = '(max-width: 767px)';
+  isMobileAndTablet = false;
+  readonly MOBILE_BREAKPOINT = '(max-width: 1280px)';
 
 
   // Login
@@ -107,7 +107,7 @@ export class AppComponent implements AfterViewInit {
   ngAfterViewInit() {
        this.breakpointObserver.observe([this.MOBILE_BREAKPOINT])
       .subscribe(result => {
-        this.isMobile = result.matches;
+        this.isMobileAndTablet = result.matches;
       });
   }
 

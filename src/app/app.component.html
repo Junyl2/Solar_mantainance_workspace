@@ -17,7 +17,7 @@
       >
         CAPTURE STAR M
       </div>
-      <div style="padding-left: 40px">{{ user?.site?.name || "" }}</div>
+      <div class="user-site">{{ user?.site?.name || "" }}</div>
     </div>
     <div *ngIf="login == true" class="flex-row-jed-act">
       <div
@@ -37,7 +37,7 @@
 </div>
 
 <mat-drawer-container autosize>
-  <mat-drawer #drawer *ngIf="login == true && themeService.theme == 'original'" class="sidenav-menu" [mode]="isMobile ? 'over' : 'side'"
+  <mat-drawer #drawer *ngIf="login == true && themeService.theme == 'original'" class="sidenav-menu" [mode]="isMobileAndTablet ? 'over' : 'side'"
     [opened]="sidenavOpened">
 
     <div class="sidenav-button">

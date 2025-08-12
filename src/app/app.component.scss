@@ -154,3 +154,11 @@
   height: 15px;
   background-color: white;
 }
+.user-site {
+  padding-left: 40px;
+}
+@media(max-width:468px){
+  .user-site {
+    display: none !important;
+  }
+}
