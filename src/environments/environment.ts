@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  baseAdminUrl: 'http://211.107.13.167:9001',
-  baseUserUrl: 'http://211.107.13.167:9001',
+  baseAdminUrl: 'https://on-energy.kr',
+  baseUserUrl: 'https://on-energy.kr',
   // baseAdminUrl: 'http://127.0.0.1:9001',
   // baseUserUrl: 'http://127.0.0.1:9001',
   // baseAdminUrl: 'http://3.36.44.16:9001',
