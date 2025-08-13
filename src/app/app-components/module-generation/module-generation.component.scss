@@ -5,22 +5,47 @@
   flex-direction: column;
   align-items: center;
   padding: 10px 10px 0 10px;
-  position:  relative;
+  position: relative;
 }
 
 .box {
   width: 95%;
-  margin: 10px 0px 30px 0px;
+  /*   margin: 10px 0px 30px 0px; */
   display: flex;
   flex-direction: row;
-  box-shadow: 3px 3px 3px 5px grey;
+  /*  box-shadow: 3px 3px 3px 5px grey; */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   padding: 20px 10px 10px;
+  margin-bottom: 1.2rem;
 }
 
 .box1 {
   padding: 5px 5px 5px 5px;
-  width: 600px
+  width: 100%;
 }
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: .5rem;
+  width: 100%;
+  place-items: center;
+}
+
+.grid-item {
+  /*   background: white; */
+  padding: 1rem;
+  border-radius: 6px;
+  /*   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); */
+}
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 
 .box1_header {
   display: flex;
@@ -40,12 +65,13 @@
   flex-direction: row;
   width: 100%;
   padding-top: 10px;
+  gap: 1rem;
 }
 
 .box1_main_table1 {
   display: flex;
   justify-content: center;
-  width: 50%;
+  /*   width: 50%; */
   text-align: center;
   flex-direction: column;
   align-items: center;
@@ -58,7 +84,7 @@
 .box1_main_table3 {
   display: flex;
   justify-content: center;
-  width: 50%;
+  /*  width: 50%; */
   text-align: center;
   flex-direction: column;
   align-items: center;
@@ -68,6 +94,7 @@
   width: 50%;
   text-align: center;
   font-weight: bold;
+  margin-bottom: 1rem;
 }
 
 .vertical_text {
@@ -99,6 +126,7 @@
   border: 1px solid black;
 }
 
+
 .title {
   display: flex;
   align-items: center;
@@ -129,11 +157,12 @@
   border-radius: 7px;
 }
 
+/*
 .box2 {
   width: 100%;
   overflow: auto;
   white-space: nowrap;
-}
+} */
 
 .box2_row1 {
   height: 120px;
@@ -186,6 +215,24 @@
   width: 50%;
 }
 
+.pv_button {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.pv_map_button {
+  border: 1px solid #8f8f8f;
+  width: 60%;
+  height: 30px;
+  color: white;
+  background: #8f8f8f;
+  border-radius: 7px;
+}
+
+.pv_map_button:hover {
+  background: #7a7a7a;
+}
+
 .pv_map_btn {
   border: 1px solid #8f8f8f;
   width: 60%;
@@ -202,7 +249,7 @@
   align-content: center;
   width: 900px;
   height: 600px;
-  position:  absolute;
+  position: absolute;
   top: 25%;
   left: 25%;
   background: white;
