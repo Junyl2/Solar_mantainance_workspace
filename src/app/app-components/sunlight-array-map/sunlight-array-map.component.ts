@@ -20,24 +20,39 @@ export class SunlightArrayMapComponent implements OnInit {
   ngOnInit(): void {
     this.semsService.getSiteMapImage()
       .subscribe(res => {
-        console.log(res);
+         console.log('API response:', res);
 
-        if (res && res.facility.length > 0) {
-          for (let i = 0; i < res.facility.length; i++) {
-            let facility = { ...res.facility[i] };
-            facility.imageUrl = `assets/site/${res.facility[i].filename}`;
-            this.sites.push(facility);
+      if (res && res.facility.length > 0) {
+        const tempMap = new Map<string, any>();
+
+        for (let facility of res.facility) {
+          // Normalize title by stripping suffix after '-'
+          const baseTitle = facility.title.split('-')[0].trim();
+
+          // If baseTitle not yet added, add it
+          if (!tempMap.has(baseTitle)) {
+            let newFacility = { ...facility };
+            newFacility.title = baseTitle;
+            newFacility.imageUrl = `assets/site/${facility.filename}`;
+            tempMap.set(baseTitle, newFacility);
+          } else {
+            // If needed, merge info or skip duplicates will be here
           }
         }
 
-        console.log('1. sites : ');
-        console.log(this.sites);
+        // Convert map values to array for your sites
+        this.sites = Array.from(tempMap.values());
+      }
+
+      console.log('Normalized sites:', this.sites);
 
         // 발전소 모듈 카운트
         for (let i = 0; i < this.sites.length; i++) {
           let site = this.sites[i];
           this.semsService.getHardwareCount(site.id)
             .subscribe(res => {
+              //test
+                  console.log(` Raw hardwareCount response for site ${site.id}:`, res);
               let resultObject: any = { invList: [], whether1Count: 0, whether2Count: 0, whether3Count: 0, whether4Count: 0, whether5Count: 0, whether6Count: 0, elecCount: 0 }
               let invObject = {};
 
