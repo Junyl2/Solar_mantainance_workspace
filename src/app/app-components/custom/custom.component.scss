@@ -1,32 +1,34 @@
 @import "../../../theme/flosys.scss";
 
 @include desktop-1024 {
-    .input { 
-        display:inline-block;
+    .input {
+        display: inline-block;
     }
-    .chart {
-        display:block;
-        position:relative;
-        margin:auto;
-        height:60vh;
-        width:80vw;
-    }
-    .table {
-        position:relative;
-        margin:auto;
-        height:20vh;
-        width:80vw;
 
-        overflow-y:scroll;
+    .chart {
+        display: block;
+        position: relative;
+        margin: auto;
+        height: 60vh;
+        width: 80vw;
+    }
+
+    .table {
+        position: relative;
+        margin: auto;
+        height: 20vh;
+        width: 80vw;
+        overflow-y: scroll;
 
         tr {
-            margin:auto;
+            margin: auto;
 
             th {
-                margin:auto;
+                margin: auto;
             }
+
             td {
-                margin:auto;
+                margin: auto;
             }
         }
     }
