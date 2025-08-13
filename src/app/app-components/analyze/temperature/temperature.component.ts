@@ -16,6 +16,7 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
 
   chart: Chart;
   isMobile = false;
+  isTablet = false;
 
 
 
@@ -35,42 +36,72 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
   insNum = 0;
   dateList: any = [];
 
-constructor(private semsService: SemsService, private breakpointObserver: BreakpointObserver) {
+constructor(
+  private semsService: SemsService,
+  private breakpointObserver: BreakpointObserver,
+  private cdr: ChangeDetectorRef
+) {
     Chart.register(...registerables);
   }
 
   updateChartAspectRatio() {
     if (!this.chart) return;
 
-    this.chart.options.aspectRatio = this.isMobile ? 1 : 2.5;
+    this.chart.options.aspectRatio = this.isMobile ? 0.6 : this.isTablet ? 1.5 : 2.5;
     this.chart.update();
   }
 
 
   ngOnInit(): void {
-    this.getAnalyzeTemperatureInvList();
     this.radio_input1_click();
   }
 
-  ngAfterViewInit(): void {
-    this.breakpointObserver.observe(['(max-width: 767px)']).subscribe(result => {
-      this.isMobile = result.matches;
-      if(this.chart) {
-        this.updateChartAspectRatio();
-      }
-    });
+ ngAfterViewInit(): void {
+  this.getAnalyzeTemperatureInvList();
 
-    this.createChart();
-  }
+  this.breakpointObserver.observe([
+    '(max-width: 767px)',
+    '(min-width: 768px) and (max-width: 1024px)'
+  ]).subscribe(result => {
+    if (result.breakpoints['(max-width: 767px)']) {
+      this.isMobile = true;
+      this.isTablet = false;
+    } else if (result.breakpoints['(min-width: 768px) and (max-width: 1024px)']) {
+      this.isTablet = true;
+      this.isMobile = false;
+    } else {
+      this.isMobile = false;
+      this.isTablet = false;
+    }
+
+    if(this.chart) {
+      this.updateChartAspectRatio();
+    }
+  });
+
+  this.createChart();
+}
 
   getAnalyzeTemperatureInvList() {
-    this.semsService.getAnalyzeTemperatureInvList().subscribe(res => {
-      console.log(res);
-      for (let i of res) {
-        this.invList.push({viewValue: i[0], value: i[1]})
-      }
+  this.semsService.getAnalyzeTemperatureInvList().subscribe(res => {
+    console.log("Original response:", res);
+
+    // Filter only 202 and 204
+    const filtered = res.filter(i => i[1] === 202 || i[1] === 204);
+    console.log("Filtered list:", filtered);
+
+    // Defer updating the bound property
+    setTimeout(() => {
+      this.invList = filtered.map(i => ({
+        viewValue: i[0],
+        value: i[1]
+      }));
+      this.cdr.detectChanges();
     });
-  }
+  });
+}
+
+
 
   createChart() {
     this.chart = new Chart('chart_temperature', {
@@ -85,7 +116,7 @@ constructor(private semsService: SemsService, private breakpointObserver: Breakp
         ]
       },
       options: {
-        aspectRatio: this.isMobile ? 1 : 2.5,
+        aspectRatio: this.isMobile ? 0.6 : this.isTablet ? 1.5 : 2.5,
         scales: {
           y1: { type: 'linear', display: true, title: {display: true, text: '인버터 발전량', color: 'rgba(0,0,0,0.8)'}, position: 'left' },
           y3: { type: 'linear', display: true, title: {display: true, text: '모듈 후면 °C', color: 'rgba(153, 102, 255, 0.8)'}, position: 'right' },
@@ -213,7 +244,7 @@ constructor(private semsService: SemsService, private breakpointObserver: Breakp
           ]
         },
         options: {
-                  aspectRatio: this.isMobile ? 1 : 2.5,
+                  aspectRatio: this.isMobile ? 0.6 : this.isTablet ? 1.5 : 2.5,
 
           scales: {
             y1: { type: 'linear', display: true, title: {display: true, text: '인버터 발전량 kWh', color: 'rgba(0,0,0,0.8)'}, position: 'left', min: 0 },
