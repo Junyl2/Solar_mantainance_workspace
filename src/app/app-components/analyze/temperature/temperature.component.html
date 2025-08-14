@@ -7,85 +7,158 @@
             <div class="title">온도와 발전량</div>
             <div class="radio_box">
               <div class="radio_input1" (click)="radio_input1_click()">
-                <input id='radio_time' type='radio' name='time' value='1' [checked]='true'/> 시간별
+                <input
+                  id="radio_time"
+                  type="radio"
+                  name="time"
+                  value="1"
+                  [checked]="true"
+                />
+                시간별
               </div>
               <div class="radio_input2" (click)="radio_input2_click()">
-                <input id='radio_day' type='radio' name='time' value='2'/> 일별
+                <input id="radio_day" type="radio" name="time" value="2" /> 일별
               </div>
               <div class="radio_input3" (click)="radio_input3_click()">
-                <input id='radio_month' type='radio' name='time' value='3'/> 월별
+                <input id="radio_month" type="radio" name="time" value="3" />
+                월별
               </div>
             </div>
           </div>
 
           <div class="box1_header_1">
             <div class="date-and-inverter">
-            <div style="display: flex; flex-direction: row;">
-            <div class="padding_text">조회기간 :</div>
-            <div class="date_box">
-              <div id="date_start" class="data_box1">
-                <input class="data_input" matInput [matDatepicker]="startPicker" [value]="startDate" (dateChange)="onStartDaySelected($event.value)">
-                <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-                <mat-datepicker #startPicker panelClass="example-month-picker"></mat-datepicker>
+              <div style="display: flex; flex-direction: row">
+                <div class="padding_text">조회기간 :</div>
+                <div class="date_box">
+                  <div id="date_start" class="data_box1">
+                    <input
+                      class="data_input"
+                      matInput
+                      [matDatepicker]="startPicker"
+                      [value]="startDate"
+                      (dateChange)="onStartDaySelected($event.value)"
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="startPicker"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker
+                      #startPicker
+                      panelClass="example-month-picker"
+                    ></mat-datepicker>
+                  </div>
+
+                  <div id="date_start_month" class="data_month_box">
+                    <input
+                      class="data_input"
+                      matInput
+                      [matDatepicker]="startMonthPicker"
+                      [value]="startMonthDate"
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="startMonthPicker"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker
+                      #startMonthPicker
+                      startView="year"
+                      (yearSelected)="onStartMonthSelected($event)"
+                      (monthSelected)="
+                        onStartMonthMonthSelected($event, startMonthPicker)
+                      "
+                      panelClass="example-month-picker"
+                    >
+                    </mat-datepicker>
+                  </div>
+
+                  <div id="date_space" class="date_space">~</div>
+
+                  <div id="date_end" class="data_box2">
+                    <input
+                      class="data_input"
+                      matInput
+                      [matDatepicker]="endPicker"
+                      [value]="endDate"
+                      (dateChange)="onEndDaySelected($event.value)"
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="endPicker"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker
+                      #endPicker
+                      panelClass="example-month-picker"
+                    ></mat-datepicker>
+                  </div>
+                  <div id="date_end_month" class="data_month_box">
+                    <input
+                      class="data_input"
+                      matInput
+                      [matDatepicker]="endMonthPicker"
+                      [value]="endMonthDate"
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="endMonthPicker"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker
+                      #endMonthPicker
+                      startView="year"
+                      (yearSelected)="onStartMonthSelected($event)"
+                      (monthSelected)="
+                        onEndMonthMonthSelected($event, endMonthPicker)
+                      "
+                      panelClass="example-month-picker"
+                    >
+                    </mat-datepicker>
+                  </div>
+                </div>
               </div>
 
-              <div id="date_start_month" class="data_month_box">
-                <input class="data_input" matInput [matDatepicker]="startMonthPicker" [value]="startMonthDate">
-                <mat-datepicker-toggle matSuffix [for]="startMonthPicker"></mat-datepicker-toggle>
-                <mat-datepicker #startMonthPicker startView="year" (yearSelected)="onStartMonthSelected($event)"
-                                (monthSelected)="onStartMonthMonthSelected($event, startMonthPicker)" panelClass="example-month-picker">
-                </mat-datepicker>
-              </div>
-
-              <div id="date_space" class="date_space">~</div>
-
-              <div id="date_end" class="data_box2">
-                <input class="data_input" matInput [matDatepicker]="endPicker" [value]="endDate" (dateChange)="onEndDaySelected($event.value)">
-                <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-                <mat-datepicker #endPicker panelClass="example-month-picker"></mat-datepicker>
-              </div>
-              <div id="date_end_month" class="data_month_box">
-                <input class="data_input" matInput [matDatepicker]="endMonthPicker" [value]="endMonthDate">
-                <mat-datepicker-toggle matSuffix [for]="endMonthPicker"></mat-datepicker-toggle>
-                <mat-datepicker #endMonthPicker startView="year" (yearSelected)="onStartMonthSelected($event)"
-                                (monthSelected)="onEndMonthMonthSelected($event, endMonthPicker)" panelClass="example-month-picker">
-                </mat-datepicker>
-              </div>
-            </div>
-            </div>
-
-            <div style="display: flex; flex-direction: row;">
-              <div class="inv_text">인버터 :</div>
+              <div style="display: flex; flex-direction: row">
+                <div class="inv_text">인버터 :</div>
                 <mat-form-field appearance="fill">
-                  <mat-select id="inv_select" (selectionChange)="changeValue($event.value)">
+                  <mat-select
+                    id="inv_select"
+                    (selectionChange)="changeValue($event.value)"
+                  >
                     <mat-option *ngFor="let inv of invList" [value]="inv.value">
-                      {{inv.viewValue}}
+                      {{ inv.viewValue }}
                     </mat-option>
                   </mat-select>
                 </mat-form-field>
 
-              <div class="search_box"><button class="search_btn" (click)="search_click()">조회</button></div>
+                <div class="search_box">
+                  <button class="search_btn" (click)="search_click()">
+                    조회
+                  </button>
+                </div>
+              </div>
+              <div class="box1_header_2">
+                <div class="download_box">
+                  <button
+                    class="download_btn"
+                    (click)="downloadToExcel('환경과 발전량')"
+                  >
+                    Download
+                  </button>
+                </div>
+              </div>
             </div>
-            <div class="box1_header_2">
-            <div class="download_box"><button class="download_btn" (click)="downloadToExcel('환경과 발전량')">Download</button></div>
           </div>
-            </div>
-
-
-          </div>
-
-
-
-
         </div>
         <!-- end of header -->
       </div>
 
       <div class="box2">
         <div class="box2_chart_box" id="box2_chart_box">
-         <!--  <canvas id="chart_temperature" class="chart">{{ chart }}</canvas> -->
-           <canvas #chart_temperature id="chart_temperature" class="chart"></canvas>
-
+          <!--  <canvas id="chart_temperature" class="chart">{{ chart }}</canvas> -->
+          <canvas
+            #chart_temperature
+            id="chart_temperature"
+            class="chart"
+          ></canvas>
         </div>
 
         <div class="box2_table_box" id="box2_table_box">
@@ -94,8 +167,12 @@
               <td class="table_td_header">구분</td>
               <ng-container *ngIf="gbn === 'time'">
                 <ng-container *ngFor="let data1 of tableData[0]; index as i">
-                  <td *ngIf="i.toString().length === 1" class="table_td_header">0{{ i }} 시</td>
-                  <td *ngIf="i.toString().length !== 1" class="table_td_header">{{ i }} 시</td>
+                  <td *ngIf="i.toString().length === 1" class="table_td_header">
+                    0{{ i }} 시
+                  </td>
+                  <td *ngIf="i.toString().length !== 1" class="table_td_header">
+                    {{ i }} 시
+                  </td>
                 </ng-container>
               </ng-container>
               <ng-container *ngIf="gbn !== 'time'">
@@ -108,20 +185,82 @@
               <tr class="table_tr">
                 <td class="table_td">{{ tableHeadData[i] }}</td>
                 <ng-container *ngFor="let data2 of data1">
-                  <td *ngIf="(tableHeadData[i] !== '온도' && tableHeadData[i] !== '습도' && tableHeadData[i] !== '풍속' && tableHeadData[i] !== '일사량') && data2 !== 0" class="table_td">{{ data2 }} kWh</td>
-                  <td *ngIf="(tableHeadData[i] !== '온도' && tableHeadData[i] !== '습도' && tableHeadData[i] !== '풍속' && tableHeadData[i] !== '일사량') && data2 === 0" class="table_td">-</td>
+                  <td
+                    *ngIf="
+                      tableHeadData[i] !== '온도' &&
+                      tableHeadData[i] !== '습도' &&
+                      tableHeadData[i] !== '풍속' &&
+                      tableHeadData[i] !== '일사량' &&
+                      data2 !== 0
+                    "
+                    class="table_td"
+                  >
+                    {{ data2 }}
+                  </td>
+                  <td
+                    *ngIf="
+                      tableHeadData[i] !== '온도' &&
+                      tableHeadData[i] !== '습도' &&
+                      tableHeadData[i] !== '풍속' &&
+                      tableHeadData[i] !== '일사량' &&
+                      data2 === 0
+                    "
+                    class="table_td"
+                  >
+                    -
+                  </td>
 
-                  <td *ngIf="tableHeadData[i] === '온도' && data2 !== 0" class="table_td">{{ data2 }} °C</td>
-                  <td *ngIf="tableHeadData[i] === '온도' && data2 === 0" class="table_td">-</td>
+                  <td
+                    *ngIf="tableHeadData[i] === '온도' && data2 !== 0"
+                    class="table_td"
+                  >
+                    {{ data2 }} °C
+                  </td>
+                  <td
+                    *ngIf="tableHeadData[i] === '온도' && data2 === 0"
+                    class="table_td"
+                  >
+                    -
+                  </td>
 
-                  <td *ngIf="tableHeadData[i] === '습도' && data2 !== 0" class="table_td">{{ data2 }} %</td>
-                  <td *ngIf="tableHeadData[i] === '습도' && data2 === 0" class="table_td">-</td>
+                  <td
+                    *ngIf="tableHeadData[i] === '습도' && data2 !== 0"
+                    class="table_td"
+                  >
+                    {{ data2 }} %
+                  </td>
+                  <td
+                    *ngIf="tableHeadData[i] === '습도' && data2 === 0"
+                    class="table_td"
+                  >
+                    -
+                  </td>
 
-                  <td *ngIf="tableHeadData[i] === '풍속' && data2 !== 0" class="table_td">{{ data2 }} m/s</td>
-                  <td *ngIf="tableHeadData[i] === '풍속' && data2 === 0" class="table_td">-</td>
+                  <td
+                    *ngIf="tableHeadData[i] === '풍속' && data2 !== 0"
+                    class="table_td"
+                  >
+                    {{ data2 }} m/s
+                  </td>
+                  <td
+                    *ngIf="tableHeadData[i] === '풍속' && data2 === 0"
+                    class="table_td"
+                  >
+                    -
+                  </td>
 
-                  <td *ngIf="tableHeadData[i] === '일사량' && data2 !== 0" class="table_td">{{ data2 }} Wh/㎡</td>
-                  <td *ngIf="tableHeadData[i] === '일사량' && data2 === 0" class="table_td">-</td>
+                  <td
+                    *ngIf="tableHeadData[i] === '일사량' && data2 !== 0"
+                    class="table_td"
+                  >
+                    {{ data2 }} Wh/㎡
+                  </td>
+                  <td
+                    *ngIf="tableHeadData[i] === '일사량' && data2 === 0"
+                    class="table_td"
+                  >
+                    -
+                  </td>
                 </ng-container>
               </tr>
             </ng-container>
