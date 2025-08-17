@@ -1,11 +1,11 @@
 @import "./flosys-variable.scss";
 
 @mixin mobile {
-    @media (min-width: #{$breakpoint-mobile}) and (max-width: #{$breakpoint-tablet - 1px}) {
-      @content;
-    }
+  @media (min-width: #{$breakpoint-mobile}) and (max-width: #{$breakpoint-tablet - 1px}) {
+    @content;
   }
-  
+}
+
 @mixin tablet {
   @media (min-width: #{$breakpoint-tablet}) and (max-width: #{$breakpoint-desktop-1024 - 1px}) {
     @content;
@@ -18,7 +18,9 @@
   }
 }
 
-@mixin desktop-hd {     // 1920
+@mixin desktop-hd {
+
+  // 1920
   @media (min-width: #{$breakpoint-desktop-hd}) {
     @content;
   }
@@ -34,53 +36,59 @@
 
 // Flex Column -----------------------------
 @mixin mx-flex-col-jct-act {
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
+
 @mixin mx-flex-col-jspa-act {
-    display:flex;
-    flex-direction:column;
-    justify-content:space-around;
-    align-items:center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
 }
+
 @mixin mx-flex-col-jspa-asch {
-    display:flex;
-    flex-direction:column;
-    justify-content:space-around;
-    align-items:stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: stretch;
 }
 
 // Flex Row ----------------------------
 @mixin mx-flex-row-jspa-act {
-    display:flex;
-    flex-direction:row;
-    justify-content:space-around;
-    align-items:center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
 }
+
 // JustifyStart AlignCenter
 @mixin mx-flex-row-jst-act {
-    display:flex;
-    flex-direction:row;
-    justify-content:start;
-    align-items:center;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
 }
+
 @mixin mx-flex-row-jed-act {
-  display:flex;
-  flex-direction:row;
-  justify-content:end;
-  align-items:center;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
 }
+
 @mixin mx-flex-row-jspb-act {
-    display:flex;
-    flex-direction:row;
-    justify-content:space-between;
-    align-items:center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
+
 @mixin mx-flex-row-jspb-aed {
-    display:flex;
-    flex-direction:row;
-    justify-content:space-between;
-    align-items:flex-end;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
 }

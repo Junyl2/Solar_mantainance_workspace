@@ -1,0 +1,663 @@
+    Project is attempting to disable the Ivy compiler. Angular versions 12 and higher do not support the deprecated View Engine compiler for applications. The Ivy compiler will be used to build this project. 
+    For additional information or if the build fails, please see https://angular.io/guide/ivy
+- Generating browser application bundles (phase: setup)...
+<t> [webpack.cache.PackFileCacheStrategy] restore cache container: 8.700667 ms
+    [IdleFileCachePlugin] Initial cache was generated and cache will be persisted in 5s.
+✔ Browser application bundle generation complete.
+    [webpack.cache.PackFileCacheStrategy] Pack got invalid because of write to: ResolverCachePlugin|normal|dependencyType=|esm|path=|/Users/macbook/Documents/GitHub/bipv_web|request=|/Users/macbook/Documents/GitHub/bipv_web/src/main.ts
+asset main.ce560a780c024a6d.js 10.4 MiB {179} [emitted] [immutable] (name: main)
+asset styles.56a6184f637cf6e6.css 472 KiB {532} [emitted] [immutable] (name: styles)
+asset bootstrap-icons.e23375a1fdb9d81a.woff 120 KiB ({532}) [emitted] [from: /Users/macbook/Documents/GitHub/bipv_web/node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff] (auxiliary name: styles)
+asset bootstrap-icons.7e8b70c0ca62bff8.woff2 89.9 KiB ({532}) [emitted] [from: /Users/macbook/Documents/GitHub/bipv_web/node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff2] (auxiliary name: styles)
+asset 3rdpartylicenses.txt 44.3 KiB [emitted]
+asset polyfills.723176af6055e3ca.js 36.9 KiB {429} [emitted] [immutable] (name: polyfills)
+asset runtime.ffaeb743d8d3fe45.js 1.73 KiB {666} [emitted] [immutable] (name: runtime)
+Entrypoint main 10.4 MiB = runtime.ffaeb743d8d3fe45.js 1.73 KiB main.ce560a780c024a6d.js 10.4 MiB
+Entrypoint polyfills 38.6 KiB = runtime.ffaeb743d8d3fe45.js 1.73 KiB polyfills.723176af6055e3ca.js 36.9 KiB
+Entrypoint styles 474 KiB (210 KiB) = runtime.ffaeb743d8d3fe45.js 1.73 KiB styles.56a6184f637cf6e6.css 472 KiB 2 auxiliary assets
+chunk {179} (runtime: runtime) main.ce560a780c024a6d.js (main) 18.2 MiB [initial] [rendered]
+  dependent modules 3.1 MiB [dependent] 142 modules
+  ./src/main.ts + 282 modules [4270] 15.1 MiB {179} [built] [code generated]
+    [no exports used]
+    ModuleConcatenation bailout: Cannot concat with ./node_modules/ag-grid-community/dist/ag-grid-community.cjs.js: Module is not an ECMAScript module
+    ModuleConcatenation bailout: Cannot concat with ./node_modules/file-saver/dist/FileSaver.min.js: Module is not an ECMAScript module
+    ModuleConcatenation bailout: Cannot concat with ./node_modules/gauge-chart/dist/bundle.js: Module is not an ECMAScript module
+    ModuleConcatenation bailout: Cannot concat with ./node_modules/moment/locale/ko.js: Module is not an ECMAScript module
+    ModuleConcatenation bailout: Cannot concat with ./node_modules/moment/moment.js: Module is not an ECMAScript module
+    ModuleConcatenation bailout: Cannot concat with ./node_modules/svg-gauge/index.js: Module is not an ECMAScript module
+    entry /Users/macbook/Documents/GitHub/bipv_web/src/main.ts main
+chunk {429} (runtime: runtime) polyfills.723176af6055e3ca.js (polyfills) 119 KiB [initial] [rendered]
+  dependent modules 109 KiB [dependent] 1 module
+  ./src/polyfills.ts + 1 modules [9430] 10.2 KiB {429} [built] [code generated]
+    [no exports used]
+    ModuleConcatenation bailout: Cannot concat with ./node_modules/zone.js/fesm2015/zone.js: Module is not an ECMAScript module
+    entry /Users/macbook/Documents/GitHub/bipv_web/src/polyfills.ts polyfills
+chunk {532} (runtime: runtime) styles.56a6184f637cf6e6.css (styles) 100 bytes (javascript) 552 KiB (css/mini-extract) [initial] [rendered]
+  dependent modules 552 KiB [dependent] 2 modules
+  ./node_modules/@angular/material/prebuilt-themes/indigo-pink.css [103] 50 bytes {532} [built] [code generated]
+    [no exports used]
+    entry /Users/macbook/Documents/GitHub/bipv_web/node_modules/@angular/material/prebuilt-themes/indigo-pink.css styles
+  ./src/styles.scss [8248] 50 bytes {532} [built] [code generated]
+    [no exports used]
+    entry /Users/macbook/Documents/GitHub/bipv_web/src/styles.scss styles
+chunk {666} (runtime: runtime) runtime.ffaeb743d8d3fe45.js (runtime) 4.54 KiB [entry] [rendered]
+  runtime modules 4.54 KiB 8 modules
+  
+
+LOG from webpack.Compilation
+<t> runtime requirements.modules: 0.125333 ms
+<t> runtime requirements.chunks: 0.081375 ms
+<t> runtime requirements.entries: 0.554917 ms
+<t> runtime requirements.modules: 0.013375 ms
+<t> runtime requirements.chunks: 0.009416 ms
+<t> runtime requirements.entries: 0.061333 ms
+<t> compute affected modules: 0.206333 ms
+<t> finish modules: 37.1885 ms
+<t> report dependency errors and warnings: 20.107917 ms
+<t> optimize dependencies: 77.399 ms
+<t> create chunks: 117.924958 ms
+<t> compute affected modules with chunk graph: 0.138208 ms
+<t> optimize: 91.78825 ms
+    149 modules hashed, 0 from cache (0.19 variants per module in average)
+<t> module hashing: 38.234667 ms
+    100% code generated (149 generated, 0 from cache)
+<t> code generation: 1288.052667 ms
+<t> runtime requirements.modules: 0.590041 ms
+<t> runtime requirements.chunks: 0.202084 ms
+<t> runtime requirements.entries: 0.891125 ms
+<t> runtime requirements: 1.759417 ms
+<t> hashing: initialize hash: 0.012208 ms
+<t> hashing: hash warnings: 0.031541 ms
+<t> hashing: sort chunks: 0.029166 ms
+<t> hashing: hash runtime modules: 1.274249 ms
+<t> hashing: hash chunks: 1.20496 ms
+<t> hashing: hash digest: 0.10475 ms
+<t> hashing: process full hash modules: 0.001041 ms
+<t> hashing: 2.728 ms
+    100% code generated (8 generated, 0 from cache)
+<t> record hash: 0.032833 ms
+<t> module assets: 0.50825 ms
+<t> create chunk assets: 5.118042 ms
+<t> process assets: 19165.356666 ms
+
+LOG from webpack.Compiler
+<t> make hook: 20153.59475 ms
+<t> finish make hook: 0.081709 ms
+<t> finish compilation: 57.755083 ms
+<t> seal compilation: 20791.912375 ms
+<t> afterCompile hook: 0.106583 ms
+<t> emitAssets: 45.43775 ms
+<t> emitRecords: 0.052958 ms
+<t> done hook: 0.735459 ms
+<t> beginIdle: 0.757 ms
+
+LOG from webpack.ResolverCachePlugin
+    27% really resolved (2289 real resolves with 0 cached but invalid, 6341 cached valid, 0 concurrent)
+
+LOG from webpack.FlagDependencyExportsPlugin
+<t> restore cached provided exports: 2.094166 ms
+<t> figure out provided exports: 26.487292 ms
+    81% of exports of modules have been determined (152 no declared exports, 639 not cached, 1 flagged uncacheable, 0 from cache, 0 from mem cache, 6 additional calculations due to dependencies)
+<t> store provided exports into cache: 3.793583 ms
+
+LOG from webpack.InnerGraphPlugin
+<t> infer dependency usage: 16.176126 ms
+
+LOG from webpack.SideEffectsFlagPlugin
+<t> update dependencies: 31.19825 ms
+
+LOG from webpack.FlagDependencyUsagePlugin
+<t> initialize exports usage: 0.715792 ms
+<t> trace exports usage in graph: 45.111166 ms
+
+LOG from webpack.buildChunkGraph
+<t> visitModules: prepare: 28.636925 ms
+<t> visitModules: visiting: 31.259916 ms
+    922 queue items processed (432 blocks)
+    0 chunk groups connected
+    0 chunk groups processed for merging (0 module sets, 0 forked, 0 + 0 modules forked, 0 + 0 modules merged into fork, 0 resulting modules)
+    0 chunk group info updated (0 already connected chunk groups reconnected)
+<t> visitModules: 31.344834 ms
+<t> connectChunkGroups: 0.155417 ms
+<t> cleanup: 0.031 ms
+
+LOG from webpack.SplitChunksPlugin
+<t> prepare: 0.041541 ms
+<t> modules: 4.789625 ms
+<t> queue: 0.009125 ms
+<t> maxSize: 0.020083 ms
+
+LOG from webpack.ModuleConcatenationPlugin
+<t> select relevant modules: 2.840833 ms
+<t> sort relevant modules: 0.253041 ms
+<t> find modules to concatenate: 31.498625 ms
+<t> sort concat configurations: 0.01575 ms
+<t> create concatenated modules: 18.9615 ms
++ 3 hidden lines
+
+LOG from webpack.FileSystemInfo
+    3071 new snapshots created
+    0% root snapshot uncached (0 / 6341)
+    0% children snapshot uncached (0 / 0)
+    0 entries tested
+    File info in cache: 797 timestamps 215 hashes 215 timestamp hash combinations
+    File timestamp hash combination snapshot optimization: 91% (16301/17904) entries shared via 49 shared snapshots (2359 times referenced)
+    Directory info in cache: 0 timestamps 0 hashes 0 timestamp hash combinations
+    Missing items snapshot optimization: 60% (3066/5082) entries shared via 74 shared snapshots (696 times referenced)
+    Managed items info in cache: 232 items
+    Managed items snapshot optimization: 22% (1022/4603) entries shared via 31 shared snapshots (181 times referenced)
+    Managed files snapshot optimization: 74% (11268/15214) entries shared via 327 shared snapshots (3116 times referenced)
+    Managed contexts snapshot optimization: 0% (0/1) entries shared via 0 shared snapshots (0 times referenced)
+    Managed missing snapshot optimization: 75% (6374/8547) entries shared via 239 shared snapshots (1343 times referenced)
+
+WARNING in ./src/styles.scss (./src/styles.scss.webpack[javascript/auto]!=!./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[1].use[2]!./node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!./src/styles.scss)
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(34:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+ @ ./src/styles.scss
+
+WARNING in ./src/app/app-components/analyze/environment/environment.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/analyze/pr/pr.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/analyze/temperature/temperature.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/analyze/use-rate/use-rate.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/custom/custom.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/efficiency/efficiency.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/generation-quantity/generation-quantity.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/home/generation-board/generation-board.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(8:1) postcss-import: @import must precede all other statements (besides @charset)
+
+WARNING in ./src/app/app-components/home/generation-board/generation-board.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(36:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/home/home.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(8:1) postcss-import: @import must precede all other statements (besides @charset)
+
+WARNING in ./src/app/app-components/home/home.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(36:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/home/notice-board/notice-board.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(8:1) postcss-import: @import must precede all other statements (besides @charset)
+
+WARNING in ./src/app/app-components/home/notice-board/notice-board.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(36:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/home/solar-energy-generation-board/solar-energy-generation-board.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(8:1) postcss-import: @import must precede all other statements (besides @charset)
+
+WARNING in ./src/app/app-components/home/solar-energy-generation-board/solar-energy-generation-board.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(36:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/home/total-generation-board/total-generation-board.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(8:1) postcss-import: @import must precede all other statements (besides @charset)
+
+WARNING in ./src/app/app-components/home/total-weather-board/total-weather-board.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(8:1) postcss-import: @import must precede all other statements (besides @charset)
+
+WARNING in ./src/app/app-components/home/transfer-board/transfer-board.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(8:1) postcss-import: @import must precede all other statements (besides @charset)
+
+WARNING in ./src/app/app-components/home/weather-board/weather-board.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(8:1) postcss-import: @import must precede all other statements (besides @charset)
+
+WARNING in ./src/app/app-components/invertor-alarm/invertor-alarm.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/module-generation/module-generation-detail/module-generation-detail.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/module-generation/module-generation.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/notification/notification.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/question/question-detail/question-detail.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/question/question-register/question-register.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/question/question.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/solar-efficiency/solar-efficiency.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/solar-quantity/solar-quantity.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/sunlight-array-map/sunlight-array-map.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(54:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/temp-humi/temp-humi.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app-components/wind/wind.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/app.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/download-invertor/download-invertor.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/download-optimizer/download-optimizer.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/download-weather/download-weather.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/login/login.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+WARNING in ./src/app/my-info/my-info.component.scss
+Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+2025-08-17 22:27:16: webpack 5.64.1 compiled in 45262 ms (f80f663cd3de9018)
+    [webpack.cache.PackFileCacheStrategy] Storing pack...
+<t> [webpack.cache.PackFileCacheStrategy] resolve build dependencies: 458.6545 ms
+<t> [webpack.cache.PackFileCacheStrategy] snapshot build dependencies: 26.045708 ms
+    [webpack.cache.PackFileCacheStrategy] 4078 fresh items in cache put into pack 0
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|5|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|25|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/login/login.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|28|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/my-info/my-info.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|30|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/download-weather/download-weather.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|29|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/download-invertor/download-invertor.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|38|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/download-optimizer/download-optimizer.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|4|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/home/home.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 2 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|1|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/home/generation-board/generation-board.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 2 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|2|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/home/total-generation-board/total-generation-board.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|7|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/generation-quantity/generation-quantity.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|3|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/home/solar-energy-generation-board/solar-energy-generation-board.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 2 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|9|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/solar-quantity/solar-quantity.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|10|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/temp-humi/temp-humi.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|11|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/wind/wind.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|12|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/efficiency/efficiency.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|15|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/solar-efficiency/solar-efficiency.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|16|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/custom/custom.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|18|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/home/total-weather-board/total-weather-board.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|17|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/home/weather-board/weather-board.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|19|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/home/transfer-board/transfer-board.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|20|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/question/question.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|21|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/notification/notification.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|22|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/question/question-detail/question-detail.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|23|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/question/question-register/question-register.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|31|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/sunlight-array-map/sunlight-array-map.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|26|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/invertor-alarm/invertor-alarm.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|32|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/module-generation/module-generation.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|27|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/home/notice-board/notice-board.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 2 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|33|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/module-generation/module-generation-detail/module-generation-detail.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|34|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/analyze/environment/environment.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|35|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/analyze/pr/pr.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|36|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/analyze/temperature/temperature.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'angular-compiler:resource|37|Compilation/modules|asset/source|/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[0].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/app/app-components/analyze/use-rate/use-rate.component.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'Compilation/modules|/Users/macbook/Documents/GitHub/bipv_web/node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[1].use[2]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!/Users/macbook/Documents/GitHub/bipv_web/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!/Users/macbook/Documents/GitHub/bipv_web/src/styles.scss': No serializer registered for Warning
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning
+<t> [webpack.cache.PackFileCacheStrategy] store pack: 1074.178583 ms
+    [webpack.cache.PackFileCacheStrategy] Stored pack (4078 items, 1 files, 294 MiB)
+✔ Browser application bundle generation complete.
+- Copying assets...
+✔ Copying assets complete.
+- Generating index html...
+✔ Index html generation complete.
+
+Initial Chunk Files           | Names         |      Size
+main.ce560a780c024a6d.js      | main          |  10.39 MB
+styles.56a6184f637cf6e6.css   | styles        | 472.26 kB
+polyfills.723176af6055e3ca.js | polyfills     |  36.87 kB
+runtime.ffaeb743d8d3fe45.js   | runtime       |   1.73 kB
+
+| Initial Total |  10.88 MB
+
+Build at: 2025-08-17T14:27:20.283Z - Hash: f80f663cd3de9018 - Time: 49119ms
+
+./src/styles.scss.webpack[javascript/auto]!=!./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].rules[0].oneOf[1].use[2]!./node_modules/resolve-url-loader/index.js??ruleSet[1].rules[3].rules[1].use[0]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].rules[1].use[1]!./src/styles.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(34:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/analyze/environment/environment.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/analyze/pr/pr.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/analyze/temperature/temperature.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/analyze/use-rate/use-rate.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/custom/custom.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/efficiency/efficiency.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/generation-quantity/generation-quantity.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/home/generation-board/generation-board.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(8:1) postcss-import: @import must precede all other statements (besides @charset)
+
+./src/app/app-components/home/generation-board/generation-board.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(36:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/home/home.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(8:1) postcss-import: @import must precede all other statements (besides @charset)
+
+./src/app/app-components/home/home.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(36:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/home/notice-board/notice-board.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(8:1) postcss-import: @import must precede all other statements (besides @charset)
+
+./src/app/app-components/home/notice-board/notice-board.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(36:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/home/solar-energy-generation-board/solar-energy-generation-board.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(8:1) postcss-import: @import must precede all other statements (besides @charset)
+
+./src/app/app-components/home/solar-energy-generation-board/solar-energy-generation-board.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(36:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/home/total-generation-board/total-generation-board.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(8:1) postcss-import: @import must precede all other statements (besides @charset)
+
+./src/app/app-components/home/total-weather-board/total-weather-board.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(8:1) postcss-import: @import must precede all other statements (besides @charset)
+
+./src/app/app-components/home/transfer-board/transfer-board.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(8:1) postcss-import: @import must precede all other statements (besides @charset)
+
+./src/app/app-components/home/weather-board/weather-board.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(8:1) postcss-import: @import must precede all other statements (besides @charset)
+
+./src/app/app-components/invertor-alarm/invertor-alarm.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/module-generation/module-generation-detail/module-generation-detail.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/module-generation/module-generation.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/notification/notification.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/question/question-detail/question-detail.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/question/question-register/question-register.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/question/question.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/solar-efficiency/solar-efficiency.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/solar-quantity/solar-quantity.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/sunlight-array-map/sunlight-array-map.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(54:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/temp-humi/temp-humi.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app-components/wind/wind.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/app.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/download-invertor/download-invertor.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/download-optimizer/download-optimizer.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/download-weather/download-weather.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/login/login.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+./src/app/my-info/my-info.component.scss - Warning: Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+Warning
+
+(32:3) postcss-preset-env: start value has mixed support, consider using flex-start instead
+
+
