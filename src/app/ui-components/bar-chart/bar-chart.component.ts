@@ -5,8 +5,8 @@ import {
   ElementRef,
   AfterViewInit,
   Input,
-  SimpleChanges
-} from '@angular/core'
+  SimpleChanges,
+} from '@angular/core';
 
 import {
   ChartType,
@@ -39,27 +39,27 @@ import {
   Legend,
   Title,
   Tooltip,
-  ChartOptions
-} from 'node_modules/chart.js'
+  ChartOptions,
+} from 'node_modules/chart.js';
 
 @Component({
   selector: 'bar-chart',
   templateUrl: './bar-chart.component.html',
-  styleUrls: ['./bar-chart.component.css']
+  styleUrls: ['./bar-chart.component.css'],
 })
 export class BarChartComponent implements OnInit, AfterViewInit {
-  @ViewChild('canvasBarChartViewChild') chartElement!: ElementRef
-  private chartType: ChartType = 'bar'
+  @ViewChild('canvasBarChartViewChild') chartElement!: ElementRef;
+  private chartType: ChartType = 'bar';
 
-  @Input() labels: string[] = []
+  @Input() labels: string[] = [];
   @Input() showLegend: boolean = true;
   @Input() animation: any = true;
 
   // @Input() data
 
-  private chart!: Chart
-  private chartConfig!: ChartConfiguration
-  private chartData!: ChartData
+  private chart!: Chart;
+  private chartConfig!: ChartConfiguration;
+  private chartData!: ChartData;
   chartOption!: ChartOptions;
 
   constructor(private elementRef: ElementRef) {
@@ -87,14 +87,14 @@ export class BarChartComponent implements OnInit, AfterViewInit {
       Legend,
       Title,
       Tooltip
-    )
+    );
   }
 
   ngOnInit() {
     this.chartData = {
       labels: this.labels,
-      datasets: []
-    }
+      datasets: [],
+    };
 
     this.chartOption = {
       animation: false,
@@ -106,21 +106,21 @@ export class BarChartComponent implements OnInit, AfterViewInit {
       },
       plugins: {
         legend: {
-          display: this.showLegend
-        }
-      }
-    }
+          display: this.showLegend,
+        },
+      },
+    };
 
     this.chartConfig = {
       type: this.chartType,
       options: {
         ...this.chartOption,
       },
-      data: this.chartData
-    }
+      data: this.chartData,
+    };
   }
 
-      ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges) {
     if (changes['labels'] && !changes['labels'].isFirstChange()) {
       if (changes['labels'].previousValue !== changes['labels'].currentValue) {
         this.labels = changes['labels'].currentValue;
@@ -132,11 +132,11 @@ export class BarChartComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     console.log('ngAfterViewInit');
-    const nativeChart = this.chartElement.nativeElement
+    const nativeChart = this.chartElement.nativeElement;
     this.chart = new Chart(
       nativeChart, // Chart element
       this.chartConfig //
-    )
+    );
   }
 
   addConfigOptions(additionOptions: {}) {
@@ -145,16 +145,19 @@ export class BarChartComponent implements OnInit, AfterViewInit {
 
     this.chartConfig.options = {
       ...this.chartConfig.options,
-      ...additionOptions
+      ...additionOptions,
     };
 
-    this.chart = new Chart(
-      nativeChart,
-      this.chartConfig
-    );
+    this.chart = new Chart(nativeChart, this.chartConfig);
   }
 
-  addDataset(label: string, data: number[], color: string, type?: ChartType | 'bar', yAxisID?: string) {
+  addDataset(
+    label: string,
+    data: number[],
+    color: string,
+    type?: ChartType | 'bar',
+    yAxisID?: string
+  ) {
     this.chartData.datasets.push({
       label: label,
       data: data, // [65, 59, 80, 81, 56, 55, 40],
@@ -164,11 +167,11 @@ export class BarChartComponent implements OnInit, AfterViewInit {
       backgroundColor: color,
       // tension: 0.0,
       yAxisID: yAxisID,
-    })
-    this.chart.update()
+    });
+    this.chart.update();
   }
 
   resetDataset(): void {
-    this.chartData.datasets = []
+    this.chartData.datasets = [];
   }
 }

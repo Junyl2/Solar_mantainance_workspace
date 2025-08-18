@@ -1,4 +1,4 @@
-import { WeatherInfo } from "./weather-info";
+import { WeatherInfo } from './weather-info';
 
 export class WeatherInfoSummary {
   public insName: string | undefined;

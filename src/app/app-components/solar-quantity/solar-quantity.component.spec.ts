@@ -8,9 +8,8 @@ describe('SolarQuantityComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SolarQuantityComponent ]
-    })
-    .compileComponents();
+      declarations: [SolarQuantityComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

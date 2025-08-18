@@ -1,4 +1,13 @@
-import { Component, OnInit, SimpleChanges, AfterViewInit, ViewChild, ElementRef, AfterContentChecked, ChangeDetectorRef  } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  SimpleChanges,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+  AfterContentChecked,
+  ChangeDetectorRef,
+} from '@angular/core';
 
 // Angular Material Datepicker
 import { MatDatepicker } from '@angular/material/datepicker';
@@ -20,37 +29,36 @@ import { format } from 'date-fns';
 import { OntestUtils } from 'src/app/utils/ontest-utils';
 import { WeatherInfoSummary } from 'src/app/models/weather-info-summary';
 
-
 @Component({
   selector: 'app-solar-quantity',
   templateUrl: './solar-quantity.component.html',
   styleUrls: ['./solar-quantity.component.scss'],
-  providers: [
-  ],
+  providers: [],
 })
-export class SolarQuantityComponent implements OnInit, AfterViewInit, AfterContentChecked {
-
-  @ViewChild('barchartMonthly') barchartMonthly! : BarChartComponent;
-  @ViewChild('barchartDaily') barchartDaily! : BarChartComponent;
-  @ViewChild('barchartHourly') barchartHourly! : BarChartComponent;
+export class SolarQuantityComponent
+  implements OnInit, AfterViewInit, AfterContentChecked
+{
+  @ViewChild('barchartMonthly') barchartMonthly!: BarChartComponent;
+  @ViewChild('barchartDaily') barchartDaily!: BarChartComponent;
+  @ViewChild('barchartHourly') barchartHourly!: BarChartComponent;
 
   // Utils
-  private chartUtil : ChartJsUtils = new ChartJsUtils();
-  private onTestUtil : OntestUtils = new OntestUtils(this.semsService);
+  private chartUtil: ChartJsUtils = new ChartJsUtils();
+  private onTestUtil: OntestUtils = new OntestUtils(this.semsService);
 
-  showChart:boolean = true;
+  showChart: boolean = true;
   pickerStartDate = new Date(2022, 0, 1);
 
   startYMat!: Date;
   endYMat!: Date;
 
-  viewChart = (show:boolean) => {
-    if(show) {
+  viewChart = (show: boolean) => {
+    if (show) {
       this.showChart = true;
     } else {
       this.showChart = false;
     }
-  }
+  };
 
   // Monthly ----------------------
   startMonthlyDate: Date = new Date();
@@ -61,14 +69,14 @@ export class SolarQuantityComponent implements OnInit, AfterViewInit, AfterConte
   endMaxMonthlyDate!: Date;
   chartMonthlyLabels!: string[];
   tableMonthlyLabels!: string[];
-  tableMonthlyData! : WeatherInfoSummary[];
+  tableMonthlyData!: WeatherInfoSummary[];
 
   // Daily -------------------------
   startDailyDate: Date = new Date();
   startMinDailyDate!: Date;
   startMaxDailyDate!: Date;
   endDailyDate: Date = new Date();
-  endMinDailyDate! : Date;
+  endMinDailyDate!: Date;
   endMaxDailyDate!: Date;
   chartDailyLabels!: string[];
   tableDailyLabels!: string[];
@@ -82,10 +90,11 @@ export class SolarQuantityComponent implements OnInit, AfterViewInit, AfterConte
   tableTimeLabels!: string[];
   tableTimeData!: WeatherInfoSummary[];
 
-  constructor(private semsService: SemsService,
+  constructor(
+    private semsService: SemsService,
     private dateAdapter: DateAdapter<any>,
-    private cdRef:ChangeDetectorRef) {
-
+    private cdRef: ChangeDetectorRef
+  ) {
     // Monthly ----------------------
     this.startMinMonthlyDate = this.semsService.getInstalledDate();
     this.startMaxMonthlyDate = moment().toDate();
@@ -94,14 +103,13 @@ export class SolarQuantityComponent implements OnInit, AfterViewInit, AfterConte
     this.startMonthlyDate = this.startMinMonthlyDate;
     this.endMonthlyDate = moment().toDate();
 
-
     // Daily -------------------------
-    this.startMinDailyDate = this.endMinDailyDate = this.semsService.getInstalledDate();
+    this.startMinDailyDate = this.endMinDailyDate =
+      this.semsService.getInstalledDate();
     this.startMaxDailyDate = this.endMaxDailyDate = moment().toDate();
 
     this.endDailyDate = moment().toDate();
-    this.startDailyDate = moment().add(-1,'M').toDate();
-
+    this.startDailyDate = moment().add(-1, 'M').toDate();
 
     // Time ---------------------------
     this.timeDate = this.maxTimeDate = moment().toDate();
@@ -111,14 +119,12 @@ export class SolarQuantityComponent implements OnInit, AfterViewInit, AfterConte
   site;
 
   ngOnInit(): void {
-    this.semsService.getSite().subscribe(res => {
+    this.semsService.getSite().subscribe((res) => {
       this.site = res;
-    })
+    });
   }
 
-  ngAfterContentChecked(): void {
-
-  }
+  ngAfterContentChecked(): void {}
 
   ngAfterViewInit(): void {
     // initialize scale on chart
@@ -135,92 +141,150 @@ export class SolarQuantityComponent implements OnInit, AfterViewInit, AfterConte
           display: true,
           position: 'left',
         },
-      }
-    }
-    this.barchartMonthly.addConfigOptions(scalesOption)
-    this.barchartHourly.addConfigOptions(scalesOption)
-    this.barchartDaily.addConfigOptions(scalesOption)
+      },
+    };
+    this.barchartMonthly.addConfigOptions(scalesOption);
+    this.barchartHourly.addConfigOptions(scalesOption);
+    this.barchartDaily.addConfigOptions(scalesOption);
 
     this.cdRef.detectChanges();
 
     // Monthly ---------------------------
-    //this.updateMonthlyPage();
+    this.updateMonthlyPage();
 
     // Daily -----------------------------
-    //this.updateDailyPage();
+    this.updateDailyPage();
 
     // Hours -----------------------------
-    //this.updateHourlyPage();
+    this.updateHourlyPage();
   }
 
-  updateMonthlyPage() : void {
+  updateMonthlyPage(): void {
     // Chart Label
     this.chartMonthlyLabels = [];
-    this.chartMonthlyLabels = DateUtils.getSpanYYMMStringArray(this.endMonthlyDate, this.startMonthlyDate);
+    this.chartMonthlyLabels = DateUtils.getSpanYYMMStringArray(
+      this.endMonthlyDate,
+      this.startMonthlyDate
+    );
 
     // Table First Labels
     this.tableMonthlyLabels = [];
-    this.tableMonthlyLabels.push("일사량계");
-    this.tableMonthlyLabels= this.tableMonthlyLabels.concat(this.chartMonthlyLabels);
+    this.tableMonthlyLabels.push('일사량계');
+    this.tableMonthlyLabels = this.tableMonthlyLabels.concat(
+      this.chartMonthlyLabels
+    );
 
     // Chart Data & Table Data ---------------------------------------------
     var inverterCount = this.semsService.getSolarCheckerCount();
     // Empty dataset
     this.barchartMonthly.resetDataset();
 
-    this.semsService.getWeatherSummary("MONTHLY", format(this.startMonthlyDate, 'yyyy-MM-dd'), format(this.endMonthlyDate, 'yyyy-MM-dd'))
-        .subscribe(res => {
-      const apiData = res;
-      const irApiData = [];
+    this.semsService
+      .getWeatherSummary(
+        'MONTHLY',
+        format(this.startMonthlyDate, 'yyyy-MM-dd'),
+        format(this.endMonthlyDate, 'yyyy-MM-dd')
+      )
+      .subscribe((res) => {
+        const apiData = res;
+        const irApiData = [];
 
-      for (let i = 0; i < apiData.length; i++) {
-        if (apiData[i].insName.includes('Irradiance')) {
-          irApiData.push(apiData[i]);
+        for (let i = 0; i < apiData.length; i++) {
+          // 정확한 일사량계 이름만 필터링 (IRRADIANCE1, IRRADIANCE2, IRRADIANCE3)
+          const insName = apiData[i].insName;
+          if (
+            insName === 'IRRADIANCE1' ||
+            insName === 'IRRADIANCE2' ||
+            insName === 'IRRADIANCE3'
+          ) {
+            // 차트 범례에 표시될 이름을 센서 이름 그대로 유지
+            const sensorData = {
+              ...apiData[i],
+              displayName: insName, // 범례에 표시될 이름
+            };
+            irApiData.push(sensorData);
+          }
         }
-      }
 
-      this.tableMonthlyData = this.onTestUtil.syncInvertorGridData(this.chartMonthlyLabels, irApiData, "irradiance", this.barchartMonthly, 'yy-MM', undefined, undefined, this.site);
-    })
+        this.tableMonthlyData = this.onTestUtil.syncInvertorGridData(
+          this.chartMonthlyLabels,
+          irApiData,
+          'irradiance',
+          this.barchartMonthly,
+          'yy-MM',
+          undefined,
+          undefined,
+          this.site
+        );
+      });
   }
 
-  updateDailyPage() : void {
+  updateDailyPage(): void {
     // Chart Label
     this.chartDailyLabels = [];
-    this.chartDailyLabels = DateUtils.getSpanMonthDayStringArray(this.startDailyDate, this.endDailyDate);
+    this.chartDailyLabels = DateUtils.getSpanMonthDayStringArray(
+      this.startDailyDate,
+      this.endDailyDate
+    );
 
     // Table First Labels
     this.tableDailyLabels = [];
-    this.tableDailyLabels.push("일사량계");
-    this.tableDailyLabels= this.tableDailyLabels.concat(this.chartDailyLabels);
+    this.tableDailyLabels.push('일사량계');
+    this.tableDailyLabels = this.tableDailyLabels.concat(this.chartDailyLabels);
 
     // Chart Data & Table Data ---------------------------------------------
     // Empty dataset
     this.barchartDaily.resetDataset();
 
-    this.semsService.getWeatherSummary("DAILY", format(this.startDailyDate, 'yyyy-MM-dd'), format(this.endDailyDate, 'yyyy-MM-dd'))
-        .subscribe(res => {
-      const apiData = res;
-      const irApiData = [];
+    this.semsService
+      .getWeatherSummary(
+        'DAILY',
+        format(this.startDailyDate, 'yyyy-MM-dd'),
+        format(this.endDailyDate, 'yyyy-MM-dd')
+      )
+      .subscribe((res) => {
+        const apiData = res;
+        const irApiData = [];
 
-      for (let i = 0; i < apiData.length; i++) {
-        if (apiData[i].insName.includes('Irradiance')) {
-          irApiData.push(apiData[i]);
+        for (let i = 0; i < apiData.length; i++) {
+          // 정확한 일사량계 이름만 필터링 (IRRADIANCE1, IRRADIANCE2, IRRADIANCE3)
+          const insName = apiData[i].insName;
+          if (
+            insName === 'IRRADIANCE1' ||
+            insName === 'IRRADIANCE2' ||
+            insName === 'IRRADIANCE3'
+          ) {
+            // 차트 범례에 표시될 이름을 센서 이름 그대로 유지
+            const sensorData = {
+              ...apiData[i],
+              displayName: insName, // 범례에 표시될 이름
+            };
+            irApiData.push(sensorData);
+          }
         }
-      }
 
-      this.tableDailyData = this.onTestUtil.syncInvertorGridData(this.chartDailyLabels, irApiData, "irradiance", this.barchartDaily, 'MM-dd', undefined, undefined, this.site);
-    })
+        this.tableDailyData = this.onTestUtil.syncInvertorGridData(
+          this.chartDailyLabels,
+          irApiData,
+          'irradiance',
+          this.barchartDaily,
+          'MM-dd',
+          undefined,
+          undefined,
+          this.site
+        );
+      });
   }
 
-  updateHourlyPage() : void {
+  updateHourlyPage(): void {
     // Chart Label
     this.chartTimeLabels = [];
     this.chartTimeLabels = DateUtils.getSpanTimeStringArray();
 
     // Table First Labels
     this.tableTimeLabels = [];
-    this.tableTimeLabels.push("일사량계");
-    this.tableTimeLabels= this.tableTimeLabels.concat(this.chartTimeLabels);
+    this.tableTimeLabels.push('일사량계');
+    this.tableTimeLabels = this.tableTimeLabels.concat(this.chartTimeLabels);
 
     // Chart Data & Table Data ---------------------------------------------
     var inverterCount = this.semsService.getSolarCheckerCount();
@@ -228,29 +292,56 @@ export class SolarQuantityComponent implements OnInit, AfterViewInit, AfterConte
     this.barchartHourly.resetDataset();
 
     let dateParam = new Date(this.timeDate);
-    this.semsService.getWeatherSummary("HOURLY", format(dateParam, 'yyyy-MM-dd'), format(dateParam.setDate(this.timeDate.getDate() + 1), 'yyyy-MM-dd'))
-        .subscribe(res => {
-      const apiData = res;
-      const irApiData = [];
+    this.semsService
+      .getWeatherSummary(
+        'HOURLY',
+        format(dateParam, 'yyyy-MM-dd'),
+        format(dateParam.setDate(this.timeDate.getDate() + 1), 'yyyy-MM-dd')
+      )
+      .subscribe((res) => {
+        const apiData = res;
+        const irApiData = [];
 
-      for (let i = 0; i < apiData.length; i++) {
-        if (apiData[i].insName.includes('Irradiance')) {
-          irApiData.push(apiData[i]);
+        for (let i = 0; i < apiData.length; i++) {
+          // 정확한 일사량계 이름만 필터링 (IRRADIANCE1, IRRADIANCE2, IRRADIANCE3)
+          const insName = apiData[i].insName;
+          if (
+            insName === 'IRRADIANCE1' ||
+            insName === 'IRRADIANCE2' ||
+            insName === 'IRRADIANCE3'
+          ) {
+            // 차트 범례에 표시될 이름을 센서 이름 그대로 유지
+            const sensorData = {
+              ...apiData[i],
+              displayName: insName, // 범례에 표시될 이름
+            };
+            irApiData.push(sensorData);
+          }
         }
-      }
 
-      this.tableTimeData = this.onTestUtil.syncInvertorGridData(this.chartTimeLabels, irApiData, "irradiance", this.barchartHourly, 'HH', 'hourly', undefined, this.site);
-    })
+        this.tableTimeData = this.onTestUtil.syncInvertorGridData(
+          this.chartTimeLabels,
+          irApiData,
+          'irradiance',
+          this.barchartHourly,
+          'HH',
+          'hourly',
+          undefined,
+          this.site
+        );
+      });
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-  }
+  ngOnChanges(changes: SimpleChanges) {}
 
   // Monthly ------------------------------------------------------
   onStartMonthlyYearSelected(normalizedYear: Moment) {
     this.startMonthlyDate.setFullYear(normalizedYear.year());
   }
-  onStartMonthlyMonthSelected(normalizedMonth: Moment, datepicker: MatDatepicker<Date>) {
+  onStartMonthlyMonthSelected(
+    normalizedMonth: Moment,
+    datepicker: MatDatepicker<Date>
+  ) {
     this.startMonthlyDate.setFullYear(normalizedMonth.year());
     this.startMonthlyDate.setMonth(normalizedMonth.month());
     this.startMonthlyDate = new Date(this.startMonthlyDate);
@@ -261,7 +352,10 @@ export class SolarQuantityComponent implements OnInit, AfterViewInit, AfterConte
   onEndMonthlyYearSelected(normalizedYear: Moment) {
     this.endMonthlyDate.setFullYear(normalizedYear.year());
   }
-  onEndMonthlyMonthSelected(normalizedMonth: Moment, datepicker: MatDatepicker<Date>) {
+  onEndMonthlyMonthSelected(
+    normalizedMonth: Moment,
+    datepicker: MatDatepicker<Date>
+  ) {
     this.endMonthlyDate = normalizedMonth.endOf('month').toDate();
 
     datepicker.close();
@@ -281,5 +375,4 @@ export class SolarQuantityComponent implements OnInit, AfterViewInit, AfterConte
   onHourlyDateSelected(normalizedDate: Moment) {
     this.timeDate = normalizedDate.toDate();
   }
-
 }
