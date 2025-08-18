@@ -1,8 +1,7 @@
 <mat-tab-group (selectedIndexChange)="myTabSelectedIndexChange($event)">
-  <!-- Monthly  -------------------------------------------------------------------------------------->
   <mat-tab *ngFor="let facility of sites; index as i">
     <ng-template mat-tab-label>
-      <span>{{facility.title}}</span>
+      <span>{{ facility.title }}</span>
     </ng-template>
 
     <div class="container">
@@ -12,121 +11,173 @@
       <div class="apartment-image-div">
         <table class="table-container">
           <thead>
-          <tr style="background-color: #8f8f8f; color: white">
-            <td class="td_border" colspan="3" rowSpan="2">구분</td>
-            <td class="td_border" colspan="2">{{facility.title}}</td>
-          </tr>
-          <tr style="background-color: #8f8f8f; color: white">
-            <td class="td_border" style="width: 200px">용량</td>
-            <td class="td_border" style="width: 200px">개수</td>
-          </tr>
+            <tr style="background-color: #8f8f8f; color: white">
+              <td class="td_border" colspan="3" rowspan="2">구분</td>
+              <td class="td_border" colspan="2">{{ facility.title }}</td>
+            </tr>
+            <tr style="background-color: #8f8f8f; color: white">
+              <td class="td_border" style="width: 200px">용량</td>
+              <td class="td_border" style="width: 200px">개수</td>
+            </tr>
           </thead>
           <tbody>
-          <ng-container *ngFor="let data of facility?.resultObject?.invList">
-            <tr>
-              <td class="td_border" colspan="3">{{ data.inv[0][6] }}</td>
-              <td class="td_border">{{ data.inv[0][3] }} W</td>
-              <td class="td_border">{{ data.inv.length }} 개</td>
-            </tr>
-
-            <ng-container *ngFor="let item1 of data.pv1Object | keyvalue; index as j">
-              <tr>
-                <td *ngIf="j === 0" class="td_space" style="width: 200px" [attr.rowspan]="data.pvCount + 5"></td>
-                <td *ngIf="j === 0" class="td_border" style="width: 200px" [attr.rowspan]="data.pvCount">PV 모듈</td>
-                <td class="td_border" style="width: 200px">Dark Gray</td>
-                <td class="td_border">{{ item1.key }} W</td>
-                <td class="td_border">{{ item1.value }} 개</td>
-              </tr>
-            </ng-container>
-
-            <ng-container *ngFor="let item2 of data.pv2Object | keyvalue">
+            <ng-container
+              *ngIf="
+                facility?.resultObject?.invList?.length > 0;
+                else noInverter
+              "
+            >
+              <ng-container *ngFor="let data of facility.resultObject.invList">
                 <tr>
-                  <td class="td_border">Terra Cotta</td>
-                  <td class="td_border">{{ item2.key }} W</td>
-                  <td class="td_border">{{ item2.value }} 개</td>
+                  <td class="td_border" colspan="3">
+                    {{ data.inv[0]?.[6] || '-' }}
+                  </td>
+                  <td class="td_border">{{ data.inv[0]?.[3] || 0 }} W</td>
+                  <td class="td_border">{{ data.inv?.length || 0 }} 개</td>
                 </tr>
+
+                <!-- PV1 (Dark Gray) -->
+                <ng-container
+                  *ngFor="let item1 of data.pv1Object | keyvalue; index as j"
+                >
+                  <tr>
+                    <td
+                      *ngIf="j === 0"
+                      class="td_space"
+                      style="width: 200px"
+                      [attr.rowspan]="data.pvCount + 5"
+                    ></td>
+                    <td
+                      *ngIf="j === 0"
+                      class="td_border"
+                      style="width: 200px"
+                      [attr.rowspan]="data.pvCount"
+                    >
+                      PV 모듈
+                    </td>
+                    <td class="td_border">Dark Gray</td>
+                    <td class="td_border">{{ item1.key || 0 }} W</td>
+                    <td class="td_border">{{ item1.value || 0 }} 개</td>
+                  </tr>
+                </ng-container>
+
+                <!-- PV2 (Terra Cotta) -->
+                <ng-container *ngFor="let item2 of data.pv2Object | keyvalue">
+                  <tr>
+                    <td class="td_border">Terra Cotta</td>
+                    <td class="td_border">{{ item2.key || 0 }} W</td>
+                    <td class="td_border">{{ item2.value || 0 }} 개</td>
+                  </tr>
+                </ng-container>
+
+                <!-- PV3 (White Gray) -->
+                <ng-container *ngFor="let item3 of data.pv3Object | keyvalue">
+                  <tr>
+                    <td class="td_border">White Gray</td>
+                    <td class="td_border">{{ item3.key || 0 }} W</td>
+                    <td class="td_border">{{ item3.value || 0 }} 개</td>
+                  </tr>
+                </ng-container>
+
+                <!-- Optimizer -->
+                <tr>
+                  <td class="td_border">옵티마이저</td>
+                  <td class="td_border">-</td>
+                  <td class="td_border">-</td>
+                  <td class="td_border">{{ data.opt?.length || 0 }} 개</td>
+                </tr>
+
+                <!-- Temperature sensors -->
+                <tr>
+                  <td class="td_border" rowspan="4">온도센서</td>
+                  <td class="td_border">모듈 전면</td>
+                  <td class="td_border">-</td>
+                  <td class="td_border">{{ data.tmp[1]?.length || 0 }} 개</td>
+                </tr>
+                <tr>
+                  <td class="td_border">모듈 후면</td>
+                  <td class="td_border">-</td>
+                  <td class="td_border">{{ data.tmp[2]?.length || 0 }} 개</td>
+                </tr>
+                <tr>
+                  <td class="td_border">건물 표면</td>
+                  <td class="td_border">-</td>
+                  <td class="td_border">{{ data.tmp[3]?.length || 0 }} 개</td>
+                </tr>
+                <tr>
+                  <td class="td_border">공기층</td>
+                  <td class="td_border">-</td>
+                  <td class="td_border">{{ data.tmp[4]?.length || 0 }} 개</td>
+                </tr>
+              </ng-container>
             </ng-container>
 
-            <ng-container *ngFor="let item3 of data.pv3Object | keyvalue">
+            <ng-template #noInverter>
               <tr>
-                <td class="td_border">White Gray</td>
-                <td class="td_border">{{ item3.key }} W</td>
-                <td class="td_border">{{ item3.value }} 개</td>
+                <td class="td_border" colspan="5" style="text-align: center">
+                  인버터 데이터가 없습니다.
+                </td>
               </tr>
-            </ng-container>
+            </ng-template>
 
+            <!-- Weather & 기타 장비 -->
             <tr>
-              <td class="td_border">옵티마이저</td>
+              <td class="td_border" rowspan="6">기상반</td>
+              <td class="td_border">일사량계</td>
               <td class="td_border">-</td>
               <td class="td_border">-</td>
-              <td class="td_border">{{ data.opt.length }} 개</td>
+              <td class="td_border">
+                {{ facility?.resultObject?.whether1Count || 0 }} 개
+              </td>
             </tr>
             <tr>
-              <td class="td_border" rowspan="4">온도센서</td>
-              <td class="td_border">모듈 전면</td>
+              <td class="td_border">풍향계</td>
               <td class="td_border">-</td>
-              <td class="td_border">{{ data.tmp[1].length }} 개</td>
+              <td class="td_border">-</td>
+              <td class="td_border">
+                {{ facility?.resultObject?.whether2Count || 0 }} 개
+              </td>
             </tr>
             <tr>
-              <td class="td_border">모듈 후면</td>
+              <td class="td_border">풍속계</td>
               <td class="td_border">-</td>
-              <td class="td_border">{{ data.tmp[2].length }} 개</td>
+              <td class="td_border">-</td>
+              <td class="td_border">
+                {{ facility?.resultObject?.whether3Count || 0 }} 개
+              </td>
             </tr>
             <tr>
-              <td class="td_border">건물 표면</td>
+              <td class="td_border">온도계</td>
               <td class="td_border">-</td>
-              <td class="td_border">{{ data.tmp[3].length }} 개</td>
+              <td class="td_border">-</td>
+              <td class="td_border">
+                {{ facility?.resultObject?.whether4Count || 0 }} 개
+              </td>
             </tr>
             <tr>
-              <td class="td_border">공기층</td>
+              <td class="td_border">습도계</td>
               <td class="td_border">-</td>
-              <td class="td_border">{{ data.tmp[4].length }} 개</td>
+              <td class="td_border">-</td>
+              <td class="td_border">
+                {{ facility?.resultObject?.whether5Count || 0 }} 개
+              </td>
             </tr>
-          </ng-container>
-
-          <tr>
-            <td class="td_border" rowSpan="6">기상반</td>
-            <td class="td_border">일사량계</td>
-            <td class="td_border">-</td>
-            <td class="td_border">-</td>
-            <td class="td_border">{{ facility?.resultObject?.whether1Count || 0 }} 개</td>
-          </tr>
-          <tr>
-            <td class="td_border">풍향계</td>
-            <td class="td_border">-</td>
-            <td class="td_border">-</td>
-            <td class="td_border">{{ facility?.resultObject?.whether2Count || 0 }} 개</td>
-          </tr>
-          <tr>
-            <td class="td_border">풍속계</td>
-            <td class="td_border">-</td>
-            <td class="td_border">-</td>
-            <td class="td_border">{{ facility?.resultObject?.whether3Count || 0 }} 개</td>
-          </tr>
-          <tr>
-            <td class="td_border">온도계</td>
-            <td class="td_border">-</td>
-            <td class="td_border">-</td>
-            <td class="td_border">{{ facility?.resultObject?.whether4Count || 0 }} 개</td>
-          </tr>
-          <tr>
-            <td class="td_border">습도계</td>
-            <td class="td_border">-</td>
-            <td class="td_border">-</td>
-            <td class="td_border">{{ facility?.resultObject?.whether5Count || 0 }} 개</td>
-          </tr>
-          <tr>
-            <td class="td_border">강우량계</td>
-            <td class="td_border">-</td>
-            <td class="td_border">-</td>
-            <td class="td_border">{{ facility?.resultObject?.whether6Count || 0 }} 개</td>
-          </tr>
-          <tr>
-            <td class="td_border" colspan="2">전력품질분석기</td>
-            <td class="td_border">-</td>
-            <td class="td_border">-</td>
-            <td class="td_border">{{ facility?.resultObject?.elecCount || 0 }} 개</td>
-          </tr>
+            <tr>
+              <td class="td_border">강우량계</td>
+              <td class="td_border">-</td>
+              <td class="td_border">-</td>
+              <td class="td_border">
+                {{ facility?.resultObject?.whether6Count || 0 }} 개
+              </td>
+            </tr>
+            <tr>
+              <td class="td_border" colspan="2">전력품질분석기</td>
+              <td class="td_border">-</td>
+              <td class="td_border">-</td>
+              <td class="td_border">
+                {{ facility?.resultObject?.elecCount || 0 }} 개
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>

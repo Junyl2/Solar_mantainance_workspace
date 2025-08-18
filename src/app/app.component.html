@@ -23,7 +23,7 @@
       <div
         style="
           padding-left: 10px;
-          font-size: clamp(.9rem, 2vw, 1rem);
+          font-size: clamp(0.9rem, 2vw, 1rem);
           font-weight: bold;
           color: RGB(150, 150, 150);
         "
@@ -37,9 +37,13 @@
 </div>
 
 <mat-drawer-container autosize>
-  <mat-drawer #drawer *ngIf="login == true && themeService.theme == 'original'" class="sidenav-menu" [mode]="isMobileAndTablet ? 'over' : 'side'"
-    [opened]="sidenavOpened">
-
+  <mat-drawer
+    #drawer
+    *ngIf="login == true && themeService.theme == 'original'"
+    class="sidenav-menu"
+    [mode]="isMobileAndTablet ? 'over' : 'side'"
+    [opened]="sidenavOpened"
+  >
     <div class="sidenav-button">
       <div
         class="sidenav-text"
