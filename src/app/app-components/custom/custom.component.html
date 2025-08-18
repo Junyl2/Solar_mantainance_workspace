@@ -1,48 +1,86 @@
 <h2 class="f-page-title">커스텀콤보차트</h2>
 <mat-tab-group>
-
   <!-- Timely -------------------------------------------------------------------------------------->
   <mat-tab label="시간별 변환효율">
     <div class="f-text-vct">
       <mat-form-field class="input" appearance="fill">
         <mat-label>일 선택</mat-label>
-        <input matInput [matDatepicker]="timePicker" [value]="hourlyDate" [min]="minTimeDate" [max]="maxTimeDate"
-          (dateChange)="onHourlyDateSelected($event.value)">
-        <mat-datepicker-toggle matSuffix [for]="timePicker"></mat-datepicker-toggle>
+        <input
+          matInput
+          [matDatepicker]="timePicker"
+          [value]="hourlyDate"
+          [min]="minTimeDate"
+          [max]="maxTimeDate"
+          (dateChange)="onHourlyDateSelected($event.value)"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [datepicker]="timePicker"
+        ></mat-datepicker-toggle>
         <mat-datepicker #timePicker panelClass="example-month-picker">
         </mat-datepicker>
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>막대차트</mat-label>
-        <mat-select required [(ngModel)]="selectBarchartHourly" (selectionChange)="updateHourlyPage()" name="barchart">
-          <mat-option *ngFor="let recipient of selectLabel | keyvalue" value="{{recipient.key}}">
-            {{recipient.value.label}}
+        <mat-select
+          required
+          [(ngModel)]="selectBarchartHourly"
+          (selectionChange)="updateHourlyPage()"
+          name="barchart"
+        >
+          <mat-option
+            *ngFor="let recipient of selectLabel | keyvalue"
+            value="{{ recipient.key }}"
+          >
+            {{ recipient.value.label }}
           </mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>꺽은선차트</mat-label>
-        <mat-select required [(ngModel)]="selectLinechartHourly" (selectionChange)="updateHourlyPage()"
-          name="linechart">
-          <mat-option *ngFor="let recipient of selectLabel | keyvalue" value="{{recipient.key}}">
-            {{recipient.value.label}}
+        <mat-select
+          required
+          [(ngModel)]="selectLinechartHourly"
+          (selectionChange)="updateHourlyPage()"
+          name="linechart"
+        >
+          <mat-option
+            *ngFor="let recipient of selectLabel | keyvalue"
+            value="{{ recipient.key }}"
+          >
+            {{ recipient.value.label }}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <a mat-raised-button class="f-form-field-button" (click)="updateHourlyPage(true)">조회</a>
+      <a
+        mat-raised-button
+        class="f-form-field-button"
+        (click)="updateHourlyPage(true)"
+        >조회</a
+      >
     </div>
-    <bar-chart [hidden]="!showChart" class="chart" #barchartHourly [labels]="chartHourlyLabels"></bar-chart>
+    <bar-chart
+      [hidden]="!showChart"
+      class="chart"
+      #barchartHourly
+      [labels]="chartHourlyLabels"
+    ></bar-chart>
     <div class="col-md-12">
-      <div class="px-1 py-3 mb-1" *ngFor="let dataGroup of tableHourlyData; index as i">
+      <div
+        class="px-1 py-3 mb-1"
+        *ngFor="let dataGroup of tableHourlyData; index as i"
+      >
         <table *ngIf="!showChart" class="table">
           <tr>
-            <th scope="col" *ngFor="let x of tableHourlyLabels">{{x}}</th>
+            <th scope="col" *ngFor="let x of tableHourlyLabels">{{ x }}</th>
           </tr>
           <tr *ngFor="let hourlyData of dataGroup.data; index as i">
-            <td *ngIf="hourlyData.name != ''">{{hourlyData.name}}</td>
-            <td *ngIf="hourlyData.name == ''">{{hourlyData.insName}}[{{hourlyData.insNum}}]</td>
+            <td *ngIf="hourlyData.name != ''">{{ hourlyData.name }}</td>
+            <td *ngIf="hourlyData.name == ''">
+              {{ hourlyData.insName }}[{{ hourlyData.insNum }}]
+            </td>
             <td *ngFor="let data of hourlyData.data; index as t">
-              {{data}}
+              {{ data }}
             </td>
           </tr>
         </table>
@@ -55,50 +93,99 @@
     <div class="f-text-vct">
       <mat-form-field class="input" appearance="fill">
         <mat-label>시작일 선택</mat-label>
-        <input matInput [matDatepicker]="startDailyPicker" [value]="startDailyDate" [min]="startMinDailyDate"
-          [max]="startMaxDailyDate" (dateChange)="onStartDailyDaySelected($event.value)">
-        <mat-datepicker-toggle matSuffix [for]="startDailyPicker"></mat-datepicker-toggle>
+        <input
+          matInput
+          [matDatepicker]="startDailyPicker"
+          [value]="startDailyDate"
+          [min]="startMinDailyDate"
+          [max]="startMaxDailyDate"
+          (dateChange)="onStartDailyDaySelected($event.value)"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [datepicker]="startDailyPicker"
+        ></mat-datepicker-toggle>
         <mat-datepicker #startDailyPicker panelClass="example-month-picker">
         </mat-datepicker>
       </mat-form-field>
       <mat-form-field class="input" appearance="fill">
         <mat-label>끝일 선택</mat-label>
-        <input matInput [matDatepicker]="endDailyPicker" [value]="endDailyDate" [min]="endMinDailyDate"
-          [max]="endMaxDailyDate" (dateChange)="onEndDailyDaySelected($event.value)">
-        <mat-datepicker-toggle matSuffix [for]="endDailyPicker"></mat-datepicker-toggle>
+        <input
+          matInput
+          [matDatepicker]="endDailyPicker"
+          [value]="endDailyDate"
+          [min]="endMinDailyDate"
+          [max]="endMaxDailyDate"
+          (dateChange)="onEndDailyDaySelected($event.value)"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [datepicker]="endDailyPicker"
+        ></mat-datepicker-toggle>
         <mat-datepicker #endDailyPicker panelClass="example-month-picker">
         </mat-datepicker>
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>막대차트</mat-label>
-        <mat-select required [(ngModel)]="selectBarchartDaily" (selectionChange)="updateDailyPage()" name="barchart">
-          <mat-option *ngFor="let recipient of selectLabel | keyvalue" value="{{recipient.key}}">
-            {{recipient.value.label}}
+        <mat-select
+          required
+          [(ngModel)]="selectBarchartDaily"
+          (selectionChange)="updateDailyPage()"
+          name="barchart"
+        >
+          <mat-option
+            *ngFor="let recipient of selectLabel | keyvalue"
+            value="{{ recipient.key }}"
+          >
+            {{ recipient.value.label }}
           </mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>꺽은선차트</mat-label>
-        <mat-select required [(ngModel)]="selectLinechartDaily" (selectionChange)="updateDailyPage()" name="linechart">
-          <mat-option *ngFor="let recipient of selectLabel | keyvalue" value="{{recipient.key}}">
-            {{recipient.value.label}}
+        <mat-select
+          required
+          [(ngModel)]="selectLinechartDaily"
+          (selectionChange)="updateDailyPage()"
+          name="linechart"
+        >
+          <mat-option
+            *ngFor="let recipient of selectLabel | keyvalue"
+            value="{{ recipient.key }}"
+          >
+            {{ recipient.value.label }}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <a mat-raised-button class="f-form-field-button" (click)="updateDailyPage(true)">조회</a>
+      <a
+        mat-raised-button
+        class="f-form-field-button"
+        (click)="updateDailyPage(true)"
+        >조회</a
+      >
     </div>
-    <bar-chart [hidden]="!showChart" class="chart" #barchartDaily [labels]="chartDailyLabels"></bar-chart>
+    <bar-chart
+      [hidden]="!showChart"
+      class="chart"
+      #barchartDaily
+      [labels]="chartDailyLabels"
+    ></bar-chart>
     <div class="col-md-12">
-      <div class="px-1 py-3 mb-1" *ngFor="let dataGroup of tableDailyData; index as i">
+      <div
+        class="px-1 py-3 mb-1"
+        *ngFor="let dataGroup of tableDailyData; index as i"
+      >
         <table *ngIf="!showChart" class="table">
           <tr>
-            <th scope="col" *ngFor="let x of tableDailyLabels">{{x}}</th>
+            <th scope="col" *ngFor="let x of tableDailyLabels">{{ x }}</th>
           </tr>
           <tr *ngFor="let dailyData of dataGroup.data; index as i">
-            <td *ngIf="dailyData.name != ''">{{dailyData.name}}</td>
-            <td *ngIf="dailyData.name == ''">{{dailyData.insName}}[{{dailyData.insNum}}]</td>
+            <td *ngIf="dailyData.name != ''">{{ dailyData.name }}</td>
+            <td *ngIf="dailyData.name == ''">
+              {{ dailyData.insName }}[{{ dailyData.insNum }}]
+            </td>
             <td *ngFor="let data of dailyData.data; index as t">
-              {{data}}
+              {{ data }}
             </td>
           </tr>
         </table>
@@ -111,55 +198,113 @@
     <div class="f-text-vct">
       <mat-form-field class="input" appearance="fill">
         <mat-label>시작년월 선택</mat-label>
-        <input matInput [matDatepicker]="startMonthlyPicker" [value]="startMonthlyDate" [min]="startMinMonthlyDate"
-          [max]="startMaxMonthlyDate">
-        <mat-datepicker-toggle matSuffix [for]="startMonthlyPicker"></mat-datepicker-toggle>
-        <mat-datepicker #startMonthlyPicker startView="year" (yearSelected)="onStartMonthlyYearSelected($event)"
-          (monthSelected)="onStartMonthlyMonthSelected($event,startMonthlyPicker)" panelClass="example-month-picker">
+        <input
+          matInput
+          [matDatepicker]="startMonthlyPicker"
+          [value]="startMonthlyDate"
+          [min]="startMinMonthlyDate"
+          [max]="startMaxMonthlyDate"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [datepicker]="startMonthlyPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker
+          #startMonthlyPicker
+          startView="year"
+          (yearSelected)="onStartMonthlyYearSelected($event)"
+          (monthSelected)="
+            onStartMonthlyMonthSelected($event, startMonthlyPicker)
+          "
+          panelClass="example-month-picker"
+        >
         </mat-datepicker>
       </mat-form-field>
       <mat-form-field class="input" appearance="fill">
         <mat-label>끝년월 선택</mat-label>
-        <input matInput [matDatepicker]="endMonthlyPicker" [value]="endMonthlyDate" [min]="endMinMonthlyDate"
-          [max]="endMaxMonthlyDate">
-        <mat-datepicker-toggle matSuffix [for]="endMonthlyPicker"></mat-datepicker-toggle>
-        <mat-datepicker #endMonthlyPicker startView="year" (yearSelected)="onEndMonthlyYearSelected($event)"
-          (monthSelected)="onEndMonthlyMonthSelected($event,endMonthlyPicker)" panelClass="example-month-picker">
+        <input
+          matInput
+          [matDatepicker]="endMonthlyPicker"
+          [value]="endMonthlyDate"
+          [min]="endMinMonthlyDate"
+          [max]="endMaxMonthlyDate"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [datepicker]="endMonthlyPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker
+          #endMonthlyPicker
+          startView="year"
+          (yearSelected)="onEndMonthlyYearSelected($event)"
+          (monthSelected)="onEndMonthlyMonthSelected($event, endMonthlyPicker)"
+          panelClass="example-month-picker"
+        >
         </mat-datepicker>
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>막대차트</mat-label>
-        <mat-select required [(ngModel)]="selectBarchartMonthly" (selectionChange)="updateMonthlyPage()"
-          name="barchart">
-          <mat-option *ngFor="let recipient of selectLabel | keyvalue" value="{{recipient.key}}">
-            {{recipient.value.label}}
+        <mat-select
+          required
+          [(ngModel)]="selectBarchartMonthly"
+          (selectionChange)="updateMonthlyPage()"
+          name="barchart"
+        >
+          <mat-option
+            *ngFor="let recipient of selectLabel | keyvalue"
+            value="{{ recipient.key }}"
+          >
+            {{ recipient.value.label }}
           </mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>꺽은선차트</mat-label>
-        <mat-select required [(ngModel)]="selectLinechartMonthly" (selectionChange)="updateMonthlyPage()"
-          name="linechart">
-          <mat-option *ngFor="let recipient of selectLabel | keyvalue" value="{{recipient.key}}">
-            {{recipient.value.label}}
+        <mat-select
+          required
+          [(ngModel)]="selectLinechartMonthly"
+          (selectionChange)="updateMonthlyPage()"
+          name="linechart"
+        >
+          <mat-option
+            *ngFor="let recipient of selectLabel | keyvalue"
+            value="{{ recipient.key }}"
+          >
+            {{ recipient.value.label }}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <a mat-raised-button class="f-form-field-button" (click)="updateMonthlyPage(true)">조회</a>
+      <a
+        mat-raised-button
+        class="f-form-field-button"
+        (click)="updateMonthlyPage(true)"
+        >조회</a
+      >
     </div>
-    <bar-chart [hidden]="!showChart" class="chart" responsive="true" #barchartMonthly [labels]="chartMonthlyLabels">
+    <bar-chart
+      [hidden]="!showChart"
+      class="chart"
+      responsive="true"
+      #barchartMonthly
+      [labels]="chartMonthlyLabels"
+    >
     </bar-chart>
     <div class="col-md-12">
-      <div class="px-1 py-3 mb-1" *ngFor="let dataGroup of tableMonthlyData; index as i">
+      <div
+        class="px-1 py-3 mb-1"
+        *ngFor="let dataGroup of tableMonthlyData; index as i"
+      >
         <table *ngIf="!showChart" class="table">
           <tr>
-            <th scope="col" *ngFor="let x of tableMonthlyLabels">{{x}}</th>
+            <th scope="col" *ngFor="let x of tableMonthlyLabels">{{ x }}</th>
           </tr>
           <tr *ngFor="let monthlyData of dataGroup.data; index as i">
-            <td *ngIf="monthlyData.name != ''">{{monthlyData.name}}</td>
-            <td *ngIf="monthlyData.name == ''">{{monthlyData.insName}}[{{monthlyData.insNum}}]</td>
+            <td *ngIf="monthlyData.name != ''">{{ monthlyData.name }}</td>
+            <td *ngIf="monthlyData.name == ''">
+              {{ monthlyData.insName }}[{{ monthlyData.insNum }}]
+            </td>
             <td *ngFor="let data of monthlyData.data; index as t">
-              {{data}}
+              {{ data }}
             </td>
           </tr>
         </table>
@@ -169,10 +314,18 @@
 
   <mat-tab disabled>
     <ng-template mat-tab-label>
-      <button class="f-mat-tab-button" (click)="viewChart(true)" mat-raised-button>
+      <button
+        class="f-mat-tab-button"
+        (click)="viewChart(true)"
+        mat-raised-button
+      >
         차트 보기
       </button>
-      <button class="f-mat-tab-button" (click)="viewChart(false)" mat-raised-button>
+      <button
+        class="f-mat-tab-button"
+        (click)="viewChart(false)"
+        mat-raised-button
+      >
         표 보기
       </button>
     </ng-template>

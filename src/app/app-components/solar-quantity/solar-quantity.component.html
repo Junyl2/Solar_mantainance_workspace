@@ -15,7 +15,7 @@
         />
         <mat-datepicker-toggle
           matSuffix
-          [for]="timePicker"
+          [datepicker]="timePicker"
         ></mat-datepicker-toggle>
         <mat-datepicker #timePicker panelClass="example-month-picker">
         </mat-datepicker>
@@ -64,7 +64,7 @@
         />
         <mat-datepicker-toggle
           matSuffix
-          [for]="startDailyPicker"
+          [datepicker]="startDailyPicker"
         ></mat-datepicker-toggle>
         <mat-datepicker #startDailyPicker panelClass="example-month-picker">
         </mat-datepicker>
@@ -81,7 +81,7 @@
         />
         <mat-datepicker-toggle
           matSuffix
-          [for]="endDailyPicker"
+          [datepicker]="endDailyPicker"
         ></mat-datepicker-toggle>
         <mat-datepicker #endDailyPicker panelClass="example-month-picker">
         </mat-datepicker>
@@ -129,7 +129,7 @@
         />
         <mat-datepicker-toggle
           matSuffix
-          [for]="startMonthlyPicker"
+          [datepicker]="startMonthlyPicker"
         ></mat-datepicker-toggle>
         <mat-datepicker
           #startMonthlyPicker
@@ -153,7 +153,7 @@
         />
         <mat-datepicker-toggle
           matSuffix
-          [for]="endMonthlyPicker"
+          [datepicker]="endMonthlyPicker"
         ></mat-datepicker-toggle>
         <mat-datepicker
           #endMonthlyPicker

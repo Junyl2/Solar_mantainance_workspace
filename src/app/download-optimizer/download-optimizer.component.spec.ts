@@ -8,9 +8,8 @@ describe('DownloadInvertorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DownloadOptimizerComponent ]
-    })
-    .compileComponents();
+      declarations: [DownloadOptimizerComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
