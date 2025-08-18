@@ -37,7 +37,7 @@
                 />
                 <mat-datepicker-toggle
                   matSuffix
-                  [datepicker]="startPicker"
+                  [for]="startPicker"
                 ></mat-datepicker-toggle>
                 <mat-datepicker
                   #startPicker
@@ -54,7 +54,7 @@
                 />
                 <mat-datepicker-toggle
                   matSuffix
-                  [datepicker]="startMonthPicker"
+                  [for]="startMonthPicker"
                 ></mat-datepicker-toggle>
                 <mat-datepicker
                   #startMonthPicker
@@ -80,7 +80,7 @@
                 />
                 <mat-datepicker-toggle
                   matSuffix
-                  [datepicker]="endPicker"
+                  [for]="endPicker"
                 ></mat-datepicker-toggle>
                 <mat-datepicker
                   #endPicker
@@ -96,7 +96,7 @@
                 />
                 <mat-datepicker-toggle
                   matSuffix
-                  [datepicker]="endMonthPicker"
+                  [for]="endMonthPicker"
                 ></mat-datepicker-toggle>
                 <mat-datepicker
                   #endMonthPicker
