@@ -158,25 +158,13 @@ export class SolarQuantityComponent
     // Hours -----------------------------
     this.updateHourlyPage();
   }
-
   updateMonthlyPage(): void {
-    // Chart Label
-    this.chartMonthlyLabels = [];
     this.chartMonthlyLabels = DateUtils.getSpanYYMMStringArray(
       this.endMonthlyDate,
       this.startMonthlyDate
     );
 
-    // Table First Labels
-    this.tableMonthlyLabels = [];
-    this.tableMonthlyLabels.push('일사량계');
-    this.tableMonthlyLabels = this.tableMonthlyLabels.concat(
-      this.chartMonthlyLabels
-    );
-
-    // Chart Data & Table Data ---------------------------------------------
-    var inverterCount = this.semsService.getSolarCheckerCount();
-    // Empty dataset
+    this.tableMonthlyLabels = ['일사량계', ...this.chartMonthlyLabels];
     this.barchartMonthly.resetDataset();
 
     this.semsService
@@ -187,52 +175,46 @@ export class SolarQuantityComponent
       )
       .subscribe((res) => {
         const apiData = res;
-        const irApiData = [];
+        const irradianceKeys = ['IRRADIANCE1', 'IRRADIANCE2', 'IRRADIANCE3'];
 
-        for (let i = 0; i < apiData.length; i++) {
-          // 정확한 일사량계 이름만 필터링 (IRRADIANCE1, IRRADIANCE2, IRRADIANCE3)
-          const insName = apiData[i].insName;
-          if (
-            insName === 'IRRADIANCE1' ||
-            insName === 'IRRADIANCE2' ||
-            insName === 'IRRADIANCE3'
-          ) {
-            // 차트 범례에 표시될 이름을 센서 이름 그대로 유지
-            const sensorData = {
-              ...apiData[i],
-              displayName: insName, // 범례에 표시될 이름
-            };
-            irApiData.push(sensorData);
-          }
+        this.tableMonthlyData = [];
+
+        for (const key of irradianceKeys) {
+          const filtered = apiData
+            .filter((item) => item.insName === key)
+            .map((item) => ({
+              ...item,
+              displayName: item.insName,
+            }));
+
+          const valueKey = key.toLowerCase(); // 'irradiance1', 'irradiance2', 'irradiance3'
+
+          const result = this.onTestUtil.syncInvertorGridData(
+            this.chartMonthlyLabels,
+            filtered,
+            valueKey,
+            this.barchartMonthly,
+            'yy-MM',
+            undefined,
+            undefined,
+            this.site
+          );
+
+          this.tableMonthlyData.push(...result);
         }
-
-        this.tableMonthlyData = this.onTestUtil.syncInvertorGridData(
-          this.chartMonthlyLabels,
-          irApiData,
-          'irradiance',
-          this.barchartMonthly,
-          'yy-MM',
-          undefined,
-          undefined,
-          this.site
-        );
       });
   }
 
   updateDailyPage(): void {
     // Chart Label
-    this.chartDailyLabels = [];
     this.chartDailyLabels = DateUtils.getSpanMonthDayStringArray(
       this.startDailyDate,
       this.endDailyDate
     );
 
     // Table First Labels
-    this.tableDailyLabels = [];
-    this.tableDailyLabels.push('일사량계');
-    this.tableDailyLabels = this.tableDailyLabels.concat(this.chartDailyLabels);
+    this.tableDailyLabels = ['일사량계', ...this.chartDailyLabels];
 
-    // Chart Data & Table Data ---------------------------------------------
     // Empty dataset
     this.barchartDaily.resetDataset();
 
@@ -244,91 +226,87 @@ export class SolarQuantityComponent
       )
       .subscribe((res) => {
         const apiData = res;
-        const irApiData = [];
+        const irradianceKeys = ['IRRADIANCE1', 'IRRADIANCE2', 'IRRADIANCE3'];
 
-        for (let i = 0; i < apiData.length; i++) {
-          // 정확한 일사량계 이름만 필터링 (IRRADIANCE1, IRRADIANCE2, IRRADIANCE3)
-          const insName = apiData[i].insName;
-          if (
-            insName === 'IRRADIANCE1' ||
-            insName === 'IRRADIANCE2' ||
-            insName === 'IRRADIANCE3'
-          ) {
-            // 차트 범례에 표시될 이름을 센서 이름 그대로 유지
-            const sensorData = {
-              ...apiData[i],
-              displayName: insName, // 범례에 표시될 이름
-            };
-            irApiData.push(sensorData);
-          }
+        this.tableDailyData = [];
+
+        for (const key of irradianceKeys) {
+          const filtered = apiData
+            .filter((item) => item.insName === key)
+            .map((item) => ({
+              ...item,
+              displayName: item.insName,
+            }));
+
+          const valueKey = key.toLowerCase(); // 'irradiance1', 'irradiance2', 'irradiance3'
+
+          const result = this.onTestUtil.syncInvertorGridData(
+            this.chartDailyLabels,
+            filtered,
+            valueKey,
+            this.barchartDaily,
+            'MM-dd',
+            undefined,
+            undefined,
+            this.site
+          );
+
+          this.tableDailyData.push(...result);
         }
-
-        this.tableDailyData = this.onTestUtil.syncInvertorGridData(
-          this.chartDailyLabels,
-          irApiData,
-          'irradiance',
-          this.barchartDaily,
-          'MM-dd',
-          undefined,
-          undefined,
-          this.site
-        );
       });
   }
 
   updateHourlyPage(): void {
     // Chart Label
-    this.chartTimeLabels = [];
+
     this.chartTimeLabels = DateUtils.getSpanTimeStringArray();
 
     // Table First Labels
-    this.tableTimeLabels = [];
-    this.tableTimeLabels.push('일사량계');
-    this.tableTimeLabels = this.tableTimeLabels.concat(this.chartTimeLabels);
+    this.tableTimeLabels = ['일사량계', ...this.chartTimeLabels];
 
-    // Chart Data & Table Data ---------------------------------------------
-    var inverterCount = this.semsService.getSolarCheckerCount();
     // Empty dataset
     this.barchartHourly.resetDataset();
 
-    let dateParam = new Date(this.timeDate);
+    const inverterCount = this.semsService.getSolarCheckerCount();
+    const dateParam = new Date(this.timeDate);
+    const nextDate = new Date(dateParam);
+    nextDate.setDate(nextDate.getDate() + 1);
+
     this.semsService
       .getWeatherSummary(
         'HOURLY',
         format(dateParam, 'yyyy-MM-dd'),
-        format(dateParam.setDate(this.timeDate.getDate() + 1), 'yyyy-MM-dd')
+        format(nextDate, 'yyyy-MM-dd')
       )
       .subscribe((res) => {
         const apiData = res;
-        const irApiData = [];
+        const irradianceKeys = ['IRRADIANCE1', 'IRRADIANCE2', 'IRRADIANCE3'];
 
-        for (let i = 0; i < apiData.length; i++) {
-          // 정확한 일사량계 이름만 필터링 (IRRADIANCE1, IRRADIANCE2, IRRADIANCE3)
-          const insName = apiData[i].insName;
-          if (
-            insName === 'IRRADIANCE1' ||
-            insName === 'IRRADIANCE2' ||
-            insName === 'IRRADIANCE3'
-          ) {
-            // 차트 범례에 표시될 이름을 센서 이름 그대로 유지
-            const sensorData = {
-              ...apiData[i],
-              displayName: insName, // 범례에 표시될 이름
-            };
-            irApiData.push(sensorData);
-          }
+        this.tableTimeData = [];
+
+        for (const key of irradianceKeys) {
+          const filtered = apiData
+            .filter((item) => item.insName === key)
+            .map((item) => ({
+              ...item,
+              displayName: item.insName,
+            }));
+
+          const valueKey = key.toLowerCase(); // 'irradiance1', 'irradiance2', 'irradiance3'
+
+          const result = this.onTestUtil.syncInvertorGridData(
+            this.chartTimeLabels,
+            filtered,
+            valueKey,
+            this.barchartHourly,
+            'HH',
+            'hourly',
+            undefined,
+            this.site
+          );
+
+          this.tableTimeData.push(...result);
         }
-
-        this.tableTimeData = this.onTestUtil.syncInvertorGridData(
-          this.chartTimeLabels,
-          irApiData,
-          'irradiance',
-          this.barchartHourly,
-          'HH',
-          'hourly',
-          undefined,
-          this.site
-        );
       });
   }
 

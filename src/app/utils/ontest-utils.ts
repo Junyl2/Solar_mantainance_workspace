@@ -129,6 +129,12 @@ export class OntestUtils {
     site?: any | undefined,
     yAxisID?: string | undefined
   ): WeatherInfoSummary[] {
+    const colorMap: Record<string, string> = {
+      irradiance: '#ff6384', // 빨강 (IRRADIANCE1)
+      irradiance2: '#36a2eb', // 파랑 (IRRADIANCE2)
+      irradiance3: '#ffce56', // 노랑 (IRRADIANCE3)
+    };
+
     const chartUtil: ChartJsUtils = new ChartJsUtils();
     // The server only retrieves existing data. Need to fill 0 for dates with no data
     let invertorData = [];
@@ -193,11 +199,13 @@ export class OntestUtils {
       if (invertorName.length == 0) {
         invertorName = `${invertorDataList[inv].insName}[${invertorDataList[inv].insNum}]`;
       }
+      const fieldKey = field.toLowerCase(); // 'irradiance', 'irradiance2', ...
+      const color = colorMap[fieldKey] || chartUtil.getColorNext();
 
       chart.addDataset(
         `${invertorName}`,
         invertorData[inv],
-        chartUtil.getColorNext(),
+        color,
         chartType,
         yAxisID
       );

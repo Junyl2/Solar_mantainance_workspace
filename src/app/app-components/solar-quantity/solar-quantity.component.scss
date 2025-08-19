@@ -1,5 +1,13 @@
 @import "../../../theme/flosys.scss";
 
+.chart {
+  display: block;
+  position: relative;
+  margin: auto;
+  min-height: 300px; // 👈 모바일에서 보이게 하기
+  width: 90vw;
+}
+
 @include desktop-1024 {
     .input { 
         display:inline-block;
