@@ -11,7 +11,7 @@ if [[ "$reinstall" == "y" || "$reinstall" == "Y" ]]; then
   echo "🔁 의존성 및 dist 초기화 중..."
   rm -rf node_modules package-lock.json "$DIST_DIR"
   echo "📦 npm install 시작..."
-  npm install
+  npm install --legacy-peer-deps
 else
   echo "🧹 기존 dist 삭제 중..."
   rm -rf "$DIST_DIR"
