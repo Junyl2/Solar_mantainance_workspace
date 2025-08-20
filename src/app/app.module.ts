@@ -1,31 +1,24 @@
 // Angular
+import { NgxPaginationModule } from 'ngx-pagination';
+
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-// Angular datetime picker
-import {
-  NgxMatDatetimePickerModule,
-  NgxMatTimepickerModule,
-  NgxMatNativeDateModule,
-} from '@angular-material-components/datetime-picker';
+
 // Angular Overlay
 import { OverlayModule } from '@angular/cdk/overlay';
 
 // Application
 import { AppComponent } from './app.component';
-import { AgGridModule } from 'ag-grid-angular';
 import { HomeComponent } from './app-components/home/home.component';
 import { SettingComponent } from './app-components/setting/setting.component';
 import { GenerationQuantityComponent } from './app-components/generation-quantity/generation-quantity.component';
 
 // UI Components
 import { BarChartComponent } from './ui-components/bar-chart/bar-chart.component';
-import { NgxPaginationModule } from 'ngx-pagination';
-
-// Application Services
 
 // Angular Material
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -43,7 +36,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialogModule } from '@angular/material/dialog';
-
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
@@ -66,17 +58,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 
 // Angular Material Datepicker
-import {
-  DateAdapter,
-  MAT_DATE_FORMATS,
-  MAT_DATE_LOCALE,
-} from '@angular/material/core';
-import {
-  MAT_MOMENT_DATE_FORMATS,
-  MomentDateAdapter,
-  MAT_MOMENT_DATE_ADAPTER_OPTIONS,
-} from '@angular/material-moment-adapter';
-import 'moment/locale/ko';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+
+// Font Awesome
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
+// Components
 import { WeatherInfoComponent } from './app-components/weather-info/weather-info.component';
 import { SolarQuantityComponent } from './app-components/solar-quantity/solar-quantity.component';
 import { TempHumiComponent } from './app-components/temp-humi/temp-humi.component';
@@ -93,23 +80,6 @@ import { TotalWeatherBoardComponent } from './app-components/home/total-weather-
 import { TransferBoardComponent } from './app-components/home/transfer-board/transfer-board.component';
 import { QuestionComponent } from './app-components/question/question.component';
 import { NotificationComponent } from './app-components/notification/notification.component';
-
-// Chart JS
-
-// Font Awesome
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-
-// Angular Gauge
-import { GaugeModule } from 'angular-gauge';
-
-// Angular Gauge Chart
-import { GaugeChartModule } from 'angular-gauge-chart';
-
-// Angular Resize Event
-import { AngularResizeEventModule } from 'angular-resize-event';
-
-// NG Bootstrap
-import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { QuestionDetailComponent } from './app-components/question/question-detail/question-detail.component';
 import { QuestionRegisterComponent } from './app-components/question/question-register/question-register.component';
 import { NotificationDetailComponent } from './app-components/notification/notification-detail/notification-detail.component';
@@ -133,31 +103,6 @@ import { SolarEnergyGenerationBoardComponent } from './app-components/home/solar
 import { DownloadOptimizerComponent } from './download-optimizer/download-optimizer.component';
 
 const routes: Routes = [
-  // basic routes
-  // {
-  //   path: '',
-  //   component: AppComponent,
-  //   children: [
-  //     { path: '', component: HomeComponent },
-  //     { path: 'generationquantity', component: GenerationQuantityComponent },
-  //     { path: 'weather', component: WeatherInfoComponent },
-  //     { path: 'solar', component: SolarQuantityComponent },
-  //     { path: 'temphumi', component: TempHumiComponent },
-  //     { path: 'wnd', component: WindComponent },
-  //     { path: 'efficiency', component: EfficiencyComponent },
-  //     { path: 'install', component: InstallComponent },
-  //     { path: 'ref', component: ReferenceComponent },
-  //     { path: 'solareffici', component: SolarEfficiencyComponent },
-  //     { path: 'custom', component: CustomComponent },
-  //     { path: 'question', component: QuestionComponent },
-  //     { path: 'question/register', component: QuestionRegisterComponent },
-  //     { path: 'question/:id', component: QuestionDetailComponent },
-  //     { path: 'notification', component: NotificationComponent },
-  //     { path: 'notification/:id', component: NotificationDetailComponent },
-  //     { path: 'setting', component: SettingComponent },
-  //   ]
-  // },
-  // login route
   { path: 'login', component: LoginComponent },
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
   {
@@ -269,13 +214,9 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
-
-    // Application
     HomeComponent,
     SettingComponent,
     GenerationQuantityComponent,
-
-    // Application Components
     BarChartComponent,
     WeatherInfoComponent,
     SolarQuantityComponent,
@@ -313,51 +254,28 @@ const routes: Routes = [
     SolarEnergyGenerationBoardComponent,
   ],
   imports: [
-    // Angular Modules
+    // Angular Core Modules
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forRoot(routes),
-    // Angular Datetime picker
-    NgxMatTimepickerModule,
-    NgxMatDatetimePickerModule,
-    NgxMatNativeDateModule,
-    // Angular Overlay
+
+    // Angular CDK
     OverlayModule,
-    MatDialogModule,
-
-    // AG Grid
-    AgGridModule.withComponents(null),
-
-    // Pagination
-    NgxPaginationModule,
-
-    // Checkbox
 
     // Font Awesome
     FontAwesomeModule,
 
-    // NGX Gauge !!! �������� !!! Angular gauge�� ��Ż����.
-    // NgxGaugeModule,
-
-    // Angular Gauge
-    GaugeModule.forRoot(),
-
-    // Angular Gauge Chart
-    GaugeChartModule,
-
-    // Angular Resize Event
-    AngularResizeEventModule,
-
-    // Angular Material Modules
+    // Angular Material Modules (필수만 선택)
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
     MatSidenavModule,
     MatTabsModule,
     MatDatepickerModule,
+    MatNativeDateModule,
     MatInputModule,
     MatFormFieldModule,
     MatGridListModule,
@@ -366,59 +284,24 @@ const routes: Routes = [
     MatExpansionModule,
     MatSelectModule,
     MatProgressBarModule,
-
-    MatAutocompleteModule,
-    MatBadgeModule,
-    MatBottomSheetModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatCardModule,
-    MatCheckboxModule,
-    MatChipsModule,
-    MatStepperModule,
-    MatDatepickerModule,
     MatDialogModule,
-    MatDividerModule,
-    MatExpansionModule,
-    MatGridListModule,
-    MatIconModule,
-    MatInputModule,
+    MatCheckboxModule,
+    MatProgressSpinnerModule,
     MatListModule,
     MatMenuModule,
-    MatNativeDateModule,
     MatPaginatorModule,
-    MatProgressBarModule,
-    MatProgressSpinnerModule,
     MatRadioModule,
-    MatRippleModule,
-    MatSelectModule,
-    MatSidenavModule,
-    MatSliderModule,
-    MatSlideToggleModule,
     MatSnackBarModule,
     MatSortModule,
     MatTableModule,
-    MatTabsModule,
-    MatToolbarModule,
     MatTooltipModule,
-    MatTreeModule,
-    OverlayModule,
 
-    // NG Bootstrap
-    NgbProgressbarModule,
+    // Auth Service Module
     AuthServiceModule,
+
+    NgxPaginationModule,
   ],
-  exports: [RouterModule],
   providers: [
-    {
-      provide: DateAdapter,
-      useClass: MomentDateAdapter,
-      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
-    },
-    {
-      provide: MAT_DATE_FORMATS,
-      useValue: MAT_MOMENT_DATE_FORMATS,
-    },
     {
       provide: MAT_DATE_LOCALE,
       useValue: 'ko-KR',
@@ -428,9 +311,6 @@ const routes: Routes = [
       useClass: SemsHttpInterceptor,
       multi: true,
     },
-  ],
-  entryComponents: [
-    // added to dynamically render this component at runtime
   ],
   bootstrap: [AppComponent],
 })

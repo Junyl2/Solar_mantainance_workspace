@@ -4,20 +4,20 @@
   padding: 10px 10px 0 10px;
 }
 
-.custom-pagination .page-number{
+.custom-pagination .page-number {
   display: inline-block;
   /* padding: 5px 12px; */
   margin: 0px 4px;
   border-radius: 25px;
 }
 
-.page-number.current{
-  background: #ffffff!important;
+.page-number.current {
+  background: #ffffff !important;
   color: blue;
   font-weight: bold;
 }
 
-.page-number span{
+.page-number span {
   display: block;
   width: 28px;
   height: 28px;
@@ -25,7 +25,8 @@
   cursor: pointer;
 }
 
-.pagination-previous,.pagination-next{
+.pagination-previous,
+.pagination-next {
   display: inline-block;
   font-weight: bold;
 }

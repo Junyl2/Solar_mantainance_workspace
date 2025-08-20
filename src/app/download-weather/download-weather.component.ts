@@ -51,7 +51,7 @@ export class DownloadWeatherComponent implements OnInit {
     });
   }
 
-  toggleCheckbox($event, key) {
+  toggleCheckbox($event: any, key: string) {
     this.weatherSelect[key] = $event.checked;
   }
 
@@ -97,25 +97,81 @@ export class DownloadWeatherComponent implements OnInit {
         this.facilities,
         this.weatherSelect
       )
-      .subscribe((res) => {
-        this.showProgressSpinner = false;
+      .subscribe({
+        next: (res: any) => {
+          this.showProgressSpinner = false;
+          console.log(moment(moment.now()).toISOString());
 
-        console.log(moment(moment.now()).toISOString());
-
-        saveAs(
-          res,
-          `weather-download-${moment(moment.now()).toISOString()}.xlsx`
-        );
+          // 타입 안전한 파일 저장
+          this.saveFile(
+            res,
+            `weather-download-${moment(moment.now()).toISOString()}.xlsx`
+          );
+        },
+        error: (error) => {
+          this.showProgressSpinner = false;
+          console.error('다운로드 중 오류 발생:', error);
+        },
       });
   }
 
-  selectFacilityAll($event) {
+  // 파일 저장을 위한 별도 메서드 추가
+  private saveFile(data: any, filename: string) {
+    try {
+      // Case 1: 이미 Blob인 경우
+      if (data instanceof Blob) {
+        saveAs(data, filename);
+        return;
+      }
+
+      // Case 2: ArrayBuffer인 경우
+      if (data instanceof ArrayBuffer) {
+        const blob = new Blob([data], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        });
+        saveAs(blob, filename);
+        return;
+      }
+
+      // Case 3: 문자열인 경우
+      if (typeof data === 'string') {
+        const blob = new Blob([data], { type: 'text/plain;charset=utf-8' });
+        saveAs(blob, filename);
+        return;
+      }
+
+      // Case 4: 배열이나 객체인 경우 (JSON으로 변환)
+      if (Array.isArray(data) || typeof data === 'object') {
+        // Excel 파일로 저장하려면 적절한 형식으로 변환
+        const jsonString = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonString], {
+          type: 'application/json;charset=utf-8',
+        });
+        // .xlsx 대신 .json 확장자 사용
+        const jsonFilename = filename.replace('.xlsx', '.json');
+        saveAs(blob, jsonFilename);
+        return;
+      }
+
+      // Case 5: 기본값 - Blob으로 강제 변환
+      const blob = new Blob([data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      saveAs(blob, filename);
+    } catch (error) {
+      console.error('파일 저장 중 오류 발생:', error);
+      // 최후의 수단: 타입 캐스팅 사용
+      saveAs(data as Blob, filename);
+    }
+  }
+
+  selectFacilityAll($event: any) {
     for (let facility of this.facilities) {
       // facility.selected = $event;
     }
   }
 
-  selectFacility($event, id, isAll) {
+  selectFacility($event: any, id: any, isAll: boolean) {
     if (isAll) {
       for (let facility of this.facilities) {
         facility.selected = $event.checked;
