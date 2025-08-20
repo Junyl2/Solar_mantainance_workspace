@@ -1,5 +1,3 @@
-# pm2 start npm --name "web" -- start -- --host 0.0.0.0
-
 #!/bin/bash
 
 DIST_DIR="./dist"
@@ -16,6 +14,10 @@ else
   echo "🧹 기존 dist 삭제 중..."
   rm -rf "$DIST_DIR"
 fi
+
+echo "=============================="
+echo "🔧 잘못된 브라우저 버전(18.5-18.6) 수정 중..."
+sed -i 's/18\.5-18\.6/18.5/g' node_modules/caniuse-lite/data/browserVersions.js
 
 echo "=============================="
 echo "⚙️ Angular 프로덕션 빌드 시작..."
