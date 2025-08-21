@@ -572,49 +572,21 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
               this.tableData.push(this.formatPowerData(series)); // 인버터 데이터는 kWh로 포맷
             }
 
-            // Temperature series for 24hr format
-            arrayUpperList = this.buildHourSeries(arrayUpper, [
-              'temperature1',
-              'temperature2',
-              'temp1',
-              'value',
-              'temp2',
-            ]);
+            // Temperature series for 24hr format - 각각 다른 키 사용
+            arrayUpperList = this.buildHourSeries(arrayUpper, ['temperature1']); // 어레이 온도는 temperature1만
             arrayMiddleList = this.buildHourSeries(arrayMiddle, [
               'temperature1',
-              'temperature2',
-              'temp1',
-              'value',
-              'temp2',
-            ]);
-            arrayLowerList = this.buildHourSeries(arrayLower, [
-              'temperature1',
-              'temperature2',
-              'temp1',
-              'value',
-              'temp2',
-            ]);
+            ]); // 어레이 온도는 temperature1만
+            arrayLowerList = this.buildHourSeries(arrayLower, ['temperature1']); // 어레이 온도는 temperature1만
             ambientUpperList = this.buildHourSeries(ambientUpper, [
-              'temperature1',
               'temperature2',
-              'temp1',
-              'value',
-              'temp2',
-            ]);
+            ]); // 어레이 주변은 temperature2만
             ambientMiddleList = this.buildHourSeries(ambientMiddle, [
-              'temperature1',
               'temperature2',
-              'temp1',
-              'value',
-              'temp2',
-            ]);
+            ]); // 어레이 주변은 temperature2만
             ambientLowerList = this.buildHourSeries(ambientLower, [
-              'temperature1',
               'temperature2',
-              'temp1',
-              'value',
-              'temp2',
-            ]);
+            ]); // 어레이 주변은 temperature2만
           } else if (gbn === 'day' || gbn === 'month') {
             if (gbn === 'day') {
               this.gbn = 'day';
@@ -680,43 +652,44 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
               this.tableData.push(this.formatPowerData(series)); // 인버터 데이터는 kWh로 포맷
             }
 
-            // Temperature series mapped to date/month labels
+            // Temperature series mapped to date/month labels - 각각 다른 키 사용
             const tempLabelGuess =
               arrayUpper[0] && 'date' in arrayUpper[0] ? 'date' : 'timePeriod';
+
             arrayUpperList = this.buildSeriesByLabels(
               arrayUpper,
               this.dateList,
-              ['temperature1', 'temperature2', 'temp1', 'value', 'temp2'],
+              ['temperature1'], // 어레이 온도는 temperature1만
               tempLabelGuess
             );
             arrayMiddleList = this.buildSeriesByLabels(
               arrayMiddle,
               this.dateList,
-              ['temperature1', 'temperature2', 'temp1', 'value', 'temp2'],
+              ['temperature1'], // 어레이 온도는 temperature1만
               tempLabelGuess
             );
             arrayLowerList = this.buildSeriesByLabels(
               arrayLower,
               this.dateList,
-              ['temperature1', 'temperature2', 'temp1', 'value', 'temp2'],
+              ['temperature1'], // 어레이 온도는 temperature1만
               tempLabelGuess
             );
             ambientUpperList = this.buildSeriesByLabels(
               ambientUpper,
               this.dateList,
-              ['temperature1', 'temperature2', 'temp1', 'value', 'temp2'],
+              ['temperature2'], // 어레이 주변은 temperature2만
               tempLabelGuess
             );
             ambientMiddleList = this.buildSeriesByLabels(
               ambientMiddle,
               this.dateList,
-              ['temperature1', 'temperature2', 'temp1', 'value', 'temp2'],
+              ['temperature2'], // 어레이 주변은 temperature2만
               tempLabelGuess
             );
             ambientLowerList = this.buildSeriesByLabels(
               ambientLower,
               this.dateList,
-              ['temperature1', 'temperature2', 'temp1', 'value', 'temp2'],
+              ['temperature2'], // 어레이 주변은 temperature2만
               tempLabelGuess
             );
           }
