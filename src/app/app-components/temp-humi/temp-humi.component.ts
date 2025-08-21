@@ -100,6 +100,8 @@ export class TempHumiComponent
   tempTableTimeData!: WeatherInfoSummary[];
   humiTableTimeData!: WeatherInfoSummary[];
 
+  site: any;
+
   constructor(
     private semsService: SemsService,
     private dateAdapter: DateAdapter<any>,
@@ -125,8 +127,6 @@ export class TempHumiComponent
     this.timeDate = this.maxTimeDate = moment().toDate();
     this.minTimeDate = this.semsService.getInstalledDate();
   }
-
-  site;
 
   ngOnInit(): void {
     this.semsService.getSite().subscribe((res) => {
@@ -179,17 +179,19 @@ export class TempHumiComponent
 
     this.cdRef.detectChanges();
 
-    // Monthly ---------------------------
-    //this.updateMonthlyPage();
-
-    // Daily -----------------------------
-    //this.updateDailyPage();
-
-    // Hours -----------------------------
-    //this.updateHourlyPage();
+    // 초기 데이터 로드 - 주석 해제하여 페이지 로드시 기본 데이터 표시
+    this.updateMonthlyPage();
+    this.updateDailyPage();
+    this.updateHourlyPage();
   }
 
   updateMonthlyPage(): void {
+    // 날짜 유효성 검사
+    if (!this.startMonthlyDate || !this.endMonthlyDate) {
+      console.warn('월별 날짜가 설정되지 않았습니다.');
+      return;
+    }
+
     // Chart Label
     this.chartMonthlyLabels = [];
     this.chartMonthlyLabels = DateUtils.getSpanYYMMStringArray(
@@ -213,8 +215,8 @@ export class TempHumiComponent
     // Chart Data & Table Data ---------------------------------------------
     var inverterCount = this.semsService.getTempCheckerCount();
     // Empty dataset
-    this.tempBarchartMonthly.resetDataset();
-    this.humiBarchartMonthly.resetDataset();
+    this.tempBarchartMonthly?.resetDataset();
+    this.humiBarchartMonthly?.resetDataset();
 
     this.semsService
       .getWeatherSummary(
@@ -222,45 +224,54 @@ export class TempHumiComponent
         format(this.startMonthlyDate, 'yyyy-MM-dd'),
         format(this.endMonthlyDate, 'yyyy-MM-dd')
       )
-      .subscribe((res) => {
-        const apiData = res;
-        const tempApiData = [];
-        const humidityApiData = [];
+      .subscribe(
+        (res) => {
+          const apiData = res;
+          const tempApiData = [];
+          const humidityApiData = [];
 
-        for (let i = 0; i < apiData.length; i++) {
-          if (apiData[i].insName.includes('AirTemp')) {
-            tempApiData.push(apiData[i]);
-          } else if (apiData[i].insName.includes('Humidity')) {
-            humidityApiData.push(apiData[i]);
+          for (let i = 0; i < apiData.length; i++) {
+            if (apiData[i].insName.includes('AirTemp')) {
+              tempApiData.push(apiData[i]);
+            } else if (apiData[i].insName.includes('Humidity')) {
+              humidityApiData.push(apiData[i]);
+            }
           }
+
+          this.tempTableMonthlyData = this.onTestUtil.syncWeatherGridData(
+            this.chartMonthlyLabels,
+            tempApiData,
+            'temperature',
+            this.tempBarchartMonthly,
+            'yy-MM',
+            undefined,
+            undefined,
+            this.site
+          );
+          this.humiTableMonthlyData = this.onTestUtil.syncWeatherGridData(
+            this.chartMonthlyLabels,
+            humidityApiData,
+            'humidity',
+            this.humiBarchartMonthly,
+            'yy-MM',
+            undefined,
+            undefined,
+            this.site
+          );
+        },
+        (error) => {
+          console.error('월별 데이터 조회 중 오류 발생:', error);
         }
-
-        this.tempTableMonthlyData = this.onTestUtil.syncWeatherGridData(
-          this.chartMonthlyLabels,
-          tempApiData,
-          'temperature',
-          this.tempBarchartMonthly,
-          'yy-MM',
-          undefined,
-          undefined,
-          this.site
-        );
-        this.humiTableMonthlyData = this.onTestUtil.syncWeatherGridData(
-          this.chartMonthlyLabels,
-          humidityApiData,
-          'humidity',
-          this.humiBarchartMonthly,
-          'yy-MM',
-          undefined,
-          undefined,
-          this.site
-        );
-      });
-
-    // END Temp
+      );
   }
 
   updateDailyPage(): void {
+    // 날짜 유효성 검사
+    if (!this.startDailyDate || !this.endDailyDate) {
+      console.warn('일별 날짜가 설정되지 않았습니다.');
+      return;
+    }
+
     // Chart Label
     this.chartDailyLabels = [];
     this.chartDailyLabels = DateUtils.getSpanMonthDayStringArray(
@@ -283,8 +294,8 @@ export class TempHumiComponent
 
     // Chart Data & Table Data ---------------------------------------------
     // Empty dataset
-    this.tempBarchartDaily.resetDataset();
-    this.humiBarchartDaily.resetDataset();
+    this.tempBarchartDaily?.resetDataset();
+    this.humiBarchartDaily?.resetDataset();
 
     this.semsService
       .getWeatherSummary(
@@ -292,43 +303,56 @@ export class TempHumiComponent
         format(this.startDailyDate, 'yyyy-MM-dd'),
         format(this.endDailyDate, 'yyyy-MM-dd')
       )
-      .subscribe((res) => {
-        const apiData = res;
-        const tempApiData = [];
-        const humidityApiData = [];
+      .subscribe(
+        (res) => {
+          const apiData = res;
+          const tempApiData = [];
+          const humidityApiData = [];
 
-        for (let i = 0; i < apiData.length; i++) {
-          if (apiData[i].insName.includes('AirTemp')) {
-            tempApiData.push(apiData[i]);
-          } else if (apiData[i].insName.includes('Humidity')) {
-            humidityApiData.push(apiData[i]);
+          for (let i = 0; i < apiData.length; i++) {
+            if (apiData[i].insName.includes('AirTemp')) {
+              tempApiData.push(apiData[i]);
+            } else if (apiData[i].insName.includes('Humidity')) {
+              humidityApiData.push(apiData[i]);
+            }
           }
-        }
 
-        this.tempTableDailyData = this.onTestUtil.syncWeatherGridData(
-          this.chartDailyLabels,
-          tempApiData,
-          'temperature',
-          this.tempBarchartDaily,
-          'MM-dd',
-          undefined,
-          undefined,
-          this.site
-        );
-        this.humiTableDailyData = this.onTestUtil.syncWeatherGridData(
-          this.chartDailyLabels,
-          humidityApiData,
-          'humidity',
-          this.humiBarchartDaily,
-          'MM-dd',
-          undefined,
-          undefined,
-          this.site
-        );
-      });
+          this.tempTableDailyData = this.onTestUtil.syncWeatherGridData(
+            this.chartDailyLabels,
+            tempApiData,
+            'temperature',
+            this.tempBarchartDaily,
+            'MM-dd',
+            undefined,
+            undefined,
+            this.site
+          );
+          this.humiTableDailyData = this.onTestUtil.syncWeatherGridData(
+            this.chartDailyLabels,
+            humidityApiData,
+            'humidity',
+            this.humiBarchartDaily,
+            'MM-dd',
+            undefined,
+            undefined,
+            this.site
+          );
+        },
+        (error) => {
+          console.error('일별 데이터 조회 중 오류 발생:', error);
+        }
+      );
   }
 
   updateHourlyPage(): void {
+    console.log('🚀 updateHourlyPage 시작 - timeDate:', this.timeDate);
+
+    // 날짜 유효성 검사
+    if (!this.timeDate) {
+      console.warn('시간별 날짜가 설정되지 않았습니다.');
+      return;
+    }
+
     // Chart Label
     this.chartTimeLabels = [];
     this.chartTimeLabels = DateUtils.getSpanTimeStringArray();
@@ -349,51 +373,73 @@ export class TempHumiComponent
     // Chart Data & Table Data ---------------------------------------------
     var inverterCount = this.semsService.getSolarCheckerCount();
     // Empty dataset
-    this.tempBarchartHourly.resetDataset();
-    this.humiBarchartHourly.resetDataset();
+    this.tempBarchartHourly?.resetDataset();
+    this.humiBarchartHourly?.resetDataset();
 
-    let dateParam = new Date(this.timeDate);
+    // 날짜 계산 수정 - 원본 객체를 변경하지 않도록 새 객체 생성
+    const startDate = new Date(this.timeDate);
+    const endDate = new Date(this.timeDate);
+    endDate.setDate(endDate.getDate() + 1);
+
+    console.log('📊 API 호출 파라미터:');
+    console.log('- startDate:', format(startDate, 'yyyy-MM-dd'));
+    console.log('- endDate:', format(endDate, 'yyyy-MM-dd'));
+    console.log(
+      '- 전체 URL:',
+      `https://on-energy.kr/public/api/v1/weather/history/summary?summaryType=HOURLY&startDate=${format(
+        startDate,
+        'yyyy-MM-dd'
+      )}&endDate=${format(endDate, 'yyyy-MM-dd')}`
+    );
+
     this.semsService
       .getWeatherSummary(
         'HOURLY',
-        format(dateParam, 'yyyy-MM-dd'),
-        format(dateParam.setDate(this.timeDate.getDate() + 1), 'yyyy-MM-dd')
+        format(startDate, 'yyyy-MM-dd'),
+        format(endDate, 'yyyy-MM-dd')
       )
-      .subscribe((res) => {
-        const apiData = res;
-        const tempApiData = [];
-        const humidityApiData = [];
+      .subscribe(
+        (res) => {
+          console.log('✅ API 응답 받음:', res);
 
-        for (let i = 0; i < apiData.length; i++) {
-          if (apiData[i].insName.includes('AirTemp')) {
-            tempApiData.push(apiData[i]);
-          } else if (apiData[i].insName.includes('Humidity')) {
-            humidityApiData.push(apiData[i]);
+          const apiData = res;
+          const tempApiData = [];
+          const humidityApiData = [];
+
+          for (let i = 0; i < apiData.length; i++) {
+            if (apiData[i].insName.includes('AirTemp')) {
+              tempApiData.push(apiData[i]);
+            } else if (apiData[i].insName.includes('Humidity')) {
+              humidityApiData.push(apiData[i]);
+            }
           }
+
+          this.tempTableTimeData = this.onTestUtil.syncWeatherGridData(
+            this.chartTimeLabels,
+            tempApiData,
+            'temperature',
+            this.tempBarchartHourly,
+            'HH',
+            'hourly',
+            undefined,
+            this.site
+          );
+
+          this.humiTableTimeData = this.onTestUtil.syncWeatherGridData(
+            this.chartTimeLabels,
+            humidityApiData,
+            'humidity',
+            this.humiBarchartHourly,
+            'HH',
+            'hourly',
+            undefined,
+            this.site
+          );
+        },
+        (error) => {
+          console.error('❌ 시간별 데이터 조회 중 오류 발생:', error);
         }
-
-        this.tempTableTimeData = this.onTestUtil.syncWeatherGridData(
-          this.chartTimeLabels,
-          tempApiData,
-          'temperature', // 'temp' → 'temperature'로 변경
-          this.tempBarchartHourly,
-          'HH',
-          'hourly',
-          undefined,
-          this.site
-        );
-
-        this.humiTableTimeData = this.onTestUtil.syncWeatherGridData(
-          this.chartTimeLabels,
-          humidityApiData,
-          'humidity',
-          this.humiBarchartHourly,
-          'HH',
-          'hourly',
-          undefined,
-          this.site
-        );
-      });
+      );
   }
 
   ngOnChanges(changes: SimpleChanges) {}
@@ -402,41 +448,150 @@ export class TempHumiComponent
   onStartMonthlyYearSelected(normalizedYear: Moment) {
     this.startMonthlyDate.setFullYear(normalizedYear.year());
   }
+
   onStartMonthlyMonthSelected(
-    normalizedMonth: Moment,
+    selectedDate: any,
     datepicker: MatDatepicker<Date>
   ) {
+    console.log('🔍 월별 시작날짜 선택:', selectedDate);
+
+    let normalizedMonth: Moment;
+    if (selectedDate && typeof selectedDate.year === 'function') {
+      // 이미 Moment 객체인 경우
+      normalizedMonth = selectedDate;
+    } else if (selectedDate instanceof Date) {
+      // Date 객체인 경우 Moment로 변환
+      normalizedMonth = moment(selectedDate);
+    } else {
+      console.error('❌ 지원하지 않는 날짜 형식:', selectedDate);
+      return;
+    }
+
     this.startMonthlyDate.setFullYear(normalizedMonth.year());
     this.startMonthlyDate.setMonth(normalizedMonth.month());
     this.startMonthlyDate = new Date(this.startMonthlyDate);
 
+    console.log('📅 설정된 startMonthlyDate:', this.startMonthlyDate);
+
     datepicker.close();
+
+    // 시작 날짜 변경 시 자동 조회
+    setTimeout(() => {
+      this.updateMonthlyPage();
+    }, 100);
   }
 
   onEndMonthlyYearSelected(normalizedYear: Moment) {
     this.endMonthlyDate.setFullYear(normalizedYear.year());
   }
+
   onEndMonthlyMonthSelected(
-    normalizedMonth: Moment,
+    selectedDate: any,
     datepicker: MatDatepicker<Date>
   ) {
+    console.log('🔍 월별 종료날짜 선택:', selectedDate);
+
+    let normalizedMonth: Moment;
+    if (selectedDate && typeof selectedDate.year === 'function') {
+      // 이미 Moment 객체인 경우
+      normalizedMonth = selectedDate;
+    } else if (selectedDate instanceof Date) {
+      // Date 객체인 경우 Moment로 변환
+      normalizedMonth = moment(selectedDate);
+    } else {
+      console.error('❌ 지원하지 않는 날짜 형식:', selectedDate);
+      return;
+    }
+
     this.endMonthlyDate = normalizedMonth.endOf('month').toDate();
+    console.log('📅 설정된 endMonthlyDate:', this.endMonthlyDate);
 
     datepicker.close();
+
+    // 끝 날짜 변경 시 자동 조회
+    setTimeout(() => {
+      this.updateMonthlyPage();
+    }, 100);
   }
 
   // Daily ----------------------------------------------------------
-  onStartDailyDaySelected(normalizedDate: Moment) {
-    this.startDailyDate = normalizedDate.toDate();
+  onStartDailyDaySelected(selectedDate: any) {
+    console.log('🔍 일별 시작날짜 선택:', selectedDate);
+
+    let newDate: Date;
+    if (selectedDate && typeof selectedDate.toDate === 'function') {
+      newDate = selectedDate.toDate();
+    } else if (selectedDate instanceof Date) {
+      newDate = selectedDate;
+    } else if (typeof selectedDate === 'string') {
+      newDate = new Date(selectedDate);
+    } else {
+      console.error('❌ 지원하지 않는 날짜 형식:', selectedDate);
+      return;
+    }
+
+    this.startDailyDate = newDate;
+    console.log('📅 설정된 startDailyDate:', this.startDailyDate);
+
+    // 시작 날짜 변경 시 자동 조회
+    setTimeout(() => {
+      this.updateDailyPage();
+    }, 100);
   }
 
-  onEndDailyDaySelected(normalizedDate: Moment) {
-    this.endDailyDate = normalizedDate.toDate();
+  onEndDailyDaySelected(selectedDate: any) {
+    console.log('🔍 일별 종료날짜 선택:', selectedDate);
+
+    let newDate: Date;
+    if (selectedDate && typeof selectedDate.toDate === 'function') {
+      newDate = selectedDate.toDate();
+    } else if (selectedDate instanceof Date) {
+      newDate = selectedDate;
+    } else if (typeof selectedDate === 'string') {
+      newDate = new Date(selectedDate);
+    } else {
+      console.error('❌ 지원하지 않는 날짜 형식:', selectedDate);
+      return;
+    }
+
+    this.endDailyDate = newDate;
+    console.log('📅 설정된 endDailyDate:', this.endDailyDate);
+
+    // 끝 날짜 변경 시 자동 조회
+    setTimeout(() => {
+      this.updateDailyPage();
+    }, 100);
   }
 
   // Time ------------------------------------------------------------
+  onHourlyDateSelected(selectedDate: any) {
+    console.log('🔍 선택된 날짜 원본:', selectedDate);
+    console.log('🔍 선택된 날짜 타입:', typeof selectedDate);
 
-  onHourlyDateSelected(normalizedDate: Moment) {
-    this.timeDate = normalizedDate.toDate();
+    // 다양한 날짜 타입 처리
+    let newDate: Date;
+    if (selectedDate && typeof selectedDate.toDate === 'function') {
+      // Moment 객체인 경우
+      newDate = selectedDate.toDate();
+    } else if (selectedDate instanceof Date) {
+      // Date 객체인 경우
+      newDate = selectedDate;
+    } else if (typeof selectedDate === 'string') {
+      // 문자열인 경우
+      newDate = new Date(selectedDate);
+    } else {
+      console.error('❌ 지원하지 않는 날짜 형식:', selectedDate);
+      return;
+    }
+
+    console.log('📅 변환된 날짜:', newDate);
+    this.timeDate = newDate;
+    console.log('📅 설정된 timeDate:', this.timeDate);
+
+    // 날짜 변경 시 자동 조회
+    setTimeout(() => {
+      console.log('⏰ updateHourlyPage 호출 시점의 timeDate:', this.timeDate);
+      this.updateHourlyPage();
+    }, 100);
   }
 }

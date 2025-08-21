@@ -330,6 +330,8 @@ export class WindComponent
   }
 
   updateHourlyPage(): void {
+    console.log('updateHourlyPage 호출됨, timeDate:', this.timeDate);
+
     // Chart Label
     this.chartTimeLabels = [];
     this.chartTimeLabels = DateUtils.getSpanTimeStringArray();
@@ -352,14 +354,24 @@ export class WindComponent
     this.windDirectionBarchartHourly.resetDataset();
     this.windSpeedBarchartHourly.resetDataset();
 
-    let dateParam = new Date(this.timeDate);
+    // 날짜 계산 수정: 새로운 Date 객체를 생성해서 다음 날 계산
+    let startDate = new Date(this.timeDate);
+    let endDate = new Date(this.timeDate);
+    endDate.setDate(endDate.getDate() + 1);
+
+    const startDateStr = format(startDate, 'yyyy-MM-dd');
+    const endDateStr = format(endDate, 'yyyy-MM-dd');
+
+    console.log('API 호출 파라미터:', {
+      summaryType: 'HOURLY',
+      startDate: startDateStr,
+      endDate: endDateStr,
+    });
+
     this.semsService
-      .getWeatherSummary(
-        'HOURLY',
-        format(dateParam, 'yyyy-MM-dd'),
-        format(dateParam.setDate(this.timeDate.getDate() + 1), 'yyyy-MM-dd')
-      )
+      .getWeatherSummary('HOURLY', startDateStr, endDateStr)
       .subscribe((res) => {
+        console.log('API 응답 받음:', res);
         const apiData = res;
         const wdApiData = [];
         const wsApiData = [];
@@ -410,6 +422,8 @@ export class WindComponent
     this.startMonthlyDate = new Date(this.startMonthlyDate);
 
     datepicker.close();
+    // 자동으로 월별 데이터 업데이트
+    this.updateMonthlyPage();
   }
 
   onEndMonthlyYearSelected(normalizedYear: Moment) {
@@ -422,20 +436,52 @@ export class WindComponent
     this.endMonthlyDate = normalizedMonth.endOf('month').toDate();
 
     datepicker.close();
+    // 자동으로 월별 데이터 업데이트
+    this.updateMonthlyPage();
   }
 
   // Daily ----------------------------------------------------------
   onStartDailyDaySelected(normalizedDate: Moment) {
     this.startDailyDate = normalizedDate.toDate();
+    // 자동으로 일별 데이터 업데이트
+    this.updateDailyPage();
   }
 
   onEndDailyDaySelected(normalizedDate: Moment) {
     this.endDailyDate = normalizedDate.toDate();
+    // 자동으로 일별 데이터 업데이트
+    this.updateDailyPage();
   }
 
   // Time ------------------------------------------------------------
+  onHourlyDateSelected(selectedDate: any) {
+    console.log('🔍 선택된 날짜 원본:', selectedDate);
+    console.log('🔍 선택된 날짜 타입:', typeof selectedDate);
 
-  onHourlyDateSelected(normalizedDate: Moment) {
-    this.timeDate = normalizedDate.toDate();
+    // 다양한 날짜 타입 처리
+    let newDate: Date;
+    if (selectedDate && typeof selectedDate.toDate === 'function') {
+      // Moment 객체인 경우
+      newDate = selectedDate.toDate();
+    } else if (selectedDate instanceof Date) {
+      // Date 객체인 경우
+      newDate = selectedDate;
+    } else if (typeof selectedDate === 'string') {
+      // 문자열인 경우
+      newDate = new Date(selectedDate);
+    } else {
+      console.error('❌ 지원하지 않는 날짜 형식:', selectedDate);
+      return;
+    }
+
+    console.log('📅 변환된 날짜:', newDate);
+    this.timeDate = newDate;
+    console.log('📅 설정된 timeDate:', this.timeDate);
+
+    // 날짜 변경 시 자동 조회
+    setTimeout(() => {
+      console.log('⏰ updateHourlyPage 호출 시점의 timeDate:', this.timeDate);
+      this.updateHourlyPage();
+    }, 100);
   }
 }
