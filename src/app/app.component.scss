@@ -10,7 +10,7 @@
   box-sizing:border-box;
   color:rgb(34, 43, 69);
   display:flex;
-  font-family:"Open Sans", sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size:15px;
   font-weight:400;
   height:76px;
@@ -89,7 +89,7 @@
   margin-left:10px;
   border-radius: clamp(10px, 1.5vw, 15px);
   padding:5px;
-  background-color: RGB(70,70,70);;
+  background-color: RGB(70,70,70);
   color: white;
   font-size: clamp(1rem , 1.8vw, 1.5rem);
   font-weight:bold;
@@ -118,8 +118,6 @@
       display:block;
   }
 
-  .router-outlet {
-  }
   .sidenav-button {
     display: flex;
     padding: 15px 5px 15px 5px;

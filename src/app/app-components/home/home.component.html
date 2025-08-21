@@ -1,58 +1,71 @@
-<div style="display: flex; width: 100%; padding: 16px; flex-direction: column">
+<div class="dashboard-wrapper">
   <div class="item-title">
-    <div class="update-time mr-4">업데이트: {{updateTime | date:'yyyy.MM.dd HH:mm:ss'}}</div>
-  </div>
-
-  <!-- 태양광 발전  -->
-  <div style="display: flex; width: 100%">
-    <div
-      style="display: flex; width: 100%; background: #ffffff; border: 1px solid #c7c7c76b; border-radius: 8px; padding: 16px; margin-right: 16px;">
-      <app-solar-power-board style="width: 50%; margin-right: 24px;"
-                             [config]="config.solar"
-                             #solarEnergyGenerationBarChart></app-solar-power-board>
-      <app-total-generation-board style="width: 50%"
-                                  [config]="config.solar"></app-total-generation-board>
+    <div class="update-time mr-4">
+      업데이트: {{ updateTime | date : "yyyy.MM.dd HH:mm:ss" }}
     </div>
   </div>
 
-  <div style="display: flex; width: 100%; margin-top: 16px;">
-    <!-- 이용률 -->
-    <div
-      style="display: flex;  width: 50%; background: #ffffff; border: 1px solid #c7c7c76b; border-radius: 8px; padding: 16px; margin-right: 16px;">
-      <app-solar-power-board style="width: 50%; margin-right: 24px;"
-                             [config]="config.utilizationRate"
-                             #solarEnergyGenerationBarChart></app-solar-power-board>
-      <app-total-generation-board style="width: 50%"
-                                  [config]="config.utilizationRate"></app-total-generation-board>
-    </div>
-
-    <!-- 발전성능 -->
-    <div style="display: flex;
-                  width: 50%; background: #ffffff; border: 1px solid #c7c7c76b; border-radius: 8px; padding: 16px;">
-      <app-solar-power-board style="width: 50%; margin-right: 24px;"
-                             [config]="config.performanceRatio"
-                             #solarEnergyGenerationBarChart></app-solar-power-board>
-      <app-total-generation-board style="width: 50%"
-                                  [config]="config.performanceRatio"></app-total-generation-board>
-    </div>
-
+  <!-- 태양광 발전 -->
+  <div class="dashboard-box full-width">
+    <app-solar-power-board
+      class="dashboard-panel"
+      [config]="config.solar"
+      #solarEnergyGenerationBarChart
+    ></app-solar-power-board>
+    <app-total-generation-board
+      class="dashboard-panel"
+      [config]="config.solar"
+    ></app-total-generation-board>
   </div>
 
-  <div style="display: flex; width: 100%; margin-top: 16px;">
-    <!-- 기상정보 -->
-    <app-weather-board class="item3" style="width: 50%; margin-right: 24px;"
-                       [temp]="temp" [humi]="humi" [winddir]="dir" [wind]="wind" [solar]="solar"></app-weather-board>
+  <!-- 이용률 + 발전성능 -->
+  <div class="dashboard-row">
+    <div class="dashboard-box half-width">
+      <app-solar-power-board
+        class="dashboard-panel"
+        [config]="config.utilizationRate"
+        #solarEnergyGenerationBarChart
+      ></app-solar-power-board>
+      <app-total-generation-board
+        class="dashboard-panel"
+        [config]="config.utilizationRate"
+      ></app-total-generation-board>
+    </div>
 
+    <div class="dashboard-box half-width">
+      <app-solar-power-board
+        class="dashboard-panel"
+        [config]="config.performanceRatio"
+        #solarEnergyGenerationBarChart
+      ></app-solar-power-board>
+      <app-total-generation-board
+        class="dashboard-panel"
+        [config]="config.performanceRatio"
+      ></app-total-generation-board>
+    </div>
+  </div>
 
-    <!-- 변환효율 -->
-    <div style="display: flex;
-                width: 50%; background: #ffffff; border: 1px solid #c7c7c76b; border-radius: 8px; padding: 16px;">
-      <app-solar-power-board style="width: 50%; margin-right: 24px;"
-                             [config]="config.conversionEfficiency"
-                             #solarEnergyGenerationBarChart></app-solar-power-board>
+  <!-- 기상정보 + 변환효율 -->
+  <div class="dashboard-row">
+    <app-weather-board
+      class="half-width"
+      [temp]="temp"
+      [humi]="humi"
+      [winddir]="dir"
+      [wind]="wind"
+      [solar]="solar"
+    ></app-weather-board>
 
-      <app-total-generation-board style="width: 50%"
-                                  [config]="config.conversionEfficiency"></app-total-generation-board>
+    <div class="dashboard-box half-width">
+      <app-solar-power-board
+        class="dashboard-panel"
+        [config]="config.conversionEfficiency"
+        #solarEnergyGenerationBarChart
+      ></app-solar-power-board>
+      <app-total-generation-board
+        class="dashboard-panel"
+        [config]="config.conversionEfficiency"
+      ></app-total-generation-board>
     </div>
   </div>
 </div>

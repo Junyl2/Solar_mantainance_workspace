@@ -347,9 +347,7 @@
     top: 1.5%;
   }
 
-  .data_input {
-    width: 80px;
-  }
+
 
   ::ng-deep .mat-form-field-infix {
     width: 140px !important;
@@ -366,9 +364,6 @@
 }
 
 @media(max-width:468px) {
-  .data_input {
-    width: 50px;
-  }
 
   ::ng-deep .mat-form-field-infix {
     width: 110px !important;

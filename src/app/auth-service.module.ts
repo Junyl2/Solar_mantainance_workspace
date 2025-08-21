@@ -6,38 +6,31 @@ import {
   ModuleWithProviders,
   NgModule,
   OnInit,
-  Output
-} from '@angular/core'
-import { CommonModule } from '@angular/common'
-import { HttpClient } from '@angular/common/http'
-import {
-  BehaviorSubject,
-  Observable,
-  of,
-  shareReplay,
-  Subject,
-  tap,
-  throwError
-} from 'rxjs'
-import { retry, catchError } from 'rxjs'
-import moment from 'moment'
-import { environment } from 'src/environments/environment'
-import { Token } from './models/token'
-import { UserEntity } from './models/user-entity'
-import { Router } from '@angular/router'
+  Output,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+
+import moment from 'moment';
+import { environment } from 'src/environments/environment';
+import { Token } from './models/token';
+import { UserEntity } from './models/user-entity';
+import { Router } from '@angular/router';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { shareReplay, tap } from 'rxjs/operators';
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule]
+  imports: [CommonModule],
 })
 @Injectable()
 export class AuthServiceModule {
-  private emitChangeSource: BehaviorSubject<boolean>
-  changeEmitted$: Observable<boolean>
+  private emitChangeSource: BehaviorSubject<boolean>;
+  changeEmitted$: Observable<boolean>;
   emitChange(data) {
-    console.log('emitChange')
-    console.log(data)
-    this.emitChangeSource.next(data)
+    console.log('emitChange');
+    console.log(data);
+    this.emitChangeSource.next(data);
   }
 
   constructor(private http: HttpClient) {
@@ -46,11 +39,11 @@ export class AuthServiceModule {
     } else {
       this.emitChangeSource = new BehaviorSubject<boolean>(false);
     }
-    this.changeEmitted$ = this.emitChangeSource.asObservable()
+    this.changeEmitted$ = this.emitChangeSource.asObservable();
   }
 
   isAuth() {
-    return this.emitChangeSource.getValue()
+    return this.emitChangeSource.getValue();
   }
 
   getUserInfo(account: string) {
@@ -59,55 +52,55 @@ export class AuthServiceModule {
         `${environment.baseUserUrl}/public/api/v1/user/account/${account}`
       )
       .pipe(
-        tap(res => this.setAccount(res)),
+        tap((res) => this.setAccount(res)),
         shareReplay()
-      )
+      );
   }
 
   login(account: string, password: string) {
     return this.http
       .post<Token>(`${environment.baseUserUrl}/auth/user/login`, {
         account,
-        password
+        password,
       })
       .pipe(
-        tap(res => {
-          this.setSession(res)
-          console.log(res)
+        tap((res) => {
+          this.setSession(res);
+          console.log(res);
         }),
         shareReplay()
-      )
+      );
   }
 
   private setAccount(accountResult) {
-    localStorage.setItem('account', JSON.stringify(accountResult))
+    localStorage.setItem('account', JSON.stringify(accountResult));
   }
 
   private setSession(authResult) {
-    const expiresAt = moment().add(authResult.accessTokenExpiresIn, 'second')
+    const expiresAt = moment().add(authResult.accessTokenExpiresIn, 'second');
 
-    localStorage.setItem('token', authResult.accessToken)
-    localStorage.setItem('expires_at', JSON.stringify(expiresAt.valueOf()))
+    localStorage.setItem('token', authResult.accessToken);
+    localStorage.setItem('expires_at', JSON.stringify(expiresAt.valueOf()));
   }
 
   logout() {
-    localStorage.removeItem('token')
-    localStorage.removeItem('expires_at')
-    localStorage.removeItem('account')
-    this.emitChange(false)
+    localStorage.removeItem('token');
+    localStorage.removeItem('expires_at');
+    localStorage.removeItem('account');
+    this.emitChange(false);
   }
 
   public isLoggedIn() {
-    return moment().isBefore(this.getExpiration())
+    return moment().isBefore(this.getExpiration());
   }
 
   isLoggedOut() {
-    return !this.isLoggedIn()
+    return !this.isLoggedIn();
   }
 
   getExpiration() {
-    const expiration = localStorage.getItem('expires_at')
-    const expiresAt = JSON.parse(expiration)
-    return moment(expiresAt)
+    const expiration = localStorage.getItem('expires_at');
+    const expiresAt = JSON.parse(expiration);
+    return moment(expiresAt);
   }
 }
