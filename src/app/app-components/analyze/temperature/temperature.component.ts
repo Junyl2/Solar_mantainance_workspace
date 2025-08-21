@@ -68,7 +68,7 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
     Chart.register(...registerables);
   }
 
-  // ---------- helpers (added) ----------
+  // ---------- helpers (Node 14 호환) ----------
   private toHourIndex(tp: any): number {
     if (tp == null) return -1;
     const s = String(tp);
@@ -95,12 +95,16 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
   private buildHourSeries(arr: any[], preferredKeys: string[]): number[] {
     const out = new Array(24).fill(0);
     if (!Array.isArray(arr) || arr.length === 0) return out;
+
+    // Node 14 호환: ?? 대신 || 사용
     const key =
-      this.firstNumberKey(arr[0], preferredKeys) ??
+      this.firstNumberKey(arr[0], preferredKeys) ||
       this.firstNumberKey(arr[0], []);
     if (!key) return out;
+
     for (const r of arr) {
-      const h = this.toHourIndex(r.timePeriod ?? r.hour ?? r.time);
+      // Node 14 호환: ?? 대신 || 사용
+      const h = this.toHourIndex(r.timePeriod || r.hour || r.time);
       const v = r[key];
       if (h >= 0 && h < 24 && typeof v === 'number') out[h] = v;
     }
@@ -115,12 +119,15 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
   ): number[] {
     const out = labels.map(() => 0);
     if (!Array.isArray(arr) || arr.length === 0) return out;
+
+    // Node 14 호환: ?? 대신 || 사용
     const valueKey =
-      this.firstNumberKey(arr[0], preferredKeys) ??
+      this.firstNumberKey(arr[0], preferredKeys) ||
       this.firstNumberKey(arr[0], []);
     if (!valueKey) return out;
+
     const labelKey =
-      labelKeyGuess ??
+      labelKeyGuess ||
       ('date' in arr[0]
         ? 'date'
         : 'timePeriod' in arr[0]
@@ -130,11 +137,13 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
 
     const map = new Map<string, number>();
     for (const r of arr) {
-      const lbl = String(r[labelKey] ?? '');
+      // Node 14 호환: ?? 대신 || 사용
+      const lbl = String(r[labelKey] || '');
       const v = r[valueKey];
       if (lbl && typeof v === 'number') map.set(lbl, v);
     }
-    return labels.map((l) => map.get(l) ?? 0);
+    // Node 14 호환: ?? 대신 || 사용
+    return labels.map((l) => map.get(l) || 0);
   }
 
   // 데이터 단위 변환 함수 추가
@@ -435,13 +444,14 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
         next: (res) => {
           console.log('API response:', res);
 
-          const inverterData = res?.inverterGenerationData ?? [];
-          const arrayUpper = res?.arrayUpperData ?? [];
-          const arrayMiddle = res?.arrayMiddleData ?? [];
-          const arrayLower = res?.arrayLowerData ?? [];
-          const ambientUpper = res?.ambientUpperData ?? [];
-          const ambientMiddle = res?.ambientMiddleData ?? [];
-          const ambientLower = res?.ambientLowerData ?? [];
+          // Node 14 호환: ?? 대신 || 사용하고 기본값 제공
+          const inverterData = (res && res.inverterGenerationData) || [];
+          const arrayUpper = (res && res.arrayUpperData) || [];
+          const arrayMiddle = (res && res.arrayMiddleData) || [];
+          const arrayLower = (res && res.arrayLowerData) || [];
+          const ambientUpper = (res && res.ambientUpperData) || [];
+          const ambientMiddle = (res && res.ambientMiddleData) || [];
+          const ambientLower = (res && res.ambientLowerData) || [];
 
           if (this.chart) {
             this.chart.destroy();
@@ -535,17 +545,15 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
                   'kwh',
                   'energy',
                   'power',
-                ]) ?? 'powerGeneration'
+                ]) || 'powerGeneration' // Node 14 호환
               : 'powerGeneration';
             const byId: Record<string, any[]> = {};
             for (const row of inverterData) {
-              const id = (
-                row.insNum ??
-                row.inverterId ??
-                row.id ??
-                'INV'
-              ).toString();
-              (byId[id] ||= []).push(row);
+              // Node 14 호환: ?? 대신 || 사용
+              const id = String(
+                row.insNum || row.inverterId || row.id || 'INV'
+              );
+              (byId[id] = byId[id] || []).push(row);
             }
             for (const id of Object.keys(byId)) {
               const series = this.buildHourSeries(byId[id], [
@@ -631,7 +639,7 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
                   'kwh',
                   'energy',
                   'power',
-                ]) ?? 'powerGeneration'
+                ]) || 'powerGeneration' // Node 14 호환
               : 'powerGeneration';
             const invLabelKey =
               inverterData[0] && 'date' in inverterData[0]
@@ -639,13 +647,11 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
                 : 'timePeriod';
             const byId: Record<string, any[]> = {};
             for (const row of inverterData) {
-              const id = (
-                row.insNum ??
-                row.inverterId ??
-                row.id ??
-                '인버터'
-              ).toString();
-              (byId[id] ||= []).push(row);
+              // Node 14 호환: ?? 대신 || 사용
+              const id = String(
+                row.insNum || row.inverterId || row.id || '인버터'
+              );
+              (byId[id] = byId[id] || []).push(row);
             }
             for (const id of Object.keys(byId)) {
               const series = this.buildSeriesByLabels(
