@@ -9,15 +9,11 @@ if [[ "$reinstall" == "y" || "$reinstall" == "Y" ]]; then
   echo "🔁 의존성 및 dist 초기화 중..."
   rm -rf node_modules package-lock.json "$DIST_DIR"
   echo "📦 npm install 시작..."
-  npm install --legacy-peer-deps
+  npm install
 else
   echo "🧹 기존 dist 삭제 중..."
   rm -rf "$DIST_DIR"
-fi
-
-echo "=============================="
-echo "🔧 잘못된 브라우저 버전(18.5-18.6) 수정 중..."
-sed -i 's/18\.5-18\.6/18.5/g' node_modules/caniuse-lite/data/browserVersions.js
+fi  # ← 여기에 fi가 반드시 있어야 합니다!!
 
 echo "=============================="
 echo "⚙️ Angular 프로덕션 빌드 시작..."
