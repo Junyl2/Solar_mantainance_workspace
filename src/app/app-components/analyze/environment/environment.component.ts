@@ -1,12 +1,5 @@
-import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  ViewChild,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { SemsService } from '../../../services/sems-service';
-import { ActivatedRoute } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
 import moment from 'moment';
 import * as XLSX from 'xlsx';
@@ -17,9 +10,14 @@ import * as XLSX from 'xlsx';
   styleUrls: ['./environment.component.scss'],
 })
 export class EnvironmentComponent implements OnInit, AfterViewInit {
-  @ViewChild('chart_environment', { static: true }) chart;
+  // If API already returns kWh, set to 'kWh'
+  private readonly ENERGY_INCOMING_UNIT: 'Wh' | 'kWh' = 'Wh';
+  private readonly ENERGY_TINY_EPS = 0.001; // kWh threshold for display
+  private readonly ENV_DECIMALS = 2; // temp/%, m/s, Wh/㎡
 
-  colorArray: any = [
+  chart!: Chart;
+
+  colorArray: string[] = [
     'rgba(54, 162, 235, 0.8)',
     'rgba(255, 99, 132, 0.8)',
     'rgba(75,192,134,0.8)',
@@ -30,14 +28,16 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
     'rgba(154,235,54,0.8)',
     'rgba(236,111,227,0.8)',
   ];
+
   startDate: Date = new Date();
   endDate: Date = new Date();
+
   startMonthDate: Date = new Date(
     new Date().getFullYear(),
     new Date().getMonth(),
     1
   );
-  tempMonthDate: Date = new Date(
+  private tempMonthDate: Date = new Date(
     new Date().getFullYear(),
     new Date().getMonth() + 1,
     0
@@ -47,11 +47,12 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
     new Date().getMonth(),
     this.tempMonthDate.getDate()
   );
-  tableHeadData: any = [];
-  tableDayData: any = [];
-  tableData: any = [];
+
+  tableHeadData: any[] = [];
+  tableDayData: any[] = [];
+  tableData: any[] = [];
   gbn = '';
-  dateList: any = [];
+  dateList: string[] = [];
 
   constructor(private semsService: SemsService) {
     Chart.register(...registerables);
@@ -59,41 +60,41 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.radio_input1_click();
-    this.createChart();
+    this.createBaseChart();
   }
 
   ngAfterViewInit(): void {}
 
-  createChart() {
+  // ---------- helpers ----------
+  private toDisplayKwh(v: number | null | undefined): number {
+    if (v == null || isNaN(+v)) return 0;
+    return this.ENERGY_INCOMING_UNIT === 'Wh' ? +v / 1000 : +v;
+  }
+  private round(v: number, dp: number): number {
+    if (v == null || isNaN(+v)) return 0;
+    return +(+v).toFixed(dp);
+  }
+
+  // display helpers for template
+  isNumber(v: any): boolean {
+    return v !== null && v !== undefined && !isNaN(+v);
+  }
+  fmtEnergy(v: any): string {
+    if (!this.isNumber(v)) return '-';
+    const n = +v;
+    if (n === 0) return '-';
+    if (Math.abs(n) < this.ENERGY_TINY_EPS) return '<0.001 kWh';
+    return `${n.toFixed(3)} kWh`;
+  }
+
+  private createBaseChart(): void {
     this.chart = new Chart('chart_environment', {
       type: 'line',
       data: {
-        labels: [
-          '00시',
-          '01시',
-          '02시',
-          '03시',
-          '04시',
-          '05시',
-          '06시',
-          '07시',
-          '08시',
-          '09시',
-          '10시',
-          '11시',
-          '12시',
-          '13시',
-          '14시',
-          '15시',
-          '16시',
-          '17시',
-          '18시',
-          '19시',
-          '20시',
-          '21시',
-          '22시',
-          '23시',
-        ],
+        labels: Array.from(
+          { length: 24 },
+          (_, i) => `${i.toString().padStart(2, '0')}시`
+        ),
         datasets: [
           {
             label: '온도',
@@ -127,37 +128,13 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
             yAxisID: 'y5',
             type: 'line',
           },
-          {
-            label: '발전1',
-            data: [],
-            borderColor: 'rgba(54, 162, 235, 0.8)',
-            backgroundColor: 'rgba(54, 162, 235, 0.8)',
-            yAxisID: 'y1',
-            type: 'bar',
-          },
-          {
-            label: '발전2',
-            data: [],
-            borderColor: 'rgba(255, 99, 132, 0.8)',
-            backgroundColor: 'rgba(255, 99, 132, 0.8)',
-            yAxisID: 'y1',
-            type: 'bar',
-          },
         ],
       },
       options: {
         aspectRatio: 2.5,
+        maintainAspectRatio: true,
+        responsive: true,
         scales: {
-          y2: {
-            type: 'linear',
-            display: true,
-            title: {
-              display: true,
-              text: '온도',
-              color: 'rgba(255, 159, 64, 0.8)',
-            },
-            position: 'left',
-          },
           y1: {
             type: 'linear',
             display: true,
@@ -167,6 +144,18 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
               color: 'rgba(54, 162, 235, 0.8)',
             },
             position: 'left',
+            min: 0,
+          },
+          y2: {
+            type: 'linear',
+            display: true,
+            title: {
+              display: true,
+              text: '온도',
+              color: 'rgba(255, 159, 64, 0.8)',
+            },
+            position: 'left',
+            min: 0,
           },
           y3: {
             type: 'linear',
@@ -177,6 +166,7 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
               color: 'rgba(153, 102, 255, 0.8)',
             },
             position: 'right',
+            min: 0,
           },
           y4: {
             type: 'linear',
@@ -187,64 +177,67 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
               color: 'rgba(75,192,134,0.8)',
             },
             position: 'right',
+            min: 0,
           },
           y5: {
             type: 'linear',
             display: true,
             title: { display: true, text: '일사량', color: 'rgba(0,0,0,0.8)' },
             position: 'right',
+            min: 0,
           },
         },
       },
     });
   }
 
+  // ---------- radio + date UI ----------
   radio_input1_click() {
-    // @ts-ignore
-    document.getElementById('radio_time').checked = true;
-    document.getElementById('date_start').style.display = 'flex';
-    document.getElementById('date_space').style.display = 'none';
-    document.getElementById('date_end').style.display = 'none';
-    document.getElementById('date_start_month').style.display = 'none';
-    document.getElementById('date_end_month').style.display = 'none';
+    (document.getElementById('radio_time') as HTMLInputElement).checked = true;
+    (document.getElementById('date_start') as HTMLElement).style.display =
+      'flex';
+    (document.getElementById('date_space') as HTMLElement).style.display =
+      'none';
+    (document.getElementById('date_end') as HTMLElement).style.display = 'none';
+    (document.getElementById('date_start_month') as HTMLElement).style.display =
+      'none';
+    (document.getElementById('date_end_month') as HTMLElement).style.display =
+      'none';
   }
-
   radio_input2_click() {
-    // @ts-ignore
-    document.getElementById('radio_day').checked = true;
-    document.getElementById('date_start').style.display = '';
-    document.getElementById('date_space').style.display = 'flex';
-
-    document.getElementById('date_start').style.display = 'flex';
-    document.getElementById('date_end').style.display = 'flex';
-    document.getElementById('date_start_month').style.display = 'none';
-    document.getElementById('date_end_month').style.display = 'none';
+    (document.getElementById('radio_day') as HTMLInputElement).checked = true;
+    (document.getElementById('date_space') as HTMLElement).style.display =
+      'flex';
+    (document.getElementById('date_start') as HTMLElement).style.display =
+      'flex';
+    (document.getElementById('date_end') as HTMLElement).style.display = 'flex';
+    (document.getElementById('date_start_month') as HTMLElement).style.display =
+      'none';
+    (document.getElementById('date_end_month') as HTMLElement).style.display =
+      'none';
   }
-
   radio_input3_click() {
-    // @ts-ignore
-    document.getElementById('radio_month').checked = true;
-    document.getElementById('date_start').style.display = '';
-    document.getElementById('date_space').style.display = 'flex';
-
-    document.getElementById('date_start').style.display = 'none';
-    document.getElementById('date_end').style.display = 'none';
-    document.getElementById('date_start_month').style.display = 'flex';
-    document.getElementById('date_end_month').style.display = 'flex';
+    (document.getElementById('radio_month') as HTMLInputElement).checked = true;
+    (document.getElementById('date_space') as HTMLElement).style.display =
+      'flex';
+    (document.getElementById('date_start') as HTMLElement).style.display =
+      'none';
+    (document.getElementById('date_end') as HTMLElement).style.display = 'none';
+    (document.getElementById('date_start_month') as HTMLElement).style.display =
+      'flex';
+    (document.getElementById('date_end_month') as HTMLElement).style.display =
+      'flex';
   }
 
   onStartDaySelected(normalizedDate: any) {
     this.startDate = normalizedDate.toDate();
   }
-
   onEndDaySelected(normalizedDate: any) {
     this.endDate = normalizedDate.toDate();
   }
-
   onStartMonthSelected(normalizedYear: any) {
     this.startMonthDate.setFullYear(normalizedYear.year());
   }
-
   onStartMonthMonthSelected(normalizedMonth: any, datepicker: any) {
     this.startMonthDate.setFullYear(normalizedMonth.year());
     this.startMonthDate.setMonth(normalizedMonth.month());
@@ -253,49 +246,44 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
       this.startMonthDate.getMonth(),
       1
     );
-
     datepicker.close();
   }
-
   onEndMonthSelected(normalizedYear: any) {
     this.endMonthDate.setFullYear(normalizedYear.year());
   }
-
   onEndMonthMonthSelected(normalizedMonth: any, datepicker: any) {
     this.endMonthDate.setFullYear(normalizedMonth.year());
     this.endMonthDate.setMonth(normalizedMonth.month());
-
-    let tempDate = new Date(
+    const last = new Date(
       this.endMonthDate.getFullYear(),
       normalizedMonth.month() + 1,
       0
-    );
+    ).getDate();
     this.endMonthDate = new Date(
       this.endMonthDate.getFullYear(),
       normalizedMonth.month(),
-      tempDate.getDate()
+      last
     );
-
     datepicker.close();
   }
 
+  // ---------- search ----------
   search_click() {
-    let gbn;
-    let startDate;
-    let endDate;
+    let gbn: 'time' | 'day' | 'month' = 'time';
+    let startDate: string;
+    let endDate: string;
 
-    // @ts-ignore
-    if (document.getElementById('radio_time').checked) {
+    if ((document.getElementById('radio_time') as HTMLInputElement).checked) {
       gbn = 'time';
       startDate = moment(this.startDate).format('YYYYMMDD');
       endDate = moment(this.startDate).add(1, 'days').format('YYYYMMDD');
-      // @ts-ignore
-    } else if (document.getElementById('radio_day').checked) {
+    } else if (
+      (document.getElementById('radio_day') as HTMLInputElement).checked
+    ) {
       gbn = 'day';
       startDate = moment(this.startDate).format('YYYYMMDD');
       endDate = moment(this.endDate).add(1, 'days').format('YYYYMMDD');
-      // @ts-ignore
-    } else if (document.getElementById('radio_month').checked) {
+    } else {
       gbn = 'month';
       startDate = moment(this.startMonthDate).format('YYYYMMDD');
       endDate = moment(this.endMonthDate).add(1, 'days').format('YYYYMMDD');
@@ -304,13 +292,13 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
     this.semsService
       .getAnalyzeEnvironmentInfo(gbn, startDate, endDate)
       .subscribe((res) => {
-        console.log(res);
-
+        // res[0] -> generation [timeOrDateIdxOrStr, inverterLabel, value]
+        // res[1] -> env        [timeOrDateIdxOrStr, temp, hum, wind, irradiance]
         this.tableHeadData = [];
         this.tableData = [];
-        this.chart.destroy();
+        if (this.chart) this.chart.destroy();
 
-        let chartObject: any = {
+        const chartObject: any = {
           type: 'line',
           data: {
             labels: [],
@@ -334,8 +322,8 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
               {
                 label: '풍속',
                 data: [],
-                borderColor: 'rgba(75,192,134,0.8)',
-                backgroundColor: 'rgba(75,192,134,0.8)',
+                borderColor: 'rgba(75,192,134, 0.8)',
+                backgroundColor: 'rgba(75,192,134, 0.8)',
                 yAxisID: 'y4',
                 type: 'line',
               },
@@ -352,17 +340,6 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
           options: {
             aspectRatio: 2.5,
             scales: {
-              y2: {
-                type: 'linear',
-                display: true,
-                title: {
-                  display: true,
-                  text: '온도',
-                  color: 'rgba(255, 159, 64, 0.8)',
-                },
-                position: 'left',
-                min: 0,
-              },
               y1: {
                 type: 'linear',
                 display: true,
@@ -370,6 +347,17 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
                   display: true,
                   text: '발전량 kWh',
                   color: 'rgba(54, 162, 235, 0.8)',
+                },
+                position: 'left',
+                min: 0,
+              },
+              y2: {
+                type: 'linear',
+                display: true,
+                title: {
+                  display: true,
+                  text: '온도',
+                  color: 'rgba(255, 159, 64, 0.8)',
                 },
                 position: 'left',
                 min: 0,
@@ -411,243 +399,179 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
           },
         };
 
-        let invNameList = [];
-        let temp1List = [];
-        let temp2List = [];
-        let temp3List = [];
-        let temp4List = [];
+        let tempList: number[] = [];
+        let humList: number[] = [];
+        let windList: number[] = [];
+        let irrList: number[] = [];
 
         if (gbn === 'time') {
           this.gbn = 'time';
-          chartObject.data.labels = [
-            '00시',
-            '01시',
-            '02시',
-            '03시',
-            '04시',
-            '05시',
-            '06시',
-            '07시',
-            '08시',
-            '09시',
-            '10시',
-            '11시',
-            '12시',
-            '13시',
-            '14시',
-            '15시',
-            '16시',
-            '17시',
-            '18시',
-            '19시',
-            '20시',
-            '21시',
-            '22시',
-            '23시',
-          ];
+          chartObject.data.labels = Array.from(
+            { length: 24 },
+            (_, i) => `${i.toString().padStart(2, '0')}시`
+          );
 
-          let titleList = [];
+          // Build inverter datasets (per hour 0..23)
+          const titleSet = new Set<string>();
+          for (const row of res[0]) titleSet.add(row[1]);
+          const invObject: Record<string, number[]> = {};
+          for (const title of Array.from(titleSet))
+            invObject[title] = new Array(24).fill(0);
 
-          for (let i of res[0]) {
-            if (!titleList.includes(i[1])) {
-              titleList.push(i[1]);
-            }
+          for (const row of res[0]) {
+            const hr = +row[0]; // 0..23
+            const title = row[1] as string;
+            const raw = +row[2] || 0;
+            invObject[title][hr] = this.toDisplayKwh(raw); // <-- keep unrounded kWh
           }
 
-          let invObject = {};
-          for (let title of titleList) {
-            let tempList1 = [
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              0,
-            ];
+          tempList = new Array(24).fill(0);
+          humList = new Array(24).fill(0);
+          windList = new Array(24).fill(0);
+          irrList = new Array(24).fill(0);
 
-            for (let i of res[0]) {
-              if (title === i[1]) {
-                tempList1[i[0]] = i[2];
-              }
-            }
-
-            invObject[title] = tempList1;
+          for (const env of res[1]) {
+            const hr = +env[0];
+            tempList[hr] = this.round(+env[1] || 0, this.ENV_DECIMALS);
+            humList[hr] = this.round(+env[2] || 0, this.ENV_DECIMALS);
+            windList[hr] = this.round(+env[3] || 0, this.ENV_DECIMALS);
+            irrList[hr] = this.round(+env[4] || 0, this.ENV_DECIMALS);
           }
 
-          temp1List = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          ];
-          temp2List = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          ];
-          temp3List = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          ];
-          temp4List = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          ];
-
-          for (let i of res[1]) {
-            temp1List[i[0]] = i[1];
-            temp2List[i[0]] = i[2];
-            temp3List[i[0]] = i[3];
-            temp4List[i[0]] = i[4];
-          }
-
-          for (let i = 0; i < Object.keys(invObject).length; i++) {
-            this.tableHeadData.push(Object.keys(invObject)[i]);
-            this.tableData.push(invObject[Object.keys(invObject)[i]]);
+          // add inverter datasets
+          Object.keys(invObject).forEach((key, i) => {
+            this.tableHeadData.push(key);
+            this.tableData.push(invObject[key]);
             chartObject.data.datasets.push({
-              label: Object.keys(invObject)[i],
-              data: invObject[Object.keys(invObject)[i]],
-              borderColor: this.colorArray[i],
-              backgroundColor: this.colorArray[i],
+              label: key,
+              data: invObject[key],
+              borderColor: this.colorArray[i % this.colorArray.length],
+              backgroundColor: this.colorArray[i % this.colorArray.length],
               yAxisID: 'y1',
               type: 'bar',
             });
-          }
-        } else if (gbn === 'day' || gbn == 'month') {
+          });
+        } else {
+          // day or month
           if (gbn === 'day') {
             this.gbn = 'day';
-            startDate = moment(this.startDate).format('YYYY-MM-DD');
-            endDate = moment(this.endDate).format('YYYY-MM-DD');
-            this.dateList = this.getDatesStartToLast(startDate, endDate);
-            chartObject.data.labels = this.dateList;
-            this.tableDayData = this.dateList;
+            const s = moment(this.startDate).format('YYYY-MM-DD');
+            const e = moment(this.endDate).format('YYYY-MM-DD');
+            this.dateList = this.getDatesStartToLast(s, e);
           } else {
             this.gbn = 'month';
-            startDate = moment(this.startMonthDate).format('YYYY-MM');
-            endDate = moment(this.endMonthDate).format('YYYY-MM');
-            this.dateList = this.getMonthDatesStartToLast(startDate, endDate);
-            chartObject.data.labels = this.dateList;
-            this.tableDayData = this.dateList;
+            const s = moment(this.startMonthDate).format('YYYY-MM');
+            const e = moment(this.endMonthDate).format('YYYY-MM');
+            this.dateList = this.getMonthDatesStartToLast(s, e);
           }
+          chartObject.data.labels = this.dateList;
+          this.tableDayData = this.dateList;
 
-          let titleList = [];
+          const titleSet = new Set<string>();
+          for (const row of res[0]) titleSet.add(row[1]);
+          const invObject: Record<string, number[]> = {};
+          for (const title of Array.from(titleSet))
+            invObject[title] = new Array(this.dateList.length).fill(0);
 
-          for (let i of res[0]) {
-            if (!titleList.includes(i[1])) {
-              titleList.push(i[1]);
+          for (const row of res[0]) {
+            const dStr = row[0] as string; // 'YYYY-MM-DD' or 'YYYY-MM'
+            const idx = this.dateList.indexOf(dStr);
+            if (idx >= 0) {
+              const raw = +row[2] || 0;
+              invObject[row[1]][idx] = this.toDisplayKwh(raw); // <-- keep unrounded kWh
             }
           }
 
-          let invObject = {};
-          for (let title of titleList) {
-            let tempList1 = [];
+          tempList = new Array(this.dateList.length).fill(0);
+          humList = new Array(this.dateList.length).fill(0);
+          windList = new Array(this.dateList.length).fill(0);
+          irrList = new Array(this.dateList.length).fill(0);
 
-            for (let i of this.dateList) {
-              tempList1.push(0);
-            }
-
-            for (let i of res[0]) {
-              if (title === i[1]) {
-                tempList1[this.dateList.indexOf(i[0])] = i[2];
-              }
-            }
-
-            invObject[title] = tempList1;
-          }
-
-          for (let i of this.dateList) {
-            temp1List.push(0);
-            temp2List.push(0);
-            temp3List.push(0);
-            temp4List.push(0);
-          }
-
-          for (let i of this.dateList) {
-            for (let j of res[1]) {
-              if (i === j[0]) {
-                temp1List[this.dateList.indexOf(j[0])] = j[1];
-                temp2List[this.dateList.indexOf(j[0])] = j[2];
-                temp3List[this.dateList.indexOf(j[0])] = j[3];
-                temp4List[this.dateList.indexOf(j[0])] = j[4];
-              }
+          for (const env of res[1]) {
+            const dStr = env[0] as string;
+            const idx = this.dateList.indexOf(dStr);
+            if (idx >= 0) {
+              tempList[idx] = this.round(+env[1] || 0, this.ENV_DECIMALS);
+              humList[idx] = this.round(+env[2] || 0, this.ENV_DECIMALS);
+              windList[idx] = this.round(+env[3] || 0, this.ENV_DECIMALS);
+              irrList[idx] = this.round(+env[4] || 0, this.ENV_DECIMALS);
             }
           }
 
-          for (let i = 0; i < Object.keys(invObject).length; i++) {
-            this.tableHeadData.push(Object.keys(invObject)[i]);
-            this.tableData.push(invObject[Object.keys(invObject)[i]]);
+          Object.keys(invObject).forEach((key, i) => {
+            this.tableHeadData.push(key);
+            this.tableData.push(invObject[key]);
             chartObject.data.datasets.push({
-              label: Object.keys(invObject)[i],
-              data: invObject[Object.keys(invObject)[i]],
-              borderColor: this.colorArray[i],
-              backgroundColor: this.colorArray[i],
+              label: key,
+              data: invObject[key],
+              borderColor: this.colorArray[i % this.colorArray.length],
+              backgroundColor: this.colorArray[i % this.colorArray.length],
               yAxisID: 'y1',
               type: 'bar',
             });
-          }
+          });
         }
 
-        chartObject.data.datasets[0].data = temp1List;
-        chartObject.data.datasets[1].data = temp2List;
-        chartObject.data.datasets[2].data = temp3List;
-        chartObject.data.datasets[3].data = temp4List;
-        this.tableHeadData.push('온도');
-        this.tableHeadData.push('습도');
-        this.tableHeadData.push('풍속');
-        this.tableHeadData.push('일사량');
-        this.tableData.push(temp1List);
-        this.tableData.push(temp2List);
-        this.tableData.push(temp3List);
-        this.tableData.push(temp4List);
+        // env lines & env rows
+        chartObject.data.datasets[0].data = tempList;
+        chartObject.data.datasets[1].data = humList;
+        chartObject.data.datasets[2].data = windList;
+        chartObject.data.datasets[3].data = irrList;
 
-        console.log(chartObject);
+        this.tableHeadData.push('온도', '습도', '풍속', '일사량');
+        this.tableData.push(tempList, humList, windList, irrList);
+
         this.chart = new Chart('chart_environment', chartObject);
       });
   }
 
-  getDatesStartToLast(startDate, lastDate) {
-    let regex = RegExp(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/);
-    if (!(regex.test(startDate) && regex.test(lastDate)))
-      return 'Not Date Format';
-    let result = [];
-    let curDate = new Date(startDate);
-    while (curDate <= new Date(lastDate)) {
-      result.push(curDate.toISOString().split('T')[0]);
-      curDate.setDate(curDate.getDate() + 1);
+  // Local-safe continuous date lists
+  getDatesStartToLast(startDate: string, lastDate: string): string[] {
+    const rx = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+    if (!rx.test(startDate) || !rx.test(lastDate)) return [];
+    const res: string[] = [];
+    let cur = moment(startDate, 'YYYY-MM-DD');
+    const end = moment(lastDate, 'YYYY-MM-DD');
+    while (cur.isSameOrBefore(end, 'day')) {
+      res.push(cur.format('YYYY-MM-DD'));
+      cur = cur.add(1, 'day');
     }
-    return result;
+    return res;
   }
 
-  getMonthDatesStartToLast(startDate, lastDate) {
-    let regex = RegExp(/^\d{4}-(0[1-9]|1[012])$/);
-    if (!(regex.test(startDate) && regex.test(lastDate)))
-      return 'Not Date Format';
-    let result = [];
-    let curDate = new Date(startDate);
-    while (curDate <= new Date(lastDate)) {
-      result.push(moment(curDate).format('YYYY-MM'));
-      curDate.setMonth(curDate.getMonth() + 1);
+  getMonthDatesStartToLast(startDate: string, lastDate: string): string[] {
+    const rx = /^\d{4}-(0[1-9]|1[0-2])$/;
+    if (!rx.test(startDate) || !rx.test(lastDate)) return [];
+    const res: string[] = [];
+    let cur = moment(startDate, 'YYYY-MM');
+    const end = moment(lastDate, 'YYYY-MM');
+    while (cur.isSameOrBefore(end, 'month')) {
+      res.push(cur.format('YYYY-MM'));
+      cur = cur.add(1, 'month');
     }
-    return result;
+    return res;
   }
 
   downloadToExcel(name: string) {
-    let tableList = Array.prototype.map.call(
-      document.querySelectorAll('#table tr'),
-      function (tr) {
-        return Array.prototype.map.call(
-          tr.querySelectorAll('td'),
-          function (td) {
-            return td.innerHTML;
-          }
-        );
-      }
+    const table = document.querySelector('#table') as HTMLTableElement;
+    if (!table) return;
+
+    const rows = Array.from(table.querySelectorAll('tr'));
+    const data = rows.map((tr) =>
+      Array.from(tr.children).map((td) => (td as HTMLElement).innerText.trim())
     );
 
-    let { sheetName, fileName } = this.getFileName(name);
-
-    let wb = XLSX.utils.book_new();
-    let ws = XLSX.utils.json_to_sheet(tableList);
+    const { sheetName, fileName } = this.getFileName(name);
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(data);
     XLSX.utils.book_append_sheet(wb, ws, sheetName);
     XLSX.writeFile(wb, `${fileName}.xlsx`);
   }
 
   getFileName(name: string) {
-    let timeSpan = new Date().toISOString();
-    let sheetName = name || 'ExportResult';
-    let fileName = `${sheetName}-${timeSpan}`;
-    return {
-      sheetName,
-      fileName,
-    };
+    const timeSpan = new Date().toISOString();
+    const sheetName = name || 'ExportResult';
+    const fileName = `${sheetName}-${timeSpan}`;
+    return { sheetName, fileName };
   }
 }
