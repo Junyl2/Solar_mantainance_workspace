@@ -43,7 +43,6 @@ export class AppComponent implements AfterViewInit {
   isMobileAndTablet = false;
   readonly MOBILE_BREAKPOINT = '(max-width: 1280px)';
 
-
   // Login
   login = false;
   user: UserEntity | undefined;
@@ -82,9 +81,11 @@ export class AppComponent implements AfterViewInit {
   showFiller = true;
   sidenavOpened = true;
 
-
-  constructor(public themeService: ThemeService, public authService: AuthServiceModule, private router: Router,
-      private breakpointObserver: BreakpointObserver
+  constructor(
+    public themeService: ThemeService,
+    public authService: AuthServiceModule,
+    private router: Router,
+    private breakpointObserver: BreakpointObserver
   ) {
     const today = new Date();
     const expirationDate = authService.getExpiration().toDate();
@@ -102,11 +103,10 @@ export class AppComponent implements AfterViewInit {
     });
   }
 
-
-
   ngAfterViewInit() {
-       this.breakpointObserver.observe([this.MOBILE_BREAKPOINT])
-      .subscribe(result => {
+    this.breakpointObserver
+      .observe([this.MOBILE_BREAKPOINT])
+      .subscribe((result) => {
         this.isMobileAndTablet = result.matches;
       });
   }

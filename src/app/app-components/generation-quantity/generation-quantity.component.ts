@@ -1,4 +1,13 @@
-import { Component, OnInit, SimpleChanges, AfterViewInit, ViewChild, ElementRef, AfterContentChecked, ChangeDetectorRef  } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  SimpleChanges,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+  AfterContentChecked,
+  ChangeDetectorRef,
+} from '@angular/core';
 
 // Angular Material Datepicker
 import { MatDatepicker } from '@angular/material/datepicker';
@@ -20,41 +29,36 @@ import { InvertorSummary } from 'src/app/models/invertor-summary';
 import { format } from 'date-fns';
 import { OntestUtils } from 'src/app/utils/ontest-utils';
 
-
 @Component({
   selector: 'app-generation-quantity',
   templateUrl: './generation-quantity.component.html',
   styleUrls: ['./generation-quantity.component.scss'],
-  providers: [
-  ],
+  providers: [],
 })
-export class GenerationQuantityComponent implements OnInit, AfterViewInit, AfterContentChecked {
-
-  @ViewChild('barchartMonthly') barchartMonthly! : BarChartComponent;
-  @ViewChild('barchartDaily') barchartDaily! : BarChartComponent;
-  @ViewChild('barchartHourly') barchartHourly! : BarChartComponent;
+export class GenerationQuantityComponent
+  implements OnInit, AfterViewInit, AfterContentChecked
+{
+  @ViewChild('barchartMonthly') barchartMonthly!: BarChartComponent;
+  @ViewChild('barchartDaily') barchartDaily!: BarChartComponent;
+  @ViewChild('barchartHourly') barchartHourly!: BarChartComponent;
 
   // Utils
-  private chartUtil : ChartJsUtils = new ChartJsUtils();
-  private onTestUtil : OntestUtils = new OntestUtils(this.semsService);
+  private chartUtil: ChartJsUtils = new ChartJsUtils();
+  private onTestUtil: OntestUtils = new OntestUtils(this.semsService);
 
   showChart = true;
   pickerStartDate = new Date('2021-10-01');
 
-  viewChart = (show:boolean) => {
-    if(show) {
-      this.showChart = true;
-    } else {
-      this.showChart = false;
-    }
-  }
+  viewChart = (show: boolean) => {
+    this.showChart = !!show;
+  };
 
   startYMat!: Date;
   endYMat!: Date;
 
   control = {
     name: 'monthly',
-    value: new Date()
+    value: new Date(),
   };
 
   // Monthly ----------------------
@@ -66,14 +70,14 @@ export class GenerationQuantityComponent implements OnInit, AfterViewInit, After
   endMaxMonthlyDate!: Date;
   chartMonthlyLabels!: string[];
   tableMonthlyLabels!: string[];
-  tableMonthlyData! : InvertorSummary[];
+  tableMonthlyData!: InvertorSummary[];
 
   // Daily -------------------------
   startDailyDate: Date = new Date();
   startMinDailyDate!: Date;
   startMaxDailyDate!: Date;
   endDailyDate: Date = new Date();
-  endMinDailyDate! : Date;
+  endMinDailyDate!: Date;
   endMaxDailyDate!: Date;
   chartDailyLabels!: string[];
   tableDailyLabels!: string[];
@@ -87,10 +91,13 @@ export class GenerationQuantityComponent implements OnInit, AfterViewInit, After
   tableTimeLabels!: string[];
   tableTimeData!: InvertorSummary[];
 
-  constructor(private semsService: SemsService,
-    private dateAdapter: DateAdapter<any>,
-    private cdRef:ChangeDetectorRef) {
+  site: any;
 
+  constructor(
+    private semsService: SemsService,
+    private dateAdapter: DateAdapter<any>,
+    private cdRef: ChangeDetectorRef
+  ) {
     // Monthly ----------------------
     this.startMinMonthlyDate = this.semsService.getInstalledDate();
     this.startMaxMonthlyDate = moment().toDate();
@@ -98,29 +105,28 @@ export class GenerationQuantityComponent implements OnInit, AfterViewInit, After
     this.endMaxMonthlyDate = this.startMaxMonthlyDate;
     this.startMonthlyDate = this.startMinMonthlyDate;
     this.endMonthlyDate = moment().toDate();
-    
-    
+
     // Daily -------------------------
-    this.startMinDailyDate = this.endMinDailyDate = this.semsService.getInstalledDate();
-    this.startMaxDailyDate = this.endMaxDailyDate = this.endDailyDate = moment().toDate();
+    this.startMinDailyDate = this.endMinDailyDate =
+      this.semsService.getInstalledDate();
+    this.startMaxDailyDate =
+      this.endMaxDailyDate =
+      this.endDailyDate =
+        moment().toDate();
     this.startDailyDate = moment().add(-1, 'M').toDate();
-    
+
     // Time ---------------------------
     this.timeDate = this.maxTimeDate = moment().toDate();
     this.minTimeDate = this.semsService.getInstalledDate();
   }
 
-  site;
-
   ngOnInit(): void {
-    this.semsService.getSite().subscribe(res => {
+    this.semsService.getSite().subscribe((res) => {
       this.site = res;
-    })
+    });
   }
 
-  ngAfterContentChecked(): void {
-      
-  }
+  ngAfterContentChecked(): void {}
 
   ngAfterViewInit(): void {
     // initialize scale on chart
@@ -137,119 +143,185 @@ export class GenerationQuantityComponent implements OnInit, AfterViewInit, After
           display: true,
           position: 'left',
         },
-      }
-    }
-    this.barchartMonthly.addConfigOptions(scalesOption)
-    this.barchartHourly.addConfigOptions(scalesOption)
-    this.barchartDaily.addConfigOptions(scalesOption)
-    
+      },
+    };
+    this.barchartMonthly.addConfigOptions(scalesOption);
+    this.barchartHourly.addConfigOptions(scalesOption);
+    this.barchartDaily.addConfigOptions(scalesOption);
+
     this.cdRef.detectChanges();
 
     // Monthly ---------------------------
     this.updateMonthlyPage();
-   
+
     // Daily -----------------------------
     this.updateDailyPage();
-    
+
     // Hours -----------------------------
     this.updateHourlyPage();
   }
 
-  updateMonthlyPage() : void {
+  // === Distinct color helpers ===========================================
 
-    console.log(this.control);
-    console.log(this.startMonthlyDate);
-    console.log(this.endMonthlyDate);
-    // Chart Label    
-    this.chartMonthlyLabels = [];
-    this.chartMonthlyLabels = DateUtils.getSpanYYMMStringArray(this.endMonthlyDate, this.startMonthlyDate);
-    var dataCount = this.chartMonthlyLabels.length;
-    
-    // Table First Labels
-    this.tableMonthlyLabels = [];
-    this.tableMonthlyLabels.push("인버터");
-    this.tableMonthlyLabels= this.tableMonthlyLabels.concat(this.chartMonthlyLabels);
-    
-    // Chart Data & Table Data ---------------------------------------------
-    // Empty dataset
-    this.barchartMonthly?.resetDataset(); 
-
-    this.semsService.getGenerationQuantityMonthly(this.startMonthlyDate, this.endMonthlyDate)
-      .subscribe(res => {
-        const apiData = res;
-
-        this.tableMonthlyData = this.onTestUtil.syncGenerationGridData(this.chartMonthlyLabels, apiData, 'powerAvg', this.barchartMonthly, 'yy-MM', undefined, undefined, this.site);
-      })
+  /** Golden-angle HSL palette: generates visually distinct colors per index */
+  private getDistinctColor(i: number): string {
+    const GOLDEN_ANGLE = 137.508; // degrees
+    const hue = (i * GOLDEN_ANGLE) % 360;
+    // High saturation/medium lightness works on light/dark UIs
+    return `hsl(${hue} 70% 50%)`;
   }
 
-  async updateDailyPage() : Promise<void> {
+  /** Apply unique colors to all datasets of a BarChartComponent instance */
+  private applyDistinctColors(chartCmp: BarChartComponent): void {
+    // Attempt to access underlying Chart.js instance used by BarChartComponent
+    const chart: any =
+      (chartCmp as any)?.chart ||
+      (chartCmp as any)?._chart ||
+      (chartCmp as any)?.chartRef ||
+      null;
+
+    if (!chart?.data?.datasets) return;
+
+    chart.data.datasets.forEach((ds: any, idx: number) => {
+      const c = this.getDistinctColor(idx);
+      // If dataset already has arrays, replace with solid color string
+      ds.backgroundColor = c;
+      ds.borderColor = c;
+      ds.hoverBackgroundColor = c;
+      ds.hoverBorderColor = c;
+      ds.borderWidth = ds.borderWidth ?? 1;
+    });
+
+    if (typeof chart.update === 'function') {
+      chart.update();
+    }
+  }
+
+  // ======================================================================
+
+  updateMonthlyPage(): void {
     // Chart Label
-    this.chartDailyLabels = [];
-    this.chartDailyLabels = DateUtils.getSpanMonthDayStringArray(this.startDailyDate, this.endDailyDate);
+    this.chartMonthlyLabels = DateUtils.getSpanYYMMStringArray(
+      this.endMonthlyDate,
+      this.startMonthlyDate
+    );
 
     // Table First Labels
-    this.tableDailyLabels = [];
-    this.tableDailyLabels.push("인버터");
-    this.tableDailyLabels= this.tableDailyLabels.concat(this.chartDailyLabels);
+    this.tableMonthlyLabels = ['인버터', ...this.chartMonthlyLabels];
 
     // Chart Data & Table Data ---------------------------------------------
-    // Empty dataset
-    this.barchartDaily.resetDataset(); 
+    this.barchartMonthly?.resetDataset();
 
-    this.semsService.getGenerationQuantityDaily(this.startDailyDate, this.endDailyDate)
-      .subscribe(res => {
+    this.semsService
+      .getGenerationQuantityMonthly(this.startMonthlyDate, this.endMonthlyDate)
+      .subscribe((res) => {
         const apiData = res;
-        console.log(apiData);
 
-        this.tableDailyData = this.onTestUtil.syncGenerationGridData(this.chartDailyLabels, apiData, 'powerAvg', this.barchartDaily, 'MM-dd', undefined, undefined, this.site);
-        console.log(this.tableDailyData);
-      })
+        this.tableMonthlyData = this.onTestUtil.syncGenerationGridData(
+          this.chartMonthlyLabels,
+          apiData,
+          'powerAvg',
+          this.barchartMonthly,
+          'yy-MM',
+          undefined,
+          undefined,
+          this.site
+        );
+
+        // Ensure every inverter (dataset) gets a unique color
+        this.applyDistinctColors(this.barchartMonthly);
+      });
   }
 
-  updateHourlyPage() : void {
-    // Chart Label 
-    this.chartTimeLabels = [];
+  async updateDailyPage(): Promise<void> {
+    // Chart Label
+    this.chartDailyLabels = DateUtils.getSpanMonthDayStringArray(
+      this.startDailyDate,
+      this.endDailyDate
+    );
+
+    // Table First Labels
+    this.tableDailyLabels = ['인버터', ...this.chartDailyLabels];
+
+    // Chart Data & Table Data ---------------------------------------------
+    this.barchartDaily.resetDataset();
+
+    this.semsService
+      .getGenerationQuantityDaily(this.startDailyDate, this.endDailyDate)
+      .subscribe((res) => {
+        const apiData = res;
+
+        this.tableDailyData = this.onTestUtil.syncGenerationGridData(
+          this.chartDailyLabels,
+          apiData,
+          'powerAvg',
+          this.barchartDaily,
+          'MM-dd',
+          undefined,
+          undefined,
+          this.site
+        );
+
+        // Unique colors per dataset
+        this.applyDistinctColors(this.barchartDaily);
+      });
+  }
+
+  updateHourlyPage(): void {
+    // Chart Label
     this.chartTimeLabels = DateUtils.getSpanTimeStringArray();
 
     // Table First Labels
-    this.tableTimeLabels = [];
-    this.tableTimeLabels.push("인버터");
-    this.tableTimeLabels= this.tableTimeLabels.concat(this.chartTimeLabels);
+    this.tableTimeLabels = ['인버터', ...this.chartTimeLabels];
 
     // Chart Data & Table Data ---------------------------------------------
-    var inverterCount = this.semsService.getInverterCount();
-    // Empty dataset
-    this.barchartHourly.resetDataset(); 
+    this.barchartHourly.resetDataset();
 
-    this.semsService.getGenerationQuantityHourly(this.timeDate)
-      .subscribe(res => {
+    this.semsService
+      .getGenerationQuantityHourly(this.timeDate)
+      .subscribe((res) => {
         const apiData = res;
 
-        this.tableTimeData = this.onTestUtil.syncGenerationGridData(this.chartTimeLabels, apiData, 'powerAvg', this.barchartHourly, 'HH', 'hourly', undefined, this.site);
-      })
+        this.tableTimeData = this.onTestUtil.syncGenerationGridData(
+          this.chartTimeLabels,
+          apiData,
+          'powerAvg',
+          this.barchartHourly,
+          'HH',
+          'hourly',
+          undefined,
+          this.site
+        );
+
+        // Unique colors per dataset
+        this.applyDistinctColors(this.barchartHourly);
+      });
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-  }
+  ngOnChanges(changes: SimpleChanges) {}
 
   // Monthly ------------------------------------------------------
   onStartMonthlyYearSelected(normalizedYear: Moment) {
     this.startMonthlyDate.setFullYear(normalizedYear.year());
   }
-  onStartMonthlyMonthSelected(normalizedMonth: Moment, datepicker: MatDatepicker<Date>) {
+  onStartMonthlyMonthSelected(
+    normalizedMonth: Moment,
+    datepicker: MatDatepicker<Date>
+  ) {
     this.startMonthlyDate.setFullYear(normalizedMonth.year());
     this.startMonthlyDate.setMonth(normalizedMonth.month());
     this.startMonthlyDate = new Date(this.startMonthlyDate);
-
     datepicker.close();
   }
 
   onEndMonthlyYearSelected(normalizedYear: Moment) {
     this.endMonthlyDate.setFullYear(normalizedYear.year());
   }
-  onEndMonthlyMonthSelected(normalizedMonth: Moment, datepicker: MatDatepicker<Date>) {
+  onEndMonthlyMonthSelected(
+    normalizedMonth: Moment,
+    datepicker: MatDatepicker<Date>
+  ) {
     this.endMonthlyDate = normalizedMonth.endOf('month').toDate();
-
     datepicker.close();
   }
 
@@ -263,9 +335,7 @@ export class GenerationQuantityComponent implements OnInit, AfterViewInit, After
   }
 
   // Time ------------------------------------------------------------
-
   onHourlyDateSelected(normalizedDate: Moment) {
     this.timeDate = normalizedDate.toDate();
   }
-
 }
