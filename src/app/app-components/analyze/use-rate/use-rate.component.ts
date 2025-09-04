@@ -621,6 +621,7 @@ export class UseRateComponent implements OnInit, AfterViewInit {
       cur = cur.clone().add(1, 'month');
     }
     return result;
+    ``;
   }
 
   downloadToExcel(name: string) {
