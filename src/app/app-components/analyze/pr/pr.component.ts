@@ -1,36 +1,50 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef  } from '@angular/core';
-import {SemsService} from "../../../services/sems-service";
-import {ActivatedRoute} from "@angular/router";
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
+import { SemsService } from '../../../services/sems-service';
 import { Chart, registerables } from 'chart.js';
-import moment from "moment";
-import * as XLSX from "xlsx";
+import moment from 'moment';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-pr',
   templateUrl: './pr.component.html',
-  styleUrls: ['./pr.component.scss']
+  styleUrls: ['./pr.component.scss'],
 })
 export class PrComponent implements OnInit, AfterViewInit {
-  @ViewChild('chart_pr', {static: true}) chart;
+  @ViewChild('chart_pr', { static: true })
+  chartCanvas!: ElementRef<HTMLCanvasElement>;
+  private chart?: Chart;
 
-  colorArray: any = ['rgba(54, 162, 235, 0.8)', 'rgba(255, 99, 132, 0.8)', 'rgba(75,192,134,0.8)',
-    'rgba(255, 159, 64, 0.8)', 'rgba(153, 102, 255, 0.8)', 'rgba(255, 205, 86, 0.8)',
-    'rgba(201, 203, 207, 0.8)', 'rgba(154,235,54,0.8)', 'rgba(236,111,227,0.8)'];
-
-  colorArrayRev: any = ['rgba(236,111,227,0.8)', 'rgba(154,235,54,0.8)', 'rgba(104,110,110,0.8)',
-    'rgba(255, 205, 86, 0.8)', 'rgba(153, 102, 255, 0.8)', 'rgba(255, 159, 64, 0.8)',
-    'rgba(75,192,134,0.8)', 'rgba(255, 99, 132, 0.8)', 'rgba(54, 162, 235, 0.8)'];
-
+  // dates
   startDate: Date = new Date();
   endDate: Date = new Date();
-  startMonthDate: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  tempMonthDate: Date = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
-  endMonthDate: Date = new Date(new Date().getFullYear(), new Date().getMonth(), this.tempMonthDate.getDate());
-  tableHeadData: any = [];
-  tableDayData: any = [];
-  tableData: any = [];
-  gbn = '';
-  dateList: any = [];
+  startMonthDate: Date = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1
+  );
+  private tempMonthDate: Date = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth() + 1,
+    0
+  );
+  endMonthDate: Date = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    this.tempMonthDate.getDate()
+  );
+
+  // table
+  tableHeadData: any[] = [];
+  tableDayData: any[] = [];
+  tableData: any[] = [];
+  gbn: 'time' | 'day' | 'month' | '' = '';
+  dateList: string[] = [];
 
   constructor(private semsService: SemsService) {
     Chart.register(...registerables);
@@ -38,335 +52,444 @@ export class PrComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.radio_input1_click();
-    this.createChart();
+    this.createEmptyChart();
+  }
+  ngAfterViewInit(): void {}
+
+  /** ===== Utilities ===== */
+  private isNumber(v: any): boolean {
+    return v !== null && v !== undefined && !isNaN(+v);
+  }
+  isEnvRow(label: string): boolean {
+    return ['온도', '습도', '풍속', '일사량'].includes(label);
   }
 
-  ngAfterViewInit(): void {
+  /** Distinct palettes for two groups (no overlap) */
+  private genPalette(
+    n: number,
+    opts: { hueStart: number; hueStep?: number; s: number; l: number }
+  ): string[] {
+    if (n <= 0) return [];
+    const step = opts.hueStep ?? Math.max(8, Math.floor(360 / Math.max(1, n)));
+    const out: string[] = [];
+    for (let i = 0; i < n; i++) {
+      const hue = (opts.hueStart + i * step) % 360;
+      out.push(`hsl(${hue}deg, ${opts.s}%, ${opts.l}%)`);
+    }
+    return out;
   }
 
-  createChart() {
-    this.chart = new Chart('chart_pr', {
-      type: 'line',
+  private createEmptyChart() {
+    const cfg: any = {
+      type: 'bar',
       data: {
-        labels: ['00시', '01시', '02시', '03시', '04시', '05시', '06시', '07시', '08시', '09시', '10시', '11시', '12시', '13시', '14시', '15시', '16시', '17시', '18시', '19시', '20시', '21시', '22시', '23시'],
-        datasets: [
-          { label: 'PR', data: [], borderColor: 'rgba(255, 159, 64, 0.8)', backgroundColor: 'rgba(255, 159, 64, 0.8)', yAxisID: 'y2', type: 'line' },
-          { label: '전체 PR', data: [], borderColor: 'rgba(153, 102, 255, 0.8)', backgroundColor: 'rgba(153, 102, 255, 0.8)', yAxisID: 'y3', type: 'line' },
-          { label: '발전량', data: [], borderColor: 'rgba(54, 162, 235, 0.8)', backgroundColor: 'rgba(54, 162, 235, 0.8)', yAxisID: 'y1', type: 'bar' }
-        ]
+        labels: Array.from(
+          { length: 24 },
+          (_, i) => (i < 10 ? `0${i}` : `${i}`) + '시'
+        ),
+        datasets: [],
       },
       options: {
         aspectRatio: 2.5,
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              filter: (item) => !/\(bar\)$/.test(item.text),
+            },
+          },
+          tooltip: {
+            callbacks: {
+              label: (ctx: any) => {
+                // strip " (bar)" from tooltip label
+                const base = String(ctx.dataset.label || '').replace(
+                  /\s*\(bar\)$/,
+                  ''
+                );
+                const y = ctx.parsed.y;
+                if (ctx.dataset.yAxisID === 'y2') return `${base}: ${y}%`;
+                return `${base}: ${y} kWh`;
+              },
+            },
+          },
+        },
+
         scales: {
-          y1: { type: 'linear', display: true, title: {display: true, text: '발전량 kWh', color: 'rgba(54, 162, 235, 0.8)'}, position: 'left' },
-          y2: { type: 'linear', display: true, title: {display: true, text: '전체 PR%', color: 'rgba(255, 159, 64, 0.8)'}, position: 'right' },
-          y3: { type: 'linear', display: true, title: {display: true, text: 'PR%', color: 'rgba(153, 102, 255, 0.8)'}, position: 'right' },
-        }
+          y1: {
+            type: 'linear',
+            position: 'left',
+            title: { display: true, text: '발전량 kWh' },
+          },
+          y2: {
+            type: 'linear',
+            position: 'right',
+            title: { display: true, text: 'PR %' },
+            grid: { drawOnChartArea: false },
+            min: 0,
+          },
+          x: { ticks: { autoSkip: false, maxRotation: 0 } },
+        },
+        datasets: {
+          bar: {
+            // global bar settings for readability
+            categoryPercentage: 0.8,
+            barPercentage: 0.8,
+          },
+        },
       },
-    });
+    };
+    this.chart = new Chart(this.chartCanvas.nativeElement, cfg);
   }
 
+  /** ===== Radios / Date pickers ===== */
   radio_input1_click() {
-    // @ts-ignore
-    document.getElementById('radio_time').checked = true;
-    document.getElementById('date_start').style.display = 'flex';
-    document.getElementById('date_space').style.display = 'none';
-    document.getElementById('date_end').style.display = 'none';
-    document.getElementById('date_start_month').style.display = 'none';
-    document.getElementById('date_end_month').style.display = 'none';
+    (document.getElementById('radio_time') as HTMLInputElement).checked = true;
+    (document.getElementById('date_start') as HTMLElement).style.display =
+      'flex';
+    (document.getElementById('date_space') as HTMLElement).style.display =
+      'none';
+    (document.getElementById('date_end') as HTMLElement).style.display = 'none';
+    (document.getElementById('date_start_month') as HTMLElement).style.display =
+      'none';
+    (document.getElementById('date_end_month') as HTMLElement).style.display =
+      'none';
   }
-
   radio_input2_click() {
-    // @ts-ignore
-    document.getElementById('radio_day').checked = true;
-    document.getElementById('date_start').style.display = '';
-    document.getElementById('date_space').style.display = 'flex';
-
-    document.getElementById('date_start').style.display = 'flex';
-    document.getElementById('date_end').style.display = 'flex';
-    document.getElementById('date_start_month').style.display = 'none';
-    document.getElementById('date_end_month').style.display = 'none';
+    (document.getElementById('radio_day') as HTMLInputElement).checked = true;
+    (document.getElementById('date_space') as HTMLElement).style.display =
+      'flex';
+    (document.getElementById('date_start') as HTMLElement).style.display =
+      'flex';
+    (document.getElementById('date_end') as HTMLElement).style.display = 'flex';
+    (document.getElementById('date_start_month') as HTMLElement).style.display =
+      'none';
+    (document.getElementById('date_end_month') as HTMLElement).style.display =
+      'none';
   }
-
   radio_input3_click() {
-    // @ts-ignore
-    document.getElementById('radio_month').checked = true;
-    document.getElementById('date_start').style.display = '';
-    document.getElementById('date_space').style.display = 'flex';
-
-    document.getElementById('date_start').style.display = 'none';
-    document.getElementById('date_end').style.display = 'none';
-    document.getElementById('date_start_month').style.display = 'flex';
-    document.getElementById('date_end_month').style.display = 'flex';
+    (document.getElementById('radio_month') as HTMLInputElement).checked = true;
+    (document.getElementById('date_space') as HTMLElement).style.display =
+      'flex';
+    (document.getElementById('date_start') as HTMLElement).style.display =
+      'none';
+    (document.getElementById('date_end') as HTMLElement).style.display = 'none';
+    (document.getElementById('date_start_month') as HTMLElement).style.display =
+      'flex';
+    (document.getElementById('date_end_month') as HTMLElement).style.display =
+      'flex';
   }
 
   onStartDaySelected(normalizedDate: any) {
     this.startDate = normalizedDate.toDate();
   }
-
   onEndDaySelected(normalizedDate: any) {
     this.endDate = normalizedDate.toDate();
   }
-
   onStartMonthSelected(normalizedYear: any) {
     this.startMonthDate.setFullYear(normalizedYear.year());
   }
-
   onStartMonthMonthSelected(normalizedMonth: any, datepicker: any) {
     this.startMonthDate.setFullYear(normalizedMonth.year());
     this.startMonthDate.setMonth(normalizedMonth.month());
-    this.startMonthDate = new Date(this.startMonthDate.getFullYear(), this.startMonthDate.getMonth(), 1);
-
+    this.startMonthDate = new Date(
+      this.startMonthDate.getFullYear(),
+      this.startMonthDate.getMonth(),
+      1
+    );
     datepicker.close();
   }
-
   onEndMonthSelected(normalizedYear: any) {
     this.endMonthDate.setFullYear(normalizedYear.year());
   }
-
   onEndMonthMonthSelected(normalizedMonth: any, datepicker: any) {
     this.endMonthDate.setFullYear(normalizedMonth.year());
     this.endMonthDate.setMonth(normalizedMonth.month());
-
-    let tempDate = new Date(this.endMonthDate.getFullYear(), normalizedMonth.month() + 1, 0);
-    this.endMonthDate = new Date(this.endMonthDate.getFullYear(), normalizedMonth.month(), tempDate.getDate());
-
+    const tempDate = new Date(
+      this.endMonthDate.getFullYear(),
+      normalizedMonth.month() + 1,
+      0
+    );
+    this.endMonthDate = new Date(
+      this.endMonthDate.getFullYear(),
+      normalizedMonth.month(),
+      tempDate.getDate()
+    );
     datepicker.close();
   }
 
+  /** ===== Main search ===== */
   search_click() {
-    let gbn;
-    let startDate;
-    let endDate;
+    let gbn: 'time' | 'day' | 'month' = 'time';
+    let startDate: string;
+    let endDate: string;
 
+    const isTime = (document.getElementById('radio_time') as HTMLInputElement)
+      .checked;
+    const isDay = (document.getElementById('radio_day') as HTMLInputElement)
+      .checked;
 
-    // @ts-ignore
-    if(document.getElementById('radio_time').checked) {
+    if (isTime) {
       gbn = 'time';
-      startDate =  moment(this.startDate).format('YYYYMMDD');
+      startDate = moment(this.startDate).format('YYYYMMDD');
       endDate = moment(this.startDate).add(1, 'days').format('YYYYMMDD');
-      // @ts-ignore
-    } else if (document.getElementById('radio_day').checked) {
+    } else if (isDay) {
       gbn = 'day';
       startDate = moment(this.startDate).format('YYYYMMDD');
       endDate = moment(this.endDate).add(1, 'days').format('YYYYMMDD');
-      // @ts-ignore
-    } else if (document.getElementById('radio_month').checked) {
+    } else {
       gbn = 'month';
       startDate = moment(this.startMonthDate).format('YYYYMMDD');
       endDate = moment(this.endMonthDate).add(1, 'days').format('YYYYMMDD');
     }
 
-    this.semsService.getAnalyzePrInfo(gbn, startDate, endDate).subscribe(res => {
-      console.log(res);
+    this.semsService
+      .getAnalyzePrInfo(gbn, startDate, endDate)
+      .subscribe((res) => {
+        // Reset table + state
+        this.tableHeadData = [];
+        this.tableData = [];
+        this.gbn = gbn;
 
-      this.tableHeadData = [];
-      this.tableData = [];
-      this.chart.destroy();
+        const cfg: any = {
+          type: 'bar',
+          data: { labels: [], datasets: [] },
+          options: {
+            aspectRatio: 2.5,
+            responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: {
+                  filter: (item) => !/\(bar\)$/.test(item.text),
+                },
+              },
+              tooltip: {
+                callbacks: {
+                  label: (ctx: any) => {
+                    // strip " (bar)" from tooltip label
+                    const base = String(ctx.dataset.label || '').replace(
+                      /\s*\(bar\)$/,
+                      ''
+                    );
+                    const y = ctx.parsed.y;
+                    if (ctx.dataset.yAxisID === 'y2') return `${base}: ${y}%`;
+                    return `${base}: ${y} kWh`;
+                  },
+                },
+              },
+            },
 
-      let chartObject: any = {
-        type: 'line',
-        data: {
-          labels: [],
-          datasets: []
-        },
-        options: {
-          aspectRatio: 2.5,
-          scales: {
-            y1: { type: 'linear', display: true, title: {display: true, text: '발전량 kWh', color: 'rgba(54, 162, 235, 0.8)'}, position: 'left' },
-            y2: { type: 'linear', display: true, title: {display: true, text: 'PR %', color: 'rgba(255, 159, 64, 0.8)'}, position: 'right' }
-          }
-        },
-      }
+            scales: {
+              y1: {
+                type: 'linear',
+                position: 'left',
+                title: { display: true, text: '발전량 kWh' },
+              },
+              y2: {
+                type: 'linear',
+                position: 'right',
+                title: { display: true, text: 'PR %' },
+                grid: { drawOnChartArea: false },
+                min: 0,
+              },
+              x: { ticks: { autoSkip: false, maxRotation: 0 } },
+            },
+          },
+        };
 
-      if (gbn === 'time') {
-        this.gbn = 'time';
-        chartObject.data.labels = ['00시', '01시', '02시', '03시', '04시', '05시', '06시', '07시', '08시', '09시', '10시', '11시', '12시', '13시', '14시', '15시', '16시', '17시', '18시', '19시', '20시', '21시', '22시', '23시'];
-
-        let titleList = [];
-
-        for (let i of res[0]) {
-          if (!titleList.includes(i[1])) {
-            titleList.push(i[1]);
-          }
-        }
-
-        let invObject = {};
-        let prObject = {};
-        for (let title of titleList) {
-          let tempList1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-          let tempList2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-          for (let i of res[0]) {
-            if (title === i[1]) {
-              tempList1[i[0]] = i[2];
-            }
-          }
-
-          for (let i of res[1]) {
-            if (title === i[1]) {
-              tempList2[i[0]] = i[2];
-            }
-          }
-
-          invObject[title] = tempList1;
-          prObject[title] = tempList2;
-        }
-
-        for (let i=0; i<Object.keys(invObject).length; i++) {
-          this.tableHeadData.push(Object.keys(invObject)[i] + " 발전량");
-          this.tableData.push(invObject[Object.keys(invObject)[i]]);
-          chartObject.data.datasets.push({ label: Object.keys(invObject)[i] + " 발전량", data: invObject[Object.keys(invObject)[i]], borderColor: this.colorArray[i], backgroundColor: this.colorArray[i], yAxisID: 'y1', type: 'bar' })
-        }
-
-        let totalList = [];
-        for (let i=0; i<Object.keys(prObject).length; i++) {
-          totalList.push(prObject[Object.keys(prObject)[i]]);
-        }
-
-        const maxLength = Math.max(...totalList.map(list => list.length));
-
-        const sumList = Array.from({ length: maxLength }, (_, i) =>
-          totalList.reduce((acc, list) => Math.round((acc + list[i]) * 1000000) / 1000000, 0)
-        );
-
-        prObject["전체"] = sumList;
-
-        for (let i=0; i<Object.keys(prObject).length; i++) {
-          this.tableHeadData.push(Object.keys(prObject)[i] + " PR");
-          this.tableData.push(prObject[Object.keys(prObject)[i]]);
-          chartObject.data.datasets.push({ label: Object.keys(prObject)[i] + " PR", data: prObject[Object.keys(prObject)[i]], borderColor: this.colorArrayRev[i], backgroundColor: this.colorArrayRev[i], yAxisID: 'y2', type: 'line' })
-        }
-
-      } else if (gbn === 'day' || gbn == 'month') {
-        if (gbn === 'day') {
-          this.gbn = 'day';
-          startDate =  moment(this.startDate).format('YYYY-MM-DD');
-          endDate = moment(this.endDate).format('YYYY-MM-DD');
-          this.dateList = this.getDatesStartToLast(startDate, endDate);
-          chartObject.data.labels = this.dateList;
-          this.tableDayData = this.dateList;
+        // Labels
+        if (gbn === 'time') {
+          cfg.data.labels = Array.from(
+            { length: 24 },
+            (_, i) => (i < 10 ? `0${i}` : `${i}`) + '시'
+          );
+          // keep a synthetic list to reuse indexing logic
+          this.dateList = cfg.data.labels.map((l) => l.replace('시', ''));
+        } else if (gbn === 'day') {
+          const s = moment(this.startDate).format('YYYY-MM-DD');
+          const e = moment(this.endDate).format('YYYY-MM-DD');
+          this.dateList = this.getDatesStartToLast(s, e);
+          cfg.data.labels = this.dateList.slice();
         } else {
-          this.gbn = 'month';
-          startDate =  moment(this.startMonthDate).format('YYYY-MM');
-          endDate = moment(this.endMonthDate).format('YYYY-MM');
-          this.dateList = this.getMonthDatesStartToLast(startDate, endDate);
-          chartObject.data.labels = this.dateList;
-          this.tableDayData = this.dateList;
+          const s = moment(this.startMonthDate).format('YYYY-MM');
+          const e = moment(this.endMonthDate).format('YYYY-MM');
+          this.dateList = this.getMonthDatesStartToLast(s, e);
+          cfg.data.labels = this.dateList.slice();
         }
 
-        let titleList = [];
+        // Build UNION of titles from both res[0] (gen) and res[1] (PR)
+        const titleSet = new Set<string>();
+        for (const r of res?.[0] ?? []) titleSet.add(String(r[1]));
+        for (const r of res?.[1] ?? []) titleSet.add(String(r[1]));
+        const titles = Array.from(titleSet);
 
-        for (let i of res[0]) {
-          if (!titleList.includes(i[1])) {
-            titleList.push(i[1]);
+        // Prepare series containers for ALL titles
+        const count = cfg.data.labels.length;
+        const invObj: Record<string, number[]> = {};
+        const prObj: Record<string, number[]> = {};
+        titles.forEach((t) => {
+          invObj[t] = Array(count).fill(0);
+          prObj[t] = Array(count).fill(0);
+        });
+
+        // Index resolver
+        const resolveIndex = (x: any): number => {
+          if (gbn === 'time') {
+            const num = parseInt(String(x), 10);
+            return Number.isFinite(num) && num >= 0 && num < count ? num : -1;
           }
+          const key = String(x);
+          return this.dateList.indexOf(key);
+        };
+
+        // Fill 발전량
+        for (const r of res?.[0] ?? []) {
+          const idx = resolveIndex(r[0]);
+          const t = String(r[1]);
+          if (idx >= 0 && this.isNumber(r[2]) && invObj[t])
+            invObj[t][idx] = +r[2];
         }
 
-        let invObject = {};
-        let prObject = {};
-        for (let title of titleList) {
-          let tempList1 = [];
-          let tempList2 = [];
-
-          for (let i of this.dateList) {
-            tempList1.push(0);
-            tempList2.push(0);
-          }
-
-          for (let i of res[0]) {
-            if (title === i[1]) {
-              tempList1[this.dateList.indexOf(i[0])] = i[2];
-            }
-          }
-
-          for (let i of res[1]) {
-            if (title === i[1]) {
-              tempList2[this.dateList.indexOf(i[0])] = i[2];
-            }
-          }
-
-          invObject[title] = tempList1;
-          prObject[title] = tempList2;
+        // Fill PR
+        for (const r of res?.[1] ?? []) {
+          const idx = resolveIndex(r[0]);
+          const t = String(r[1]);
+          if (idx >= 0 && this.isNumber(r[2]) && prObj[t])
+            prObj[t][idx] = +r[2];
         }
 
-        for (let i=0; i<Object.keys(invObject).length; i++) {
-          this.tableHeadData.push(Object.keys(invObject)[i] + " 발전량");
-          this.tableData.push(invObject[Object.keys(invObject)[i]]);
-          chartObject.data.datasets.push({ label: Object.keys(invObject)[i] + " 발전량", data: invObject[Object.keys(invObject)[i]], borderColor: this.colorArray[i], backgroundColor: this.colorArray[i], yAxisID: 'y1', type: 'bar' })
-        }
-
-        let totalList = [];
-        for (let i=0; i<Object.keys(prObject).length; i++) {
-          totalList.push(prObject[Object.keys(prObject)[i]]);
-        }
-
-        const maxLength = Math.max(...totalList.map(list => list.length));
-
-        const sumList = Array.from({ length: maxLength }, (_, i) =>
-          totalList.reduce((acc, list) => Math.round((acc + list[i]) * 1000000) / 1000000, 0)
+        // Compute 전체 PR as sum of individual PR series
+        const prLists = Object.keys(prObj).map((k) => prObj[k]);
+        const total = Array.from({ length: count }, (_, i) =>
+          prLists.reduce(
+            (acc, arr) => Math.round((acc + (arr[i] ?? 0)) * 1e6) / 1e6,
+            0
+          )
         );
+        prObj['전체'] = total;
 
-        prObject["전체"] = sumList;
+        // Colors (no overlap between power-gen vs PR)
+        const barColorsPower = this.genPalette(titles.length, {
+          hueStart: 210,
+          s: 70,
+          l: 55,
+        }); // 발전량
+        const prKeys = Object.keys(prObj); // includes '전체'
+        const prColors = this.genPalette(prKeys.length, {
+          hueStart: 20,
+          s: 70,
+          l: 45,
+        }); // PR bars & lines
 
-        for (let i=0; i<Object.keys(prObject).length; i++) {
-          this.tableHeadData.push(Object.keys(prObject)[i] + " PR");
-          this.tableData.push(prObject[Object.keys(prObject)[i]]);
-          chartObject.data.datasets.push({ label: Object.keys(prObject)[i] + " PR", data: prObject[Object.keys(prObject)[i]], borderColor: this.colorArrayRev[i], backgroundColor: this.colorArrayRev[i], yAxisID: 'y2', type: 'line' })
-        }
-      }
+        // ===== TABLE + DATASETS ORDER =====
+        // 1) All 발전량 (bars) first
+        titles.forEach((t, i) => {
+          this.tableHeadData.push(`${t} 발전량`);
+          this.tableData.push(invObj[t]);
 
-      console.log(chartObject);
-      this.chart = new Chart('chart_pr', chartObject);
-    });
-  }
+          cfg.data.datasets.push({
+            label: `${t} 발전량`,
+            data: invObj[t],
+            yAxisID: 'y1',
+            type: 'bar',
+            backgroundColor: barColorsPower[i],
+            borderColor: barColorsPower[i],
+            borderWidth: 1,
+            order: 1, // draw first
+            maxBarThickness: 26,
+          });
+        });
 
-  getDatesStartToLast(startDate, lastDate) {
-    let regex = RegExp(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/);
-    if(!(regex.test(startDate) && regex.test(lastDate))) return "Not Date Format";
-    let result = [];
-    let curDate = new Date(startDate);
-    while(curDate <= new Date(lastDate)) {
-      result.push(curDate.toISOString().split("T")[0]);
-      curDate.setDate(curDate.getDate() + 1);
-    }
-    return result;
-  }
+        // 2) PR as BARS (added, thinner bars)
+        prKeys.forEach((t, i) => {
+          // NOTE: Do not add extra table rows; table already shows PR once (as lines section below).
+          cfg.data.datasets.push({
+            label: `${t} PR (bar)`,
+            data: prObj[t],
+            yAxisID: 'y2',
+            type: 'bar',
+            backgroundColor: prColors[i],
+            borderColor: prColors[i],
+            borderWidth: 1,
+            order: 2, // drawn after power bars
+            maxBarThickness: 14, // thinner than power bars for legibility
+          });
+        });
 
-  getMonthDatesStartToLast(startDate, lastDate) {
-    let regex = RegExp(/^\d{4}-(0[1-9]|1[012])$/);
-    if(!(regex.test(startDate) && regex.test(lastDate))) return "Not Date Format";
-    let result = [];
-    let curDate = new Date(startDate);
-    while(curDate <= new Date(lastDate)) {
-      result.push(moment(curDate).format('YYYY-MM'));
-      curDate.setMonth(curDate.getMonth() + 1);
-    }
-    return result;
-  }
+        // 3) PR as LINES (kept)
+        prKeys.forEach((t, i) => {
+          this.tableHeadData.push(`${t} PR`);
+          this.tableData.push(prObj[t]);
 
-  downloadToExcel(name: string) {
-    let tableList = Array.prototype.map.call(document.querySelectorAll('#table tr'), function(tr){
-      return Array.prototype.map.call(tr.querySelectorAll('td'), function(td){
-        return td.innerHTML;
+          cfg.data.datasets.push({
+            label: `${t} PR`,
+            data: prObj[t],
+            yAxisID: 'y2',
+            type: 'line',
+            borderColor: prColors[i],
+            backgroundColor: prColors[i],
+            tension: 0.3,
+            pointRadius: 2,
+            borderWidth: 2,
+            order: 3, // drawn on top
+          });
+        });
+
+        // (Re)draw
+        if (this.chart) this.chart.destroy();
+        this.chart = new Chart(this.chartCanvas.nativeElement, cfg);
       });
-    });
+  }
 
-    let { sheetName, fileName } = this.getFileName(name);
+  /** Date helpers always return arrays */
+  getDatesStartToLast(startDate: string, lastDate: string): string[] {
+    const regex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
+    if (!regex.test(startDate) || !regex.test(lastDate)) return [];
+    const result: string[] = [];
+    const cur = new Date(startDate);
+    const end = new Date(lastDate);
+    while (cur <= end) {
+      result.push(cur.toISOString().split('T')[0]);
+      cur.setDate(cur.getDate() + 1);
+    }
+    return result;
+  }
+  getMonthDatesStartToLast(startDate: string, lastDate: string): string[] {
+    const regex = /^\d{4}-(0[1-9]|1[0-2])$/;
+    if (!regex.test(startDate) || !regex.test(lastDate)) return [];
+    const result: string[] = [];
+    let cur = new Date(startDate + '-01');
+    const end = new Date(lastDate + '-01');
+    while (cur <= end) {
+      result.push(moment(cur).format('YYYY-MM'));
+      cur.setMonth(cur.getMonth() + 1);
+    }
+    return result;
+  }
 
-    let wb = XLSX.utils.book_new();
-    let ws = XLSX.utils.json_to_sheet(tableList);
+  /** Export table to Excel */
+  downloadToExcel(name: string) {
+    const rows = Array.prototype.map.call(
+      document.querySelectorAll('#table tr'),
+      (tr: HTMLTableRowElement) =>
+        Array.prototype.map.call(
+          tr.querySelectorAll('td'),
+          (td: HTMLTableCellElement) => td.innerText
+        )
+    );
+    const { sheetName, fileName } = this.getFileName(name);
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(rows);
     XLSX.utils.book_append_sheet(wb, ws, sheetName);
     XLSX.writeFile(wb, `${fileName}.xlsx`);
   }
-
-  getFileName(name: string) {
-    let timeSpan = new Date().toISOString();
-    let sheetName = name || "ExportResult";
-    let fileName = `${sheetName}-${timeSpan}`;
-    return {
-      sheetName,
-      fileName
-    };
-  };
+  private getFileName(name: string) {
+    const timeSpan = new Date().toISOString();
+    const sheetName = name || 'ExportResult';
+    const fileName = `${sheetName}-${timeSpan}`;
+    return { sheetName, fileName };
+  }
 }

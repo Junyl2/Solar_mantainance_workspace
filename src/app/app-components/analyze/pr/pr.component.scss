@@ -2,7 +2,7 @@
 
 .main {
   padding: 10px 10px 0 10px;
-  position:  relative;
+  position: relative;
 }
 
 .box {
@@ -122,7 +122,7 @@
 .download_btn {
   padding: 2px 0px 0px 0px;
   border: none;
-  width:100px;
+  width: 100px;
   height: 30px;
   color: white;
   background: #4e4e4e;
@@ -189,19 +189,19 @@
 .data_box1 {
   display: flex;
   align-items: center;
-  background: rgba(0,0,0,.04);
+  background: rgba(0, 0, 0, .04);
 }
 
 .data_box2 {
   display: none;
   align-items: center;
-  background: rgba(0,0,0,.04);
+  background: rgba(0, 0, 0, .04);
 }
 
 .data_month_box {
   display: none;
   align-items: center;
-  background: rgba(0,0,0,.04);
+  background: rgba(0, 0, 0, .04);
 }
 
 .data_input {
@@ -209,4 +209,72 @@
   background: rgb(0 0 0 / 0%);
   padding-left: 20px;
   width: 140px;
+}
+
+/* Make legend sit ABOVE the canvas (stacked column) */
+.box2_chart_box {
+  display: flex;
+  flex-direction: column;
+  /* ⬅️ was row by default */
+  align-items: center;
+  /* center legend + canvas */
+  padding: 10px;
+}
+
+/* Keep widths aligned with your chart */
+.legend {
+  width: 85%;
+  /* match .chart width */
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 10px 8px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.legend-title {
+  color: #555;
+  margin-right: 6px;
+  font-weight: 600;
+}
+
+/* Legend chips: one line per chip, no character wrapping */
+.legend-items {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.legend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #444;
+  white-space: nowrap;
+  /* ⬅️ prevents Korean labels from breaking per character */
+  cursor: pointer;
+  user-select: none;
+}
+
+.legend-chip.hidden {
+  opacity: 0.4;
+}
+
+.legend-swatch {
+  width: 16px;
+  height: 10px;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, .2);
+}
+
+/* keep your existing .chart width rule */
+.chart {
+  width: 85%;
 }
