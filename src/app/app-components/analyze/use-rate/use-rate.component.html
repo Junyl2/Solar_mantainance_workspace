@@ -132,6 +132,12 @@
         </div>
       </div>
 
+      <!-- Custom split legend (same placement/layout as PR) -->
+      <div class="legend-wrap">
+        <span #legendGen></span>
+        <span #legendRate></span>
+      </div>
+
       <div class="box2">
         <div class="box2_chart_box" id="box2_chart_box">
           <!-- Horizontal scroll wrapper; fixed-height viewport prevents vertical growth -->
@@ -148,7 +154,8 @@
           <div class="table-scroll">
             <table id="table" class="table">
               <tr class="table_tr">
-                <td class="table_td_header">구분</td>
+                <!-- sticky first header cell -->
+                <td class="table_td_header sticky-col">구분</td>
 
                 <!-- TIME HEADER -->
                 <ng-container *ngIf="gbn === 'time'; else dateHeader">
@@ -191,6 +198,7 @@
               <!-- BODY -->
               <ng-container *ngFor="let row of tableData; index as i">
                 <tr class="table_tr">
+                  <!-- sticky first column -->
                   <td class="table_td sticky-col">{{ tableHeadData[i] }}</td>
 
                   <!-- Exactly one <td> per column (either kWh or %) -->

@@ -1,4 +1,3 @@
-// pr.component.ts
 import {
   Component,
   OnInit,
@@ -31,28 +30,26 @@ export class PrComponent implements OnInit, AfterViewInit {
 
   // Bars palette (발전량)
   colorArray: string[] = [
-    'rgba(54, 162, 235, 0.8)',
-    'rgba(255, 99, 132, 0.8)',
-    'rgba(75,192,134, 0.8)',
-    'rgba(255, 159, 64,  0.8)',
-    'rgba(153, 102, 255, 0.8)',
-    'rgba(255, 205, 86,  0.8)',
-    'rgba(201, 203, 207, 0.8)',
-    'rgba(154, 235, 54,  0.8)',
-    'rgba(236, 111, 227, 0.8)',
+    'rgba(33, 150, 243, 0.85)',
+    'rgba(0, 188, 212, 0.85)',
+    'rgba(0, 150, 136, 0.85)',
+    'rgba(76, 175, 80, 0.85)',
+    'rgba(63, 81, 181, 0.85)',
+    'rgba(3, 169, 244, 0.85)',
+    'rgba(2, 136, 209, 0.85)',
+    'rgba(0, 121, 107, 0.85)',
   ];
 
   // PR palette (distinct from bars)
   prColors: string[] = [
-    'rgba(20, 120, 200, 1.0)', // deep blue
-    'rgba(220, 60, 90, 1.0)', // crimson
-    'rgba(40, 160, 110, 1.0)', // teal
-    'rgba(230, 130, 20, 1.0)', // burnt orange
-    'rgba(110, 70, 220, 1.0)', // indigo
-    'rgba(200, 170, 30, 1.0)', // mustard
-    'rgba(120, 120, 130, 1.0)', // charcoal
-    'rgba(100, 190, 40, 1.0)', // olive
-    'rgba(200, 80, 190, 1.0)', // magenta
+    'rgba(255, 112, 67, 1.0)',
+    'rgba(244, 81, 30, 1.0)',
+    'rgba(255, 167, 38, 1.0)',
+    'rgba(233, 30, 99, 1.0)',
+    'rgba(194, 24, 91, 1.0)',
+    'rgba(156, 39, 176, 1.0)',
+    'rgba(255, 82, 82, 1.0)',
+    'rgba(255, 202, 40, 1.0)',
   ];
 
   startDate: Date = new Date();

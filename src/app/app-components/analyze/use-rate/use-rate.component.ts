@@ -1,4 +1,10 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { SemsService } from '../../../services/sems-service';
 import { Chart, registerables } from 'chart.js';
 import moment from 'moment';
@@ -10,30 +16,36 @@ import * as XLSX from 'xlsx';
   styleUrls: ['./use-rate.component.scss'],
 })
 export class UseRateComponent implements OnInit, AfterViewInit {
-  @ViewChild('chart_use_rate', { static: true }) chart;
+  @ViewChild('chart_use_rate', { static: true }) chart: any;
 
-  colorArray: any = [
-    'rgba(54, 162, 235, 0.8)',
-    'rgba(255, 99, 132, 0.8)',
-    'rgba(75,192,134,0.8)',
-    'rgba(255, 159, 64, 0.8)',
-    'rgba(153, 102, 255, 0.8)',
-    'rgba(255, 205, 86, 0.8)',
-    'rgba(104,110,110,0.8)',
-    'rgba(154,235,54,0.8)',
-    'rgba(236,111,227,0.8)',
+  // Split-legend containers (same layout/placement as PR)
+  @ViewChild('legendGen', { static: true })
+  legendGen!: ElementRef<HTMLSpanElement>;
+  @ViewChild('legendRate', { static: true })
+  legendRate!: ElementRef<HTMLSpanElement>;
+
+  // Cool tones for 발전량 (bars)
+  colorArray: string[] = [
+    'rgba(33, 150, 243, 0.85)',
+    'rgba(0, 188, 212, 0.85)',
+    'rgba(0, 150, 136, 0.85)',
+    'rgba(76, 175, 80, 0.85)',
+    'rgba(63, 81, 181, 0.85)',
+    'rgba(3, 169, 244, 0.85)',
+    'rgba(2, 136, 209, 0.85)',
+    'rgba(0, 121, 107, 0.85)',
   ];
 
-  colorArrayRev: any = [
-    'rgba(236,111,227,0.8)',
-    'rgba(154,235,54,0.8)',
-    'rgba(104,110,110,0.8)',
-    'rgba(255, 205, 86, 0.8)',
-    'rgba(153, 102, 255, 0.8)',
-    'rgba(255, 159, 64, 0.8)',
-    'rgba(75,192,134,0.8)',
-    'rgba(255, 99, 132, 0.8)',
-    'rgba(54, 162, 235, 0.8)',
+  // Warm / vivid tones for 이용률 (lines)
+  colorArrayRev: string[] = [
+    'rgba(255, 112, 67, 1.0)',
+    'rgba(244, 81, 30, 1.0)',
+    'rgba(255, 167, 38, 1.0)',
+    'rgba(233, 30, 99, 1.0)',
+    'rgba(194, 24, 91, 1.0)',
+    'rgba(156, 39, 176, 1.0)',
+    'rgba(255, 82, 82, 1.0)',
+    'rgba(255, 202, 40, 1.0)',
   ];
 
   startDate: Date = new Date();
@@ -70,53 +82,45 @@ export class UseRateComponent implements OnInit, AfterViewInit {
   }
   ngAfterViewInit(): void {}
 
-  /** Used by the template to check emptiness safely */
+  /** Helpers */
   isNonZero(v: any): boolean {
     const n = Number(v);
     return Number.isFinite(n) && n !== 0;
   }
-
-  /** Format number to up to 6 decimals (usage rates) */
   private toFixed6(n: any) {
     const num = Number(n);
     return Number.isFinite(num) ? Number(num.toFixed(6)) : 0;
   }
-
-  /** Build a sparse x-axis to prevent tall bottom area when labels are many */
   private buildXAxis(labels: string[]) {
-    const step = Math.max(1, Math.ceil(labels.length / 12)); // render ~12 labels
+    const step = Math.max(1, Math.ceil(labels.length / 12));
     return {
       ticks: {
         autoSkip: false,
         maxRotation: 0,
-        callback: (_: any, index: number) =>
-          index % step === 0 ? labels[index] : '',
+        callback: (_: any, idx: number) =>
+          idx % step === 0 ? labels[idx] : '',
       },
       grid: { drawTicks: true },
     };
   }
-
-  /** Canvas width scales with label count → scroll horizontally instead of shrinking */
   private sizeCanvasToLabels(labels: string[]) {
-    const perLabelPx = 70; // size label in chart
+    const perLabelPx = 70;
     const minWidthPx = 900;
     const canvasEl = document.getElementById(
       'chart_use_rate'
     ) as HTMLCanvasElement | null;
     if (!canvasEl) return;
     const targetWidth = Math.max(minWidthPx, labels.length * perLabelPx);
-    canvasEl.style.width = `${targetWidth}px`; // height is locked in CSS
+    canvasEl.style.width = `${targetWidth}px`;
   }
-
-  /** Average by column across arrays, keeping 6 decimals */
   private averageColumns(lists: number[]): number[];
   private averageColumns(lists: number[][]): number[];
   private averageColumns(lists: any): number[] {
     const arrs: number[][] = lists ?? [];
     const maxLength = arrs.length ? Math.max(...arrs.map((l) => l.length)) : 0;
     return Array.from({ length: maxLength }, (_, idx) => {
-      let sum = 0;
-      let count = 0;
+      let sum = 0,
+        count = 0;
       for (const list of arrs) {
         const v = Number(list[idx]);
         if (!Number.isNaN(v)) {
@@ -127,8 +131,6 @@ export class UseRateComponent implements OnInit, AfterViewInit {
       return count ? this.toFixed6(sum / count) : 0;
     });
   }
-
-  /** Normalizers keep inbound data aligned with headers */
   private normHour(tp: any): number | null {
     const m = String(tp).match(/\d{1,2}/);
     if (!m) return null;
@@ -167,7 +169,123 @@ export class UseRateComponent implements OnInit, AfterViewInit {
       );
     return mth.isValid() ? mth.format('YYYY-MM') : String(tp);
   }
+  /** Replace "인버터" with "-" and tidy up dashes/spaces */
+  private cleanName(raw: string): string {
+    return String(raw ?? '')
+      .replace(/인버터/g, '-') // 201인버터1 -> 201-1
+      .replace(/--+/g, '-') // collapse multiple dashes
+      .replace(/^\-+|\-+$/g, '') // trim leading/trailing dashes
+      .trim();
+  }
+  private withAlpha(rgba: string, alpha: number): string {
+    const m = rgba.match(
+      /rgba?\s*\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/i
+    );
+    if (!m) return rgba;
+    return `rgba(${m[1]}, ${m[2]}, ${m[3]}, ${alpha})`;
+  }
 
+  /** Custom split legend (bars solid tile; lines pill with hatch) */
+  private splitLegendPlugin = {
+    id: 'splitLegendUseRate',
+    afterUpdate: (chart: Chart) => {
+      const anyOpts: any = chart.options as any;
+      const genEl = anyOpts.containers?.gen as HTMLElement;
+      const rateEl = anyOpts.containers?.rate as HTMLElement;
+      if (!genEl || !rateEl) return;
+
+      [genEl, rateEl].forEach((el) => {
+        el.innerHTML = '';
+        el.style.display = 'flex';
+        el.style.flexWrap = 'wrap';
+        el.style.alignItems = 'center';
+        el.style.gap = '8px 16px';
+        el.style.marginBottom = '6px';
+      });
+
+      const items = (
+        Chart.defaults.plugins.legend.labels as any
+      ).generateLabels(chart);
+      items.forEach((item: any) => {
+        const ds: any = chart.data.datasets[item.datasetIndex];
+        const isBar = ds.type === 'bar';
+        const target = isBar ? genEl : rateEl;
+
+        const wrap = document.createElement('span');
+        wrap.style.display = 'inline-flex';
+        wrap.style.alignItems = 'center';
+        wrap.style.gap = '8px';
+        wrap.style.cursor = 'pointer';
+        wrap.style.margin = '4px 16px 4px 0';
+
+        const sw = document.createElement('span');
+        sw.style.display = 'inline-block';
+        sw.style.width = '28px';
+        sw.style.height = '12px';
+
+        if (isBar) {
+          const bg = (ds.backgroundColor as string) || item.fillStyle || '#999';
+          sw.style.background = bg;
+          sw.style.border = '2px solid transparent';
+          sw.style.borderRadius = '2px';
+        } else {
+          const color =
+            (ds.borderColor as string) || item.strokeStyle || '#666';
+          sw.style.background = color; // solid fill
+          sw.style.border = '2px solid transparent';
+          sw.style.borderRadius = '2px'; // rectangular, not pill
+        }
+
+        const lbl = document.createElement('span');
+        lbl.textContent = item.text;
+        lbl.style.textDecoration = item.hidden ? 'line-through' : 'none';
+        lbl.style.opacity = item.hidden ? '0.6' : '1';
+
+        wrap.onclick = () => {
+          const ci: any = chart;
+          const meta = ci.getDatasetMeta(item.datasetIndex);
+          meta.hidden =
+            meta.hidden === null
+              ? !ci.data.datasets[item.datasetIndex].hidden
+              : null;
+          lbl.style.textDecoration = meta.hidden ? 'line-through' : 'none';
+          lbl.style.opacity = meta.hidden ? '0.6' : '1';
+          ci.update();
+        };
+
+        wrap.appendChild(sw);
+        wrap.appendChild(lbl);
+        target.appendChild(wrap);
+      });
+    },
+  };
+
+  /** Base styling for ALL line datasets (dots visible) */
+  private lineStyle(color: string, dashed = false) {
+    return {
+      type: 'line' as const,
+      yAxisID: 'y2',
+      order: 10, // draw above bars
+      borderColor: color,
+      backgroundColor: color,
+      borderWidth: 3,
+      pointRadius: 3, // <-- visible dots
+      pointHoverRadius: 6,
+      pointHitRadius: 10,
+      pointStyle: 'circle' as const,
+      pointBackgroundColor: color,
+      pointBorderColor: '#ffffff',
+      pointBorderWidth: 1.5,
+      tension: 0.25,
+      cubicInterpolationMode: 'monotone' as const,
+      spanGaps: true,
+      borderDash: dashed ? [6, 4] : undefined,
+      // TS-safe "no clipping"
+      clip: { left: 0, right: 0, top: 0, bottom: 0 } as any,
+    };
+  }
+
+  // ---- CHART CREATION ----
   createChart() {
     this.chart = new Chart('chart_use_rate', {
       type: 'line',
@@ -178,28 +296,23 @@ export class UseRateComponent implements OnInit, AfterViewInit {
         ),
         datasets: [
           {
-            label: '이용률',
-            data: [],
-            borderColor: 'rgba(255, 159, 64, 0.8)',
-            backgroundColor: 'rgba(255, 159, 64, 0.8)',
-            yAxisID: 'y2',
-            type: 'line',
-          },
-          {
-            label: '전체 이용률',
-            data: [],
-            borderColor: 'rgba(153, 102, 255, 0.8)',
-            backgroundColor: 'rgba(153, 102, 255, 0.8)',
-            yAxisID: 'y3',
-            type: 'line',
-          },
-          {
             label: '발전량',
             data: [],
-            borderColor: 'rgba(54, 162, 235, 0.8)',
-            backgroundColor: 'rgba(54, 162, 235, 0.8)',
+            borderColor: this.colorArray[0],
+            backgroundColor: this.colorArray[0],
             yAxisID: 'y1',
             type: 'bar',
+            order: 0,
+          },
+          {
+            label: '이용률',
+            data: [],
+            ...this.lineStyle(this.colorArrayRev[0]),
+          },
+          {
+            label: '전체(평균) 이용률',
+            data: [],
+            ...this.lineStyle(this.colorArrayRev[1], true),
           },
         ],
       },
@@ -207,20 +320,34 @@ export class UseRateComponent implements OnInit, AfterViewInit {
         maintainAspectRatio: false,
         aspectRatio: undefined as any,
         plugins: {
+          legend: { display: false },
           tooltip: {
+            mode: 'nearest',
+            intersect: true,
             callbacks: {
-              label: (context) => {
-                let label = context.dataset.label
-                  ? `${context.dataset.label}: `
-                  : '';
-                const y = context.parsed.y;
+              label: (ctx) => {
+                let label = ctx.dataset.label ? `${ctx.dataset.label}: ` : '';
+                const y = ctx.parsed.y;
                 if (y == null) return label;
-                if (String(context.dataset.label).includes('이용률'))
-                  return label + this.toFixed6(y) + ' %';
-                return label + y + ' kWh';
+                return String(ctx.dataset.label).includes('이용률')
+                  ? label + this.toFixed6(y) + ' %'
+                  : label + y + ' kWh';
               },
             },
           },
+        },
+        datasets: {
+          bar: { order: 0 },
+          line: { order: 10 },
+        },
+        // @ts-ignore custom legend containers
+        containers: {
+          gen: this.legendGen?.nativeElement,
+          rate: this.legendRate?.nativeElement,
+        },
+        interaction: { mode: 'nearest', intersect: true, axis: 'x' },
+        elements: {
+          line: { borderCapStyle: 'round', borderJoinStyle: 'round' },
         },
         scales: {
           x: this.buildXAxis(
@@ -232,29 +359,25 @@ export class UseRateComponent implements OnInit, AfterViewInit {
           y1: {
             type: 'linear',
             display: true,
-            title: {
-              display: true,
-              text: '발전량 kWh',
-              color: 'rgba(54, 162, 235, 0.8)',
-            },
+            title: { display: true, text: '발전량 kWh', color: '#1f2937' },
             position: 'left',
           },
           y2: {
             type: 'linear',
             display: true,
-            title: {
-              display: true,
-              text: '이용률%',
-              color: 'rgba(153, 102, 255, 0.8)',
-            },
+            title: { display: true, text: '이용률 %', color: '#1f2937' },
             position: 'right',
+            min: 0,
+            max: 100,
           },
         },
       },
+      plugins: [this.splitLegendPlugin],
     });
     this.sizeCanvasToLabels(this.chart.data.labels as string[]);
   }
 
+  // ---- UI handlers (unchanged) ----
   radio_input1_click() {
     (document.getElementById('radio_time') as HTMLInputElement).checked = true;
     document.getElementById('date_start')!.style.display = 'flex';
@@ -318,6 +441,7 @@ export class UseRateComponent implements OnInit, AfterViewInit {
     datepicker.close();
   }
 
+  // ---- DATA LOAD ----
   search_click() {
     let gbn: 'time' | 'day' | 'month';
     let startDate: string;
@@ -362,45 +486,53 @@ export class UseRateComponent implements OnInit, AfterViewInit {
             maintainAspectRatio: false,
             aspectRatio: undefined as any,
             plugins: {
+              legend: { display: false },
               tooltip: {
+                mode: 'nearest',
+                intersect: true,
                 callbacks: {
-                  label: (context) => {
-                    let label = context.dataset.label
-                      ? `${context.dataset.label}: `
+                  label: (ctx) => {
+                    let label = ctx.dataset.label
+                      ? `${ctx.dataset.label}: `
                       : '';
-                    const y = context.parsed.y;
+                    const y = ctx.parsed.y;
                     if (y == null) return label;
-                    if (String(context.dataset.label).includes('이용률'))
-                      return label + this.toFixed6(y) + ' %';
-                    return label + y + ' kWh';
+                    return String(ctx.dataset.label).includes('이용률')
+                      ? label + this.toFixed6(y) + ' %'
+                      : label + y + ' kWh';
                   },
                 },
               },
             },
+            datasets: { bar: { order: 0 }, line: { order: 10 } },
+            // @ts-ignore custom legend containers
+            containers: {
+              gen: this.legendGen?.nativeElement,
+              rate: this.legendRate?.nativeElement,
+            },
+            interaction: { mode: 'nearest', intersect: true, axis: 'x' },
+            elements: {
+              line: { borderCapStyle: 'round', borderJoinStyle: 'round' },
+            },
             scales: {
-              x: undefined, // set below per mode
+              x: undefined,
               y1: {
                 type: 'linear',
                 display: true,
-                title: {
-                  display: true,
-                  text: '발전량 kWh',
-                  color: 'rgba(54, 162, 235, 0.8)',
-                },
+                title: { display: true, text: '발전량 kWh', color: '#1f2937' },
                 position: 'left',
               },
               y2: {
                 type: 'linear',
                 display: true,
-                title: {
-                  display: true,
-                  text: '이용률%',
-                  color: 'rgba(153, 102, 255, 0.8)',
-                },
+                title: { display: true, text: '이용률 %', color: '#1f2937' },
                 position: 'right',
+                min: 0,
+                max: 100,
               },
             },
           },
+          plugins: [this.splitLegendPlugin],
         };
 
         // Map insNum -> displayName
@@ -446,66 +578,68 @@ export class UseRateComponent implements OnInit, AfterViewInit {
             if (hour == null) continue;
             const title = nameByIns[r?.insNum] || r?.insNum;
             if (!title) continue;
-            useRateObject[title][hour] = this.toFixed6(r?.usageRate); // percent already
+            useRateObject[title][hour] = this.toFixed6(r?.usageRate);
           }
 
+          // Bars
           Object.keys(invObject).forEach((key, i) => {
-            this.tableHeadData.push(`${key} 발전량`);
+            const clean = this.cleanName(key);
+            this.tableHeadData.push(`${clean} 발전량`);
             this.tableData.push(invObject[key]);
             chartObject.data.datasets.push({
-              label: `${key} 발전량`,
+              label: `${clean} 발전량`,
               data: invObject[key],
               borderColor: this.colorArray[i % this.colorArray.length],
               backgroundColor: this.colorArray[i % this.colorArray.length],
               yAxisID: 'y1',
               type: 'bar',
+              order: 0,
             });
           });
 
+          // Lines (+ total dashed)
           const avgList = this.averageColumns(Object.values(useRateObject));
           useRateObject['전체(평균)'] = avgList;
 
           Object.keys(useRateObject).forEach((key, i) => {
-            this.tableHeadData.push(`${key} 이용률`);
+            const clean = key === '전체(평균)' ? key : this.cleanName(key);
+            this.tableHeadData.push(`${clean} 이용률`);
             this.tableData.push(useRateObject[key]);
             chartObject.data.datasets.push({
-              label: `${key} 이용률`,
+              label: `${clean} 이용률`,
               data: useRateObject[key],
-              borderColor: this.colorArrayRev[i % this.colorArrayRev.length],
-              backgroundColor:
+              ...this.lineStyle(
                 this.colorArrayRev[i % this.colorArrayRev.length],
-              yAxisID: 'y2',
-              type: 'line',
+                clean === '전체(평균)'
+              ),
             });
           });
         } else {
-          // Day or Month
+          // Day / Month
           if (gbn === 'day') {
             this.gbn = 'day';
             const s = moment(this.startDate).format('YYYY-MM-DD');
             const e = moment(this.endDate).format('YYYY-MM-DD');
-            this.dateList = this.getDatesStartToLast(s, e); // display: YYYY.MM.DD
+            this.dateList = this.getDatesStartToLast(s, e);
           } else {
             this.gbn = 'month';
             const s = moment(this.startMonthDate).format('YYYY-MM');
             const e = moment(this.endMonthDate).format('YYYY-MM');
-            this.dateList = this.getMonthDatesStartToLast(s, e); // display: YYYY.MM
+            this.dateList = this.getMonthDatesStartToLast(s, e);
           }
           chartObject.data.labels = this.dateList;
           chartObject.options.scales.x = this.buildXAxis(this.dateList);
           this.tableDayData = this.dateList;
 
-          // Build index map using canonical keys so inbound data aligns exactly
           const idxByLabel = new Map<string, number>();
-          if (gbn === 'day') {
-            this.dateList.forEach((lbl: string, i: number) =>
+          if (gbn === 'day')
+            this.dateList.forEach((lbl, i) =>
               idxByLabel.set(this.normDay(lbl), i)
-            ); // 'YYYY.MM.DD' -> 'YYYY-MM-DD'
-          } else {
-            this.dateList.forEach((lbl: string, i: number) =>
+            );
+          else
+            this.dateList.forEach((lbl, i) =>
               idxByLabel.set(this.normMonth(lbl), i)
-            ); // 'YYYY.MM' -> 'YYYY-MM'
-          }
+            );
 
           const titleSet = new Set<string>();
           invData.forEach((d) =>
@@ -543,36 +677,40 @@ export class UseRateComponent implements OnInit, AfterViewInit {
             if (idx == null) continue;
             const title = nameByIns[r?.insNum] || r?.insNum;
             if (!title) continue;
-            useRateObject[title][idx] = this.toFixed6(r?.usageRate); // percent
+            useRateObject[title][idx] = this.toFixed6(r?.usageRate);
           }
 
+          // Bars
           Object.keys(invObject).forEach((key, i) => {
-            this.tableHeadData.push(`${key} 발전량`);
+            const clean = this.cleanName(key);
+            this.tableHeadData.push(`${clean} 발전량`);
             this.tableData.push(invObject[key]);
             chartObject.data.datasets.push({
-              label: `${key} 발전량`,
+              label: `${clean} 발전량`,
               data: invObject[key],
               borderColor: this.colorArray[i % this.colorArray.length],
               backgroundColor: this.colorArray[i % this.colorArray.length],
               yAxisID: 'y1',
               type: 'bar',
+              order: 0,
             });
           });
 
+          // Lines (+ total dashed)
           const avgList = this.averageColumns(Object.values(useRateObject));
           useRateObject['전체(평균)'] = avgList;
 
           Object.keys(useRateObject).forEach((key, i) => {
-            this.tableHeadData.push(`${key} 이용률`);
+            const clean = key === '전체(평균)' ? key : this.cleanName(key);
+            this.tableHeadData.push(`${clean} 이용률`);
             this.tableData.push(useRateObject[key]);
             chartObject.data.datasets.push({
-              label: `${key} 이용률`,
+              label: `${clean} 이용률`,
               data: useRateObject[key],
-              borderColor: this.colorArrayRev[i % this.colorArrayRev.length],
-              backgroundColor:
+              ...this.lineStyle(
                 this.colorArrayRev[i % this.colorArrayRev.length],
-              yAxisID: 'y2',
-              type: 'line',
+                clean === '전체(평균)'
+              ),
             });
           });
         }
@@ -589,35 +727,31 @@ export class UseRateComponent implements OnInit, AfterViewInit {
     );
   }
 
-  // Daily list (display in Korean: YYYY.MM.DD, local time)
+  // Daily list (YYYY.MM.DD)
   getDatesStartToLast(startDate: string, lastDate: string) {
     const regex = /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/;
     if (!(regex.test(startDate) && regex.test(lastDate))) return [];
-
     const result: string[] = [];
     let cur = moment(startDate, 'YYYY-MM-DD', true);
     const end = moment(lastDate, 'YYYY-MM-DD', true);
     if (!cur.isValid() || !end.isValid()) return [];
-
     while (cur.isSameOrBefore(end, 'day')) {
-      result.push(cur.format('YYYY.MM.DD')); // display
+      result.push(cur.format('YYYY.MM.DD'));
       cur = cur.clone().add(1, 'day');
     }
     return result;
   }
 
-  // Monthly list (display in Korean: YYYY.MM, local time)
+  // Monthly list (YYYY.MM)
   getMonthDatesStartToLast(startDate: string, lastDate: string) {
     const regex = /^\d{4}-(0[1-9]|1[012])$/;
     if (!(regex.test(startDate) && regex.test(lastDate))) return [];
-
     const result: string[] = [];
     let cur = moment(startDate, 'YYYY-MM', true).startOf('month');
     const end = moment(lastDate, 'YYYY-MM', true).startOf('month');
     if (!cur.isValid() || !end.isValid()) return [];
-
     while (cur.isSameOrBefore(end, 'month')) {
-      result.push(cur.format('YYYY.MM')); // display
+      result.push(cur.format('YYYY.MM'));
       cur = cur.clone().add(1, 'month');
     }
     return result;
