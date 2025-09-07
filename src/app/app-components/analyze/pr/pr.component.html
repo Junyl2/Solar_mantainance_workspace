@@ -1,3 +1,4 @@
+<!-- pr.component.html -->
 <div class="main">
   <div class="col-md-12">
     <div class="box">
@@ -5,7 +6,6 @@
         <div class="box1_header">
           <div class="box1_header_1">
             <div class="title">PR 추이</div>
-
             <div class="radio_box">
               <div class="radio_input1" (click)="radio_input1_click()">
                 <input
@@ -30,7 +30,7 @@
             <div class="padding_text">조회기간 :</div>
 
             <div class="date_box">
-              <!-- Day pickers -->
+              <!-- day pickers -->
               <div id="date_start" class="data_box1">
                 <input
                   class="data_input"
@@ -45,6 +45,28 @@
                 ></mat-datepicker-toggle>
                 <mat-datepicker
                   #startPicker
+                  panelClass="example-month-picker"
+                ></mat-datepicker>
+              </div>
+
+              <div id="date_start_month" class="data_month_box">
+                <input
+                  class="data_input"
+                  matInput
+                  [matDatepicker]="startMonthPicker"
+                  [value]="startMonthDate"
+                />
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="startMonthPicker"
+                ></mat-datepicker-toggle>
+                <mat-datepicker
+                  #startMonthPicker
+                  startView="year"
+                  (yearSelected)="onStartMonthSelected($event)"
+                  (monthSelected)="
+                    onStartMonthMonthSelected($event, startMonthPicker)
+                  "
                   panelClass="example-month-picker"
                 ></mat-datepicker>
               </div>
@@ -69,30 +91,6 @@
                 ></mat-datepicker>
               </div>
 
-              <!-- Month pickers -->
-              <div id="date_start_month" class="data_month_box">
-                <input
-                  class="data_input"
-                  matInput
-                  [matDatepicker]="startMonthPicker"
-                  [value]="startMonthDate"
-                />
-                <mat-datepicker-toggle
-                  matSuffix
-                  [for]="startMonthPicker"
-                ></mat-datepicker-toggle>
-                <mat-datepicker
-                  #startMonthPicker
-                  startView="year"
-                  (yearSelected)="onStartMonthSelected($event)"
-                  (monthSelected)="
-                    onStartMonthMonthSelected($event, startMonthPicker)
-                  "
-                  panelClass="example-month-picker"
-                >
-                </mat-datepicker>
-              </div>
-
               <div id="date_end_month" class="data_month_box">
                 <input
                   class="data_input"
@@ -107,13 +105,12 @@
                 <mat-datepicker
                   #endMonthPicker
                   startView="year"
-                  (yearSelected)="onEndMonthSelected($event)"
+                  (yearSelected)="onStartMonthSelected($event)"
                   (monthSelected)="
                     onEndMonthMonthSelected($event, endMonthPicker)
                   "
                   panelClass="example-month-picker"
-                >
-                </mat-datepicker>
+                ></mat-datepicker>
               </div>
             </div>
 
@@ -135,102 +132,118 @@
         </div>
       </div>
 
+      <!-- Custom split legend -->
+      <div class="legend-wrap">
+        <span #legendGen></span>
+        <span #legendPR></span>
+      </div>
+
       <div class="box2">
         <div class="box2_chart_box" id="box2_chart_box">
-          <!-- IMPORTANT: no interpolation here; use a template ref -->
           <canvas #chart_pr id="chart_pr" class="chart_module"></canvas>
         </div>
 
         <div class="box2_table_box" id="box2_table_box">
           <table id="table" class="table">
             <tr class="table_tr">
-              <td class="table_td_header">구분</td>
+              <td class="table_td_header sticky-col first-division">구분</td>
 
               <ng-container *ngIf="gbn === 'time'">
                 <ng-container *ngFor="let data1 of tableData[0]; index as i">
-                  <td class="table_td_header">
-                    {{ i.toString().length === 1 ? "0" + i : i }} 시
+                  <td *ngIf="i.toString().length === 1" class="table_td_header">
+                    0{{ i }} 시
+                  </td>
+                  <td *ngIf="i.toString().length !== 1" class="table_td_header">
+                    {{ i }} 시
                   </td>
                 </ng-container>
               </ng-container>
 
               <ng-container *ngIf="gbn !== 'time'">
-                <ng-container *ngFor="let d of dateList">
-                  <td class="table_td_header">{{ d }}</td>
+                <ng-container *ngFor="let data1 of dateList; index as i">
+                  <td class="table_td_header">{{ data1 }}</td>
                 </ng-container>
               </ng-container>
             </tr>
 
-            <ng-container *ngFor="let row of tableData; index as i">
+            <ng-container *ngFor="let data1 of tableData; index as i">
               <tr class="table_tr">
-                <td class="table_td">{{ tableHeadData[i] }}</td>
+                <td class="table_td sticky-col">{{ tableHeadData[i] }}</td>
 
-                <ng-container *ngFor="let v of row">
-                  <!-- 발전량 -->
+                <ng-container *ngFor="let data2 of data1">
+                  <!-- Non-environment rows treated as energy unless specified otherwise -->
                   <td
-                    *ngIf="!isEnvRow(tableHeadData[i]) && v !== 0"
+                    *ngIf="
+                      tableHeadData[i] !== '온도' &&
+                      tableHeadData[i] !== '습도' &&
+                      tableHeadData[i] !== '풍속' &&
+                      tableHeadData[i] !== '일사량' &&
+                      data2 !== 0
+                    "
                     class="table_td"
                   >
-                    {{ v }} kWh
+                    {{ data2 }} kWh
                   </td>
                   <td
-                    *ngIf="!isEnvRow(tableHeadData[i]) && v === 0"
+                    *ngIf="
+                      tableHeadData[i] !== '온도' &&
+                      tableHeadData[i] !== '습도' &&
+                      tableHeadData[i] !== '풍속' &&
+                      tableHeadData[i] !== '일사량' &&
+                      data2 === 0
+                    "
                     class="table_td"
                   >
                     -
                   </td>
 
-                  <!-- 온도 -->
                   <td
-                    *ngIf="tableHeadData[i] === '온도' && v !== 0"
+                    *ngIf="tableHeadData[i] === '온도' && data2 !== 0"
                     class="table_td"
                   >
-                    {{ v }} °C
+                    {{ data2 }} °C
                   </td>
                   <td
-                    *ngIf="tableHeadData[i] === '온도' && v === 0"
-                    class="table_td"
-                  >
-                    -
-                  </td>
-
-                  <!-- 습도 -->
-                  <td
-                    *ngIf="tableHeadData[i] === '습도' && v !== 0"
-                    class="table_td"
-                  >
-                    {{ v }} %
-                  </td>
-                  <td
-                    *ngIf="tableHeadData[i] === '습도' && v === 0"
+                    *ngIf="tableHeadData[i] === '온도' && data2 === 0"
                     class="table_td"
                   >
                     -
                   </td>
 
-                  <!-- 풍속 -->
                   <td
-                    *ngIf="tableHeadData[i] === '풍속' && v !== 0"
+                    *ngIf="tableHeadData[i] === '습도' && data2 !== 0"
                     class="table_td"
                   >
-                    {{ v }} m/s
+                    {{ data2 }} %
                   </td>
                   <td
-                    *ngIf="tableHeadData[i] === '풍속' && v === 0"
+                    *ngIf="tableHeadData[i] === '습도' && data2 === 0"
                     class="table_td"
                   >
                     -
                   </td>
 
-                  <!-- 일사량 -->
                   <td
-                    *ngIf="tableHeadData[i] === '일사량' && v !== 0"
+                    *ngIf="tableHeadData[i] === '풍속' && data2 !== 0"
                     class="table_td"
                   >
-                    {{ v }} Wh/㎡
+                    {{ data2 }} m/s
                   </td>
                   <td
-                    *ngIf="tableHeadData[i] === '일사량' && v === 0"
+                    *ngIf="tableHeadData[i] === '풍속' && data2 === 0"
+                    class="table_td"
+                  >
+                    -
+                  </td>
+
+                  <td
+                    *ngIf="tableHeadData[i] === '일사량' && data2 !== 0"
+                    class="table_td"
+                  >
+                    {{ data2 }} Wh/㎡
+                  </td>
+                  <td
+                    *ngIf="tableHeadData[i] === '일사량' && data2 === 0"
                     class="table_td"
                   >
                     -

@@ -8,11 +8,11 @@
 .box {
   display: flex;
   flex-direction: column;
-  padding: 10px 10px 10px 10px;
+  padding: 10px;
 }
 
 .box1 {
-  padding: 5px 5px 5px 5px;
+  padding: 5px;
 }
 
 .box1_header {
@@ -37,17 +37,17 @@
 
 .radio_input1 {
   width: 85px;
-  padding: 3px 0px 0px 0px;
+  padding: 3px 0 0;
 }
 
 .radio_input2 {
   width: 75px;
-  padding: 3px 0px 0px 0px;
+  padding: 3px 0 0;
 }
 
 .radio_input3 {
   width: 100px;
-  padding: 3px 0px 0px 0px;
+  padding: 3px 0 0;
 }
 
 .padding_text {
@@ -65,69 +65,39 @@
 .date_space {
   display: none;
   align-items: center;
-  padding: 0px 10px 0px 10px
+  padding: 0 10px;
 }
 
 .search_box {
   display: flex;
   align-items: center;
-  padding: 0px 0px 0px 20px;
+  padding-left: 20px;
+}
+
+.search_btn,
+.table_btn,
+.chart_btn,
+.download_btn {
+  border: none;
+  color: #fff;
+  background: #4e4e4e;
+  font-size: 14px;
+  border-radius: 5px;
 }
 
 .search_btn {
-  padding: 2px 0px 0px 0px;
-  border: none;
   width: 80px;
   height: 30px;
-  color: white;
-  background: #4e4e4e;
-  font-size: 14px;
-  border-radius: 5px;
 }
 
-.table_box {
-  padding: 0px 15px 0px 0px
-}
-
-.table_btn {
-  padding: 2px 0px 0px 0px;
-  border: none;
-  width: 60px;
-  color: white;
-  background: #4e4e4e;
-  font-size: 14px;
-  border-radius: 5px;
-}
-
-.chart_box {
-  padding: 0px 15px 0px 0px
-}
-
+.table_btn,
 .chart_btn {
-  padding: 2px 0px 0px 0px;
-  border: none;
   width: 60px;
-  color: white;
-  background: #4e4e4e;
-  font-size: 14px;
-  border-radius: 5px;
-}
-
-.download_box {
-  display: flex;
-  align-items: center;
-  padding: 0px 15px 0px 0px
 }
 
 .download_btn {
-  padding: 2px 0px 0px 0px;
-  border: none;
   width: 100px;
   height: 30px;
-  color: white;
-  background: #4e4e4e;
-  font-size: 14px;
-  border-radius: 5px;
 }
 
 .box1_header_1 {
@@ -144,12 +114,12 @@
 }
 
 .box2 {
-  padding: 40px 0px 0px 0px;
+  padding-top: 20px;
 }
 
 .box2_chart_box {
   display: flex;
-  padding: 10px 10px 10px 10px;
+  padding: 10px;
   justify-content: center;
 }
 
@@ -159,7 +129,7 @@
 
 .box2_table_box {
   display: flex;
-  padding: 10px 10px 10px 10px;
+  padding: 10px 0px;
   overflow: auto;
   white-space: nowrap;
 }
@@ -172,7 +142,7 @@
   background: #4e4e4e;
   color: white;
   text-align: center;
-  padding: 5px 5px 5px 5px;
+  padding: 5px;
   border: 1px solid white;
 }
 
@@ -183,98 +153,82 @@
 .table_td {
   border: 1px solid black;
   text-align: center;
-  padding: 5px 5px 5px 5px;
+  padding: 5px;
 }
 
-.data_box1 {
+.data_box1,
+.data_box2,
+.data_month_box {
   display: flex;
   align-items: center;
   background: rgba(0, 0, 0, .04);
 }
 
-.data_box2 {
-  display: none;
-  align-items: center;
-  background: rgba(0, 0, 0, .04);
-}
-
+.data_box2,
 .data_month_box {
   display: none;
-  align-items: center;
-  background: rgba(0, 0, 0, .04);
 }
 
 .data_input {
   border: none;
-  background: rgb(0 0 0 / 0%);
+  background: transparent;
   padding-left: 20px;
   width: 140px;
 }
 
-/* Make legend sit ABOVE the canvas (stacked column) */
-.box2_chart_box {
-  display: flex;
-  flex-direction: column;
-  /* ⬅️ was row by default */
-  align-items: center;
-  /* center legend + canvas */
-  padding: 10px;
-}
-
-/* Keep widths aligned with your chart */
-.legend {
-  width: 85%;
-  /* match .chart width */
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin: 0 10px 8px;
-}
-
-.legend-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
 .legend-title {
-  color: #555;
-  margin-right: 6px;
   font-weight: 600;
+  margin-bottom: 4px;
+  color: #374151;
 }
 
-/* Legend chips: one line per chip, no character wrapping */
-.legend-items {
-  display: inline-flex;
+/* Center the overall legend row and nicely space groups */
+.legend-wrap {
+  display: flex;
+  justify-content: center;
+  /* centers all legend items */
+  align-items: center;
+  gap: 2px;
+  margin-top: 1.5rem;
   flex-wrap: wrap;
-  gap: 10px;
+  padding: 0 10px 10px 10px;
 }
 
-.legend-chip {
+/* Each group (발전량 bars vs PR lines) */
+.legend-group {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: #444;
-  white-space: nowrap;
-  /* ⬅️ prevents Korean labels from breaking per character */
-  cursor: pointer;
-  user-select: none;
+  gap: 16px;
+  /* space between individual labels */
+  flex-wrap: wrap;
 }
 
-.legend-chip.hidden {
-  opacity: 0.4;
+/* Remove old header style if you had it */
+.legend-title {
+  display: none !important;
 }
 
-.legend-swatch {
-  width: 16px;
-  height: 10px;
-  border-radius: 2px;
-  border: 1px solid rgba(0, 0, 0, .2);
+/* Make the first column sticky (both header and body cells) */
+.table .sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  background: #ffffff;
+  box-shadow: 2px 0 0 rgba(0, 0, 0, 0.06);
+  border-left: 1px solid #000 !important;
 }
 
-/* keep your existing .chart width rule */
-.chart {
-  width: 85%;
+/* Header cell variant keeps your header styling and sits on top */
+.table_td_header.sticky-col {
+  background: #4e4e4e !important;
+  color: #ffffff;
+  z-index: 5;
+  box-shadow: 2px 0 0 rgba(255, 255, 255, 0.15);
+}
+
+.box2_table_box {
+  overflow: auto;
+  /* If you want a fixed height scroll area, uncomment and adjust:
+  max-height: 480px;
+  */
 }
