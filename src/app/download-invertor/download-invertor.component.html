@@ -1,265 +1,425 @@
 <h3 class="f-page-title">인버터 데이터 다운로드</h3>
 <div>
   <div class="f-text-cvt">
-    <mat-form-field class="input" appearance="fill" style="margin-right: 8px;">
+    <mat-form-field class="input" appearance="fill" style="margin-right: 8px">
       <mat-label>시작일</mat-label>
-      <input matInput [matDatepicker]="startDailyPicker" [value]="startDailyDate" [min]="startMinDailyDate"
-             [max]="startMaxDailyDate" (dateChange)="onStartDailyDaySelected($event.value)">
-      <mat-datepicker-toggle matSuffix [for]="startDailyPicker"></mat-datepicker-toggle>
+      <input
+        matInput
+        [matDatepicker]="startDailyPicker"
+        [value]="startDailyDate"
+        [min]="startMinDailyDate"
+        [max]="startMaxDailyDate"
+        (dateChange)="onStartDailyDaySelected($event.value)"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="startDailyPicker"
+      ></mat-datepicker-toggle>
       <mat-datepicker #startDailyPicker panelClass="example-month-picker">
       </mat-datepicker>
     </mat-form-field>
     <mat-form-field class="input" appearance="fill">
       <mat-label>종료일</mat-label>
-      <input matInput [matDatepicker]="endDailyPicker" [value]="endDailyDate" [min]="endMinDailyDate"
-             [max]="endMaxDailyDate" (dateChange)="onEndDailyDaySelected($event.value)">
-      <mat-datepicker-toggle matSuffix [for]="endDailyPicker"></mat-datepicker-toggle>
+      <input
+        matInput
+        [matDatepicker]="endDailyPicker"
+        [value]="endDailyDate"
+        [min]="endMinDailyDate"
+        [max]="endMaxDailyDate"
+        (dateChange)="onEndDailyDaySelected($event.value)"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="endDailyPicker"
+      ></mat-datepicker-toggle>
       <mat-datepicker #endDailyPicker panelClass="example-month-picker">
       </mat-datepicker>
     </mat-form-field>
   </div>
   <div class="f-text-cvt p-4">
-    <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid lightgrey;">
+    <div
+      style="
+        background: white;
+        padding: 16px;
+        border-radius: 8px;
+        border: 1px solid lightgrey;
+      "
+    >
       <h3 class="sub-heading">인버터</h3>
-      <div class="checkbox-vertical-list" style="display: flex; flex-direction: column; margin-bottom: 16px">
-        <div style="display: flex; width: 100%;" *ngFor="let facility of facilities;">
-          <div style="display: flex; width: 100%;" *ngIf="facility.id !== 0">
+      <div
+        class="checkbox-vertical-list"
+        style="display: flex; flex-direction: column; margin-bottom: 16px"
+      >
+        <div
+          style="display: flex; width: 100%"
+          *ngFor="let facility of facilities"
+        >
+          <div style="display: flex; width: 100%" *ngIf="facility.id !== 0">
             <ng-container *ngFor="let invertor of invertors; index as i">
-              <div class="checkbox-div" *ngIf="facility.id == invertor.facilityId">
-                <mat-checkbox class="example-margin"
-                              [(ngModel)]="invertor.selected"
-                              (change)="selectInvertor(invertor.insName, invertor.insNum)">
-                  {{facility.title}} {{invertor.name}}
+              <div
+                class="checkbox-div"
+                *ngIf="facility.id == invertor.facilityId"
+              >
+                <mat-checkbox
+                  class="example-margin"
+                  [(ngModel)]="invertor.selected"
+                  (change)="selectInvertor(invertor.insName, invertor.insNum)"
+                >
+                  {{ facility.title }} {{ invertor.name }}
                 </mat-checkbox>
               </div>
             </ng-container>
             <div class="checkbox-div">
-              <mat-checkbox class="example-margin"
-                            style="font-weight: bold"
-                            [(ngModel)]="facility.selected"
-                            (change)="selectFacility(facility)">
-                {{facility.title}} 전체
+              <mat-checkbox
+                class="example-margin"
+                style="font-weight: bold"
+                [(ngModel)]="facility.selected"
+                (change)="selectFacility(facility)"
+              >
+                {{ facility.title }} 전체
               </mat-checkbox>
             </div>
           </div>
         </div>
       </div>
-      <h3 class="sub-heading" style="margin-left: 24px;">입력(DC)</h3>
-      <div class="checkbox-vertical-list" style="margin-left: 24px;">
+      <h3 class="sub-heading" style="margin-left: 24px">입력(DC)</h3>
+      <div class="checkbox-vertical-list" style="margin-left: 24px">
         <div class="checkbox-div">
-          <mat-checkbox id="dcv1" [(ngModel)]="invertorSelect.dcv1"
-                        (change)="toggleCheckbox($event, 'dcv1'); checkAll('dcv');">전압1
+          <mat-checkbox
+            id="dcv1"
+            [(ngModel)]="invertorSelect.dcv1"
+            (change)="toggleCheckbox($event, 'dcv1'); checkAll('dcv')"
+            >전압1
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dcv2" (change)="toggleCheckbox($event, 'dcv2'); checkAll('dcv');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dcv2"
+            (change)="toggleCheckbox($event, 'dcv2'); checkAll('dcv')"
+          >
             전압2
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dcv3" (change)="toggleCheckbox($event, 'dcv3'); checkAll('dcv');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dcv3"
+            (change)="toggleCheckbox($event, 'dcv3'); checkAll('dcv')"
+          >
             전압3
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dcv4" (change)="toggleCheckbox($event, 'dcv4'); checkAll('dcv');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dcv4"
+            (change)="toggleCheckbox($event, 'dcv4'); checkAll('dcv')"
+          >
             전압4
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dcv5" (change)="toggleCheckbox($event, 'dcv5'); checkAll('dcv');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dcv5"
+            (change)="toggleCheckbox($event, 'dcv5'); checkAll('dcv')"
+          >
             전압5
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dcv6" (change)="toggleCheckbox($event, 'dcv6'); checkAll('dcv');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dcv6"
+            (change)="toggleCheckbox($event, 'dcv6'); checkAll('dcv')"
+          >
             전압6
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dcv7" (change)="toggleCheckbox($event, 'dcv7'); checkAll('dcv');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dcv7"
+            (change)="toggleCheckbox($event, 'dcv7'); checkAll('dcv')"
+          >
             전압7
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dcv8" (change)="toggleCheckbox($event, 'dcv8'); checkAll('dcv');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dcv8"
+            (change)="toggleCheckbox($event, 'dcv8'); checkAll('dcv')"
+          >
             전압8
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dcv9" (change)="toggleCheckbox($event, 'dcv9'); checkAll('dcv');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dcv9"
+            (change)="toggleCheckbox($event, 'dcv9'); checkAll('dcv')"
+          >
             전압9
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dcv10" (change)="toggleCheckbox($event, 'dcv10'); checkAll('dcv');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dcv10"
+            (change)="toggleCheckbox($event, 'dcv10'); checkAll('dcv')"
+          >
             전압10
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox style="font-weight: bold" [(ngModel)]="invertorSelect.dcv" (change)="toggleAll($event, 'dcv')">
+          <mat-checkbox
+            style="font-weight: bold"
+            [(ngModel)]="invertorSelect.dcv"
+            (change)="toggleAll($event, 'dcv')"
+          >
             전체
           </mat-checkbox>
         </div>
       </div>
-      <div class="checkbox-vertical-list" style="margin-left: 24px;">
+      <div class="checkbox-vertical-list" style="margin-left: 24px">
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dca1" (change)="toggleCheckbox($event, 'dca1'); checkAll('dca');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dca1"
+            (change)="toggleCheckbox($event, 'dca1'); checkAll('dca')"
+          >
             전류1
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dca2" (change)="toggleCheckbox($event, 'dca2'); checkAll('dca');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dca2"
+            (change)="toggleCheckbox($event, 'dca2'); checkAll('dca')"
+          >
             전류2
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dca3" (change)="toggleCheckbox($event, 'dca3'); checkAll('dca');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dca3"
+            (change)="toggleCheckbox($event, 'dca3'); checkAll('dca')"
+          >
             전류3
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dca4" (change)="toggleCheckbox($event, 'dca4'); checkAll('dca');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dca4"
+            (change)="toggleCheckbox($event, 'dca4'); checkAll('dca')"
+          >
             전류4
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dca5" (change)="toggleCheckbox($event, 'dca5'); checkAll('dca');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dca5"
+            (change)="toggleCheckbox($event, 'dca5'); checkAll('dca')"
+          >
             전류5
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dca6" (change)="toggleCheckbox($event, 'dca6'); checkAll('dca');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dca6"
+            (change)="toggleCheckbox($event, 'dca6'); checkAll('dca')"
+          >
             전류6
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dca7" (change)="toggleCheckbox($event, 'dca7'); checkAll('dca');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dca7"
+            (change)="toggleCheckbox($event, 'dca7'); checkAll('dca')"
+          >
             전류7
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dca8" (change)="toggleCheckbox($event, 'dca8'); checkAll('dca');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dca8"
+            (change)="toggleCheckbox($event, 'dca8'); checkAll('dca')"
+          >
             전류8
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dca9" (change)="toggleCheckbox($event, 'dca9'); checkAll('dca');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dca9"
+            (change)="toggleCheckbox($event, 'dca9'); checkAll('dca')"
+          >
             전류9
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.dca10" (change)="toggleCheckbox($event, 'dca10'); checkAll('dca');">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.dca10"
+            (change)="toggleCheckbox($event, 'dca10'); checkAll('dca')"
+          >
             전류10
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox style="font-weight: bold" [(ngModel)]="invertorSelect.dca" (change)="toggleAll($event, 'dca')">
+          <mat-checkbox
+            style="font-weight: bold"
+            [(ngModel)]="invertorSelect.dca"
+            (change)="toggleAll($event, 'dca')"
+          >
             전체
           </mat-checkbox>
         </div>
       </div>
-      <h3 class="sub-heading" style="margin-left: 24px;">출력(AC)</h3>
-      <div class="checkbox-vertical-list" style="margin-left: 24px;">
+      <h3 class="sub-heading" style="margin-left: 24px">출력(AC)</h3>
+      <div class="checkbox-vertical-list" style="margin-left: 24px">
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.acvRS"
-                        (change)="toggleCheckbox($event, 'acvRs'); checkAllAcv($event, false);">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.acvRS"
+            (change)="
+              toggleCheckbox($event, 'acvRs'); checkAllAcv($event, false)
+            "
+          >
             전압RS
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.acvST"
-                        (change)="toggleCheckbox($event, 'acvSt'); checkAllAcv($event, false);">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.acvST"
+            (change)="
+              toggleCheckbox($event, 'acvSt'); checkAllAcv($event, false)
+            "
+          >
             전압ST
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.acvTR"
-                        (change)="toggleCheckbox($event, 'acvTr'); checkAllAcv($event, false);">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.acvTR"
+            (change)="
+              toggleCheckbox($event, 'acvTr'); checkAllAcv($event, false)
+            "
+          >
             전압TR
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox style="font-weight: bold" [(ngModel)]="invertorSelect.acv"
-                        (change)="checkAllAcv($event, true)">
+          <mat-checkbox
+            style="font-weight: bold"
+            [(ngModel)]="invertorSelect.acv"
+            (change)="checkAllAcv($event, true)"
+          >
             전체
           </mat-checkbox>
         </div>
       </div>
-      <div class="checkbox-vertical-list" style="margin-left: 24px;">
+      <div class="checkbox-vertical-list" style="margin-left: 24px">
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.acaR"
-                        (change)="toggleCheckbox($event, 'acaR'); checkAllAca($event, false);">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.acaR"
+            (change)="
+              toggleCheckbox($event, 'acaR'); checkAllAca($event, false)
+            "
+          >
             전류R
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.acaS"
-                        (change)="toggleCheckbox($event, 'acaS'); checkAllAca($event, false);">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.acaS"
+            (change)="
+              toggleCheckbox($event, 'acaS'); checkAllAca($event, false)
+            "
+          >
             전류S
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.acaT"
-                        (change)="toggleCheckbox($event, 'acaT'); checkAllAca($event, false);">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.acaT"
+            (change)="
+              toggleCheckbox($event, 'acaT'); checkAllAca($event, false)
+            "
+          >
             전류T
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox style="font-weight: bold" [(ngModel)]="invertorSelect.aca"
-                        (change)="checkAllAca($event, true)">
+          <mat-checkbox
+            style="font-weight: bold"
+            [(ngModel)]="invertorSelect.aca"
+            (change)="checkAllAca($event, true)"
+          >
             전체
           </mat-checkbox>
         </div>
       </div>
-      <h3 class="sub-heading" style="margin-left: 24px;">기타</h3>
-      <div class="checkbox-vertical-list" style="margin-left: 24px;">
+      <h3 class="sub-heading" style="margin-left: 24px">기타</h3>
+      <div class="checkbox-vertical-list" style="margin-left: 24px">
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.eday" (change)="toggleCheckbox($event, 'eday'); checkAllEtc();">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.eday"
+            (change)="toggleCheckbox($event, 'eday'); checkAllEtc()"
+          >
             금일 발전량
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.accumulatePower" (change)="toggleCheckbox($event, 'accumulatePower'); checkAllEtc();">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.accumulatePower"
+            (change)="toggleCheckbox($event, 'accumulatePower'); checkAllEtc()"
+          >
             누적 발전량
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.power" (change)="toggleCheckbox($event, 'power'); checkAllEtc();">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.power"
+            (change)="toggleCheckbox($event, 'power'); checkAllEtc()"
+          >
             현재 발전량
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.status" (change)="toggleCheckbox($event, 'status'); checkAllEtc();">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.status"
+            (change)="toggleCheckbox($event, 'status'); checkAllEtc()"
+          >
             동작 상태
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.message"
-                        (change)="toggleCheckbox($event, 'message'); checkAllEtc();">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.message"
+            (change)="toggleCheckbox($event, 'message'); checkAllEtc()"
+          >
             점검메시지
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.tempInner"
-                        (change)="toggleCheckbox($event, 'tempInner'); checkAllEtc();">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.tempInner"
+            (change)="toggleCheckbox($event, 'tempInner'); checkAllEtc()"
+          >
             내부온도
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.frequency"
-                        (change)="toggleCheckbox($event, 'frequency'); checkAllEtc();">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.frequency"
+            (change)="toggleCheckbox($event, 'frequency'); checkAllEtc()"
+          >
             주파수
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox [(ngModel)]="invertorSelect.efficiency"
-                        (change)="toggleCheckbox($event, 'efficiency'); checkAllEtc();">
+          <mat-checkbox
+            [(ngModel)]="invertorSelect.efficiency"
+            (change)="toggleCheckbox($event, 'efficiency'); checkAllEtc()"
+          >
             변환효율
           </mat-checkbox>
         </div>
         <div class="checkbox-div">
-          <mat-checkbox style="font-weight: bold" [(ngModel)]="invertorSelect.etc" (change)="toggleAllEtc($event)">
+          <mat-checkbox
+            style="font-weight: bold"
+            [(ngModel)]="invertorSelect.etc"
+            (change)="toggleAllEtc($event)"
+          >
             전체
           </mat-checkbox>
         </div>
@@ -270,7 +430,10 @@
       <button mat-raised-button (click)="download()">다운로드</button>
     </div>
   </div>
-  <div *ngIf="showProgressSpinner==true" class="full-overlay d-flex justify-content-center align-items-center">
+  <div
+    *ngIf="showProgressSpinner == true"
+    class="full-overlay d-flex justify-content-center align-items-center"
+  >
     <mat-spinner color="secondary"></mat-spinner>
   </div>
 </div>

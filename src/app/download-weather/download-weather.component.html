@@ -1,75 +1,199 @@
 <h2 class="f-page-title">기상반 데이터 다운로드</h2>
 <div>
+  <!-- Dates -->
   <div class="f-text-cvt">
     <mat-form-field class="input" appearance="fill">
       <mat-label>시작일 선택</mat-label>
-      <input matInput [matDatepicker]="startDailyPicker" [value]="startDailyDate" [min]="startMinDailyDate"
-             [max]="startMaxDailyDate" (dateChange)="onStartDailyDaySelected($event.value)">
-      <mat-datepicker-toggle matSuffix [for]="startDailyPicker"></mat-datepicker-toggle>
-      <mat-datepicker #startDailyPicker panelClass="example-month-picker">
-      </mat-datepicker>
+      <input
+        matInput
+        [matDatepicker]="startDailyPicker"
+        [value]="startDailyDate"
+        [min]="startMinDailyDate"
+        [max]="startMaxDailyDate"
+        (dateChange)="onStartDailyDaySelected($event.value)"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="startDailyPicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker
+        #startDailyPicker
+        panelClass="example-month-picker"
+      ></mat-datepicker>
     </mat-form-field>
+
     <mat-form-field class="input" appearance="fill">
       <mat-label>끝일 선택</mat-label>
-      <input matInput [matDatepicker]="endDailyPicker" [value]="endDailyDate" [min]="endMinDailyDate"
-             [max]="endMaxDailyDate" (dateChange)="onEndDailyDaySelected($event.value)">
-      <mat-datepicker-toggle matSuffix [for]="endDailyPicker"></mat-datepicker-toggle>
-      <mat-datepicker #endDailyPicker panelClass="example-month-picker">
-      </mat-datepicker>
+      <input
+        matInput
+        [matDatepicker]="endDailyPicker"
+        [value]="endDailyDate"
+        [min]="endMinDailyDate"
+        [max]="endMaxDailyDate"
+        (dateChange)="onEndDailyDaySelected($event.value)"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="endDailyPicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker
+        #endDailyPicker
+        panelClass="example-month-picker"
+      ></mat-datepicker>
     </mat-form-field>
   </div>
+
   <div class="f-text-cvt p-4">
+    <!-- Inverters (Facilities list) -->
     <h2>인버터 선택</h2>
-    <div class="checkbox-vertical-list">
-      <ng-container *ngFor="let facility of facilities; index as i">
-          <mat-checkbox class="example-margin"
-                        style="margin-right: 8px;"
-                        [(ngModel)]="facility.selected"
-                        (change)="selectFacility($event, facility.id, false)">
-            {{facility.title}}
-          </mat-checkbox>
+
+    <!-- Status line -->
+    <div class="text-sm" style="margin-bottom: 8px">
+      <ng-container *ngIf="loadingInverters">불러오는 중…</ng-container>
+      <ng-container *ngIf="!loadingInverters && !loadInvertersError">
+        총 {{ facilities?.length || 0 }}개
       </ng-container>
+      <ng-container *ngIf="loadInvertersError">
+        <span style="color: #c00">{{ loadInvertersError }}</span>
+      </ng-container>
+    </div>
+
+    <!-- Empty state -->
+    <div
+      *ngIf="
+        !loadingInverters &&
+        !loadInvertersError &&
+        (!facilities || facilities.length === 0)
+      "
+      class="p-2"
+      style="color: #666"
+    >
+      표시할 인버터가 없습니다. (백엔드 응답이 비어있음)
+    </div>
+
+    <!-- The list -->
+    <div
+      class="checkbox-vertical-list"
+      *ngIf="facilities && facilities.length > 0"
+    >
+      <ng-container *ngFor="let facility of facilities; index as i">
+        <mat-checkbox
+          class="example-margin"
+          style="margin-right: 8px"
+          [(ngModel)]="facility.selected"
+          (change)="selectFacility($event, facility.id, false)"
+        >
+          {{ displayFacilityLabel(facility) }}
+        </mat-checkbox>
+      </ng-container>
+
       <div class="checkbox-div">
-        <mat-checkbox class="example-margin"
-                      style="font-weight: bold"
-                      [(ngModel)]="facilityAll.selected"
-                      (change)="selectFacility($event, null, true)">
-           전체
+        <mat-checkbox
+          class="example-margin"
+          style="font-weight: bold"
+          [(ngModel)]="facilityAll.selected"
+          (change)="selectFacility($event, null, true)"
+        >
+          전체
         </mat-checkbox>
       </div>
     </div>
-    <h2 class="sub-heading">입력(DC)</h2>
+
+    <!-- Meteorological -->
+    <h2 class="sub-heading">기상(측정 항목)</h2>
     <div class="checkbox-vertical-list">
       <div class="checkbox-div">
-        <mat-checkbox [(ngModel)]="weatherSelect.wd" (change)="toggleCheckbox($event, 'wd'); checkAll();">풍향
+        <mat-checkbox
+          [(ngModel)]="weatherAny.wd"
+          (change)="toggleCheckbox($event, 'wd'); checkAllWeather()"
+          >풍향</mat-checkbox
+        >
+      </div>
+      <div class="checkbox-div">
+        <mat-checkbox
+          [(ngModel)]="weatherAny.ws"
+          (change)="toggleCheckbox($event, 'ws'); checkAllWeather()"
+          >풍속</mat-checkbox
+        >
+      </div>
+      <div class="checkbox-div">
+        <mat-checkbox
+          [(ngModel)]="weatherAny.temperature"
+          (change)="toggleCheckbox($event, 'temperature'); checkAllWeather()"
+          >대기온도</mat-checkbox
+        >
+      </div>
+      <div class="checkbox-div">
+        <mat-checkbox
+          [(ngModel)]="weatherAny.humidity"
+          (change)="toggleCheckbox($event, 'humidity'); checkAllWeather()"
+          >습도</mat-checkbox
+        >
+      </div>
+      <div class="checkbox-div">
+        <mat-checkbox
+          [(ngModel)]="weatherAny.irradiance"
+          (change)="toggleCheckbox($event, 'irradiance'); checkAllWeather()"
+          >일사량</mat-checkbox
+        >
+      </div>
+      <div class="checkbox-div">
+        <mat-checkbox
+          [(ngModel)]="weatherAny.eday"
+          (change)="toggleCheckbox($event, 'eday'); checkAllWeather()"
+          >일누적일사량</mat-checkbox
+        >
+      </div>
+      <div class="checkbox-div">
+        <mat-checkbox
+          style="font-weight: bold"
+          [(ngModel)]="weatherAny.all"
+          (change)="toggleAllWeather()"
+          >전체</mat-checkbox
+        >
+      </div>
+    </div>
+
+    <!-- Input (DC) -->
+    <h2 class="sub-heading">입력(DC)</h2>
+
+    <!-- DC Voltage -->
+    <div class="checkbox-vertical-list">
+      <div class="checkbox-div" *ngFor="let idx of dcvIdx">
+        <mat-checkbox
+          [(ngModel)]="weatherAny['dcv' + idx]"
+          (change)="toggleCheckbox($event, 'dcv' + idx); checkAllGroup('dcv')"
+        >
+          전압{{ idx }}
         </mat-checkbox>
       </div>
       <div class="checkbox-div">
-        <mat-checkbox [(ngModel)]="weatherSelect.ws" (change)="toggleCheckbox($event, 'ws'); checkAll();">풍속
+        <mat-checkbox
+          style="font-weight: bold"
+          [(ngModel)]="weatherAny.dcv"
+          (change)="toggleAllGroup('dcv')"
+          >전체</mat-checkbox
+        >
+      </div>
+    </div>
+
+    <!-- DC Current -->
+    <div class="checkbox-vertical-list">
+      <div class="checkbox-div" *ngFor="let idx of dcaIdx">
+        <mat-checkbox
+          [(ngModel)]="weatherAny['dca' + idx]"
+          (change)="toggleCheckbox($event, 'dca' + idx); checkAllGroup('dca')"
+        >
+          전류{{ idx }}
         </mat-checkbox>
       </div>
       <div class="checkbox-div">
-        <mat-checkbox [(ngModel)]="weatherSelect.temperature"
-                      (change)="toggleCheckbox($event, 'temperature'); checkAll();">대기온도
-        </mat-checkbox>
-      </div>
-      <div class="checkbox-div">
-        <mat-checkbox [(ngModel)]="weatherSelect.humidity" (change)="toggleCheckbox($event, 'humidity'); checkAll();">
-          습도
-        </mat-checkbox>
-      </div>
-      <div class="checkbox-div">
-        <mat-checkbox [(ngModel)]="weatherSelect.irradiance"
-                      (change)="toggleCheckbox($event, 'irradiance'); checkAll();">일사량
-        </mat-checkbox>
-      </div>
-      <div class="checkbox-div">
-        <mat-checkbox [(ngModel)]="weatherSelect.eday"
-                      (change)="toggleCheckbox($event, 'eday'); checkAll();">일누적일사량
-        </mat-checkbox>
-      </div>
-      <div class="checkbox-div">
-        <mat-checkbox [(ngModel)]="weatherSelect.all" (change)="toggleAll()">전체</mat-checkbox>
+        <mat-checkbox
+          style="font-weight: bold"
+          [(ngModel)]="weatherAny.dca"
+          (change)="toggleAllGroup('dca')"
+          >전체</mat-checkbox
+        >
       </div>
     </div>
 
@@ -78,6 +202,10 @@
     </div>
   </div>
 </div>
-<div *ngIf="showProgressSpinner==true" class="full-overlay d-flex justify-content-center align-items-center">
+
+<div
+  *ngIf="showProgressSpinner"
+  class="full-overlay d-flex justify-content-center align-items-center"
+>
   <mat-spinner color="secondary"></mat-spinner>
 </div>
