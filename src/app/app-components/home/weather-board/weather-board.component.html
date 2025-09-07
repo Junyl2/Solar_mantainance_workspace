@@ -5,6 +5,7 @@
   </div>
 
   <ul class="weather-wrapper">
+    <!-- Temperature -->
     <li>
       <img
         class="dashboard-icon"
@@ -15,6 +16,8 @@
       <strong>{{ temp | number : "1.1-1" }}</strong>
       <span> ℃</span>
     </li>
+
+    <!-- Humidity -->
     <li>
       <img
         class="dashboard-icon"
@@ -25,12 +28,8 @@
       <strong>{{ humi | number : "1.1-1" }}</strong>
       <span> %</span>
     </li>
-    <!--  <li>
-      <img class="dashboard-icon" [src]="'assets/Images/icon-round-wind-direction.svg'" alt="풍향 아이콘" />
-      <p class="color-grey">풍향</p>
-      <strong>{{winddir|number:'1.1-1'}}</strong>
-      <span> Dir.</span>
-    </li> -->
+
+    <!-- Wind Speed -->
     <li>
       <img
         class="dashboard-icon"
@@ -41,15 +40,41 @@
       <strong>{{ wind | number : "1.1-1" }}</strong>
       <span> m/s</span>
     </li>
+
+    <!-- Solar Radiation - GHI -->
     <li>
       <img
         class="dashboard-icon"
         [src]="'assets/Images/icon-round-insolation.svg'"
-        alt="일사량 아이콘"
+        alt="일사량(GHI) 아이콘"
       />
-      <p class="color-grey">일사량</p>
-      <strong>{{ solar | number : "1.1-1" }}</strong>
-      <span> Kw/m²</span>
+      <p class="color-grey">일사량 (GHI)</p>
+      <strong>{{ solarGHI | number : "1.1-1" }}</strong>
+      <span> kW/m²</span>
+    </li>
+
+    <!-- Solar Radiation - DNI -->
+    <li>
+      <img
+        class="dashboard-icon"
+        [src]="'assets/Images/icon-round-insolation.svg'"
+        alt="일사량(DNI) 아이콘"
+      />
+      <p class="color-grey">일사량 (DNI)</p>
+      <strong>{{ solarDNI | number : "1.1-1" }}</strong>
+      <span> kW/m²</span>
+    </li>
+
+    <!-- Solar Radiation - DHI -->
+    <li>
+      <img
+        class="dashboard-icon"
+        [src]="'assets/Images/icon-round-insolation.svg'"
+        alt="일사량(DHI) 아이콘"
+      />
+      <p class="color-grey">일사량 (DHI)</p>
+      <strong>{{ solarDHI | number : "1.1-1" }}</strong>
+      <span> kW/m²</span>
     </li>
   </ul>
 </section>

@@ -118,6 +118,30 @@ export class SolarQuantityComponent
 
   site;
 
+  /** Keep only IRRADIANCE1/2/3 and label as IRRADIANCE{N}[insNum] */
+  private toIrradianceLegend<T extends { insName: string; insNum?: any }>(
+    rows: T[]
+  ): (T & { displayName: string })[] {
+    const ALLOWED = new Set(['IRRADIANCE1', 'IRRADIANCE2', 'IRRADIANCE3']);
+    return rows
+      .filter((r) => ALLOWED.has(r.insName))
+      .map((r) => ({
+        ...r,
+        displayName: r.insNum != null ? `${r.insName}[${r.insNum}]` : r.insName,
+      }));
+  }
+
+  /** If a stray dataset named '일사량' ever appears, remove it */
+  private stripStrayDailySum(chartRef: BarChartComponent | undefined) {
+    const c: any = chartRef as any;
+    const chart = c?.chart; // underlying Chart.js instance if exposed
+    if (!chart?.data?.datasets) return;
+    chart.data.datasets = chart.data.datasets.filter(
+      (d: any) => d?.label !== '일사량'
+    );
+    chart.update?.();
+  }
+
   ngOnInit(): void {
     this.semsService.getSite().subscribe((res) => {
       this.site = res;
