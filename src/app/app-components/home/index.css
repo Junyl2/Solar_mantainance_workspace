@@ -29,18 +29,16 @@
   float: left;
 }
 
-
 .power-comparison table td .num,
 .radiation-comparison table td .num {
   float: right;
 }
 
-
 .conversion-efficiency-status li {
   width: 49%;
   height: 65px;
   overflow: hidden;
-  border: 1px solid #E5EAF3;
+  border: 1px solid #e5eaf3;
   box-sizing: border-box;
   float: left;
   border-radius: 5px;
@@ -56,13 +54,13 @@
 }
 
 .conversion-efficiency-status li .list-title {
-  background-color: #F4F8FD;
+  background-color: #f4f8fd;
   float: left;
   width: 30%;
-  color: #8593A7;
+  color: #8593a7;
   padding: 20px;
   box-sizing: border-box;
-  border-right: 1px solid #E5EAF3;
+  border-right: 1px solid #e5eaf3;
   margin-right: 20px;
   letter-spacing: 0;
   font-size: 12px;

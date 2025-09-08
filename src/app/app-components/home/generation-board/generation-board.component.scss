@@ -4,6 +4,8 @@
 @import "../index.css";
 @import "../progress-bar.css";
 
+
+
 section {
   width: 100%;
   height: 100%;
@@ -23,19 +25,19 @@ section {
 
 .grid {
   display: grid;
-  height:100%;
+  height: 100%;
   grid-template-columns: repeat(6, 1fr);
   gap: 5px;
   grid-auto-rows: minmax(auto, auto);
-  margin:10px;
+  margin: 10px;
 }
 
 .icon {
-    margin:10px;
+  margin: 10px;
 }
 
 .item1 {
-  background-color: RGB(51,102,255);
+  background-color: RGB(51, 102, 255);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -52,8 +54,8 @@ section {
 }
 
 #chart {
-  position:relative;
+  position: relative;
   width: 90%;
-  margin-left:auto;
-  margin-right:auto;
+  margin-left: auto;
+  margin-right: auto;
 }

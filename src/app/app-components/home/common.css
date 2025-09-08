@@ -1,11 +1,12 @@
 @font-face {
-  font-family: 'Hahmlet-Bold';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/Hahmlet-Bold.woff2') format('woff2');
+  font-family: "Hahmlet-Bold";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/Hahmlet-Bold.woff2")
+    format("woff2");
   font-weight: normal;
   font-style: normal;
 }
 
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
 
 * {
   padding: 0;
@@ -13,7 +14,9 @@
   line-height: 1.6;
   letter-spacing: -0.04em;
   word-break: keep-all;
-  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto,
+    "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR",
+    "Malgun Gothic", sans-serif;
   color: #222;
 }
 
@@ -22,7 +25,7 @@ html {
 }
 
 body {
-  background-color: #EEF0F2;
+  background-color: #eef0f2;
   height: 100%;
   padding: 20px;
   box-sizing: border-box;
@@ -36,13 +39,12 @@ a {
 
 a:hover {
   text-decoration: underline;
-  color: #FF6B3D;
+  color: #ff6b3d;
 }
 
 a.router-link-exact-active {
-  color: #FF6B3D;
+  color: #ff6b3d;
 }
-
 
 ul,
 ol {
@@ -70,7 +72,7 @@ ol {
 
 .title-wrap .title-description {
   font-size: 12px;
-  color: #8593A7;
+  color: #8593a7;
   padding: 8px 10px;
   display: inline-block;
   letter-spacing: 0;
@@ -79,7 +81,7 @@ ol {
 section {
   width: 49.5%;
   height: 32%;
-  border: 1px solid #E5EAF3;
+  border: 1px solid #e5eaf3;
   float: left;
   background-color: #fff;
   box-sizing: border-box;
@@ -97,7 +99,6 @@ section:nth-child(even) {
   float: right;
 }
 
-
 .icon-status {
   float: right;
 }
@@ -114,7 +115,6 @@ section:nth-child(even) {
   line-height: 2;
 }
 
-
 table {
   border-collapse: collapse;
   width: 100%;
@@ -124,7 +124,7 @@ table {
 
 table thead {
   border-top: 1px solid black;
-  background-color: #F4F8FD;
+  background-color: #f4f8fd;
 }
 
 table thead td {
@@ -132,7 +132,7 @@ table thead td {
 }
 
 table tr {
-  border-bottom: 1px solid #E5EAF3;
+  border-bottom: 1px solid #e5eaf3;
 }
 
 table td {
@@ -143,7 +143,6 @@ table td {
 table tr:last-child {
   border: none;
 }
-
 
 @media (min-width: 1366px) and (max-width: 1700px) {
   .title-wrap {
@@ -161,6 +160,4 @@ table tr:last-child {
   section {
     padding: 15px;
   }
-
-
 }

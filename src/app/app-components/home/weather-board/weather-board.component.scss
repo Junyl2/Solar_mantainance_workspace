@@ -24,33 +24,60 @@
 @import "../color.css";
 @import "../progress-bar.css";
 
-section {
-  width: 100%;
+.weather-board {
+  width: 100% !important;
+  max-width: 100% !important;
   height: 100%;
-  border: 1px solid #e5eaf3;
-  float: left;
+  /*   border: 1px solid #e5eaf3; */
   background-color: #fff;
-  box-sizing: border-box;
   margin-bottom: 1%;
   border-radius: 5px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   -ms-border-radius: 5px;
   -o-border-radius: 5px;
-  padding: 20px;
-  overflow: hidden;
 }
 
 strong {
   font-size: clamp(1rem, 2vw, 1.8rem) !important;
 }
 
+/* .weather-container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+} */
+
 .weather-wrapper {
   display: flex !important;
   align-items: start !important;
   justify-content: center;
   gap: 2rem !important;
+  width: 100% !important;
+  gap: 1.5rem;
 }
+
+.weather-wrapper li {
+  display: flex;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: start !important;
+  text-align: center !important;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #8593a7 !important;
+}
+
+.label span {
+  color: #8593a7 !important;
+
+}
+
+
 
 .grid {
   display: grid;
@@ -158,11 +185,16 @@ strong {
 }
 
 .dashboard-icon {
-  max-width: 80px;
+  max-width: 60px;
   margin-top: 2rem;
 
-  @media (max-width: 1024px) {
+  @media(max-width: 1240px) {
     max-width: 70px;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 1024px) {
+    max-width: 60px;
     margin-top: 2rem;
   }
 
