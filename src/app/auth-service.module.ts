@@ -10,14 +10,21 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-
+import {
+  BehaviorSubject,
+  Observable,
+  of,
+  shareReplay,
+  Subject,
+  tap,
+  throwError,
+} from 'rxjs';
+import { retry, catchError } from 'rxjs';
 import moment from 'moment';
 import { environment } from 'src/environments/environment';
 import { Token } from './models/token';
 import { UserEntity } from './models/user-entity';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { shareReplay, tap } from 'rxjs/operators';
 
 @NgModule({
   declarations: [],

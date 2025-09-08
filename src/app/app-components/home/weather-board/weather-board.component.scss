@@ -1,7 +1,6 @@
 @font-face {
   font-family: "Hahmlet-Bold";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/Hahmlet-Bold.woff2")
-    format("woff2");
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/Hahmlet-Bold.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
 }
@@ -44,6 +43,13 @@ section {
 
 strong {
   font-size: clamp(1rem, 2vw, 1.8rem) !important;
+}
+
+.weather-wrapper {
+  display: flex !important;
+  align-items: start !important;
+  justify-content: center;
+  gap: 2rem !important;
 }
 
 .grid {
@@ -98,18 +104,22 @@ strong {
     grid-column: 1/2;
     grid-row: 1/2;
   }
+
   .humi {
     grid-column: 2/3;
     grid-row: 1/2;
   }
+
   .dir {
     grid-column: 3/4;
     grid-row: 1/2;
   }
+
   .wind {
     grid-column: 1/2;
     grid-row: 2/3;
   }
+
   .solar {
     grid-column: 2/3;
     grid-row: 2/3;
@@ -160,6 +170,7 @@ strong {
     max-width: 60px;
     margin-top: 1.5rem;
   }
+
   @media (max-width: 468px) {
     max-width: 40px;
     margin-top: 1.5rem;

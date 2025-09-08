@@ -2,17 +2,17 @@
 
 .main {
   padding: 10px 10px 0 10px;
-  position:  relative;
+  position: relative;
 }
 
 .box {
   display: flex;
   flex-direction: column;
-  padding: 10px 10px 10px 10px;
+  padding: 10px;
 }
 
 .box1 {
-  padding: 5px 5px 5px 5px;
+  padding: 5px;
 }
 
 .box1_header {
@@ -37,17 +37,17 @@
 
 .radio_input1 {
   width: 85px;
-  padding: 3px 0px 0px 0px;
+  padding: 3px 0 0;
 }
 
 .radio_input2 {
   width: 75px;
-  padding: 3px 0px 0px 0px;
+  padding: 3px 0 0;
 }
 
 .radio_input3 {
   width: 100px;
-  padding: 3px 0px 0px 0px;
+  padding: 3px 0 0;
 }
 
 .padding_text {
@@ -65,49 +65,49 @@
 .date_space {
   display: none;
   align-items: center;
-  padding: 0px 10px 0px 10px
+  padding: 0 10px;
 }
 
 .search_box {
   display: flex;
   align-items: center;
-  padding: 0px 0px 0px 20px;
+  padding: 0 0 0 20px;
 }
 
 .search_btn {
-  padding: 2px 0px 0px 0px;
+  padding: 2px 0 0;
   border: none;
   width: 80px;
   height: 30px;
-  color: white;
+  color: #fff;
   background: #4e4e4e;
   font-size: 14px;
   border-radius: 5px;
 }
 
 .table_box {
-  padding: 0px 15px 0px 0px
+  padding: 0 15px 0 0;
 }
 
 .table_btn {
-  padding: 2px 0px 0px 0px;
+  padding: 2px 0 0;
   border: none;
   width: 60px;
-  color: white;
+  color: #fff;
   background: #4e4e4e;
   font-size: 14px;
   border-radius: 5px;
 }
 
 .chart_box {
-  padding: 0px 15px 0px 0px
+  padding: 0 15px 0 0;
 }
 
 .chart_btn {
-  padding: 2px 0px 0px 0px;
+  padding: 2px 0 0;
   border: none;
   width: 60px;
-  color: white;
+  color: #fff;
   background: #4e4e4e;
   font-size: 14px;
   border-radius: 5px;
@@ -116,15 +116,15 @@
 .download_box {
   display: flex;
   align-items: center;
-  padding: 0px 15px 0px 0px
+  padding: 0 15px 0 0;
 }
 
 .download_btn {
-  padding: 2px 0px 0px 0px;
+  padding: 2px 0 0;
   border: none;
-  width:100px;
+  width: 100px;
   height: 30px;
-  color: white;
+  color: #fff;
   background: #4e4e4e;
   font-size: 14px;
   border-radius: 5px;
@@ -144,12 +144,12 @@
 }
 
 .box2 {
-  padding: 40px 0px 0px 0px;
+  padding: 40px 0 0;
 }
 
 .box2_chart_box {
   display: flex;
-  padding: 10px 10px 10px 10px;
+  padding: 10px;
   justify-content: center;
 }
 
@@ -157,10 +157,15 @@
   width: 85%;
 }
 
+/* Horizontal scroll + smooth momentum */
 .box2_table_box {
   display: flex;
-  padding: 10px 10px 10px 10px;
-  overflow: auto;
+  /*   padding: 10px; */
+  padding: 0px;
+  overflow-x: auto;
+  /* was 'overflow: auto' */
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
   white-space: nowrap;
 }
 
@@ -170,38 +175,42 @@
 
 .table_td_header {
   background: #4e4e4e;
-  color: white;
+  color: #fff;
   text-align: center;
-  padding: 5px 5px 5px 5px;
-  border: 1px solid white;
+  padding: 5px;
+  border: 1px solid #fff;
+  white-space: nowrap;
 }
 
 .table_tr {
-  border: 1px solid black;
+  border: 1px solid #000;
 }
 
 .table_td {
-  border: 1px solid black;
+  border: 1px solid #000;
   text-align: center;
-  padding: 5px 5px 5px 5px;
+  padding: 5px;
+  white-space: nowrap;
+}
+
+/* Date inputs */
+.data_box1,
+.data_box2,
+.data_month_box {
+  align-items: center;
+  background: rgba(0, 0, 0, .04);
 }
 
 .data_box1 {
   display: flex;
-  align-items: center;
-  background: rgba(0,0,0,.04);
 }
 
 .data_box2 {
   display: none;
-  align-items: center;
-  background: rgba(0,0,0,.04);
 }
 
 .data_month_box {
   display: none;
-  align-items: center;
-  background: rgba(0,0,0,.04);
 }
 
 .data_input {
@@ -209,4 +218,21 @@
   background: rgb(0 0 0 / 0%);
   padding-left: 20px;
   width: 140px;
+}
+
+/* NEW: keep first column visible while scrolling */
+.sticky-col {
+  position: sticky;
+  left: 0;
+  background: #fff;
+  color: #100c0c;
+  z-index: 2;
+  box-shadow: 2px 0 0 rgba(0, 0, 0, 0.05);
+}
+
+.table_td_header.sticky-col {
+  background: #4e4e4e !important;
+  color: #fff !important;
+  font-weight: bold;
+  z-index: 3;
 }

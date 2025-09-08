@@ -84,16 +84,16 @@ export class DownloadInvertorComponent implements OnInit {
   }
 
   // 입력 DC 선택
-  toggleCheckbox($event: any, key: string) {
-    (this.invertorSelect as any)[key] = $event.checked;
+  toggleCheckbox($event, key) {
+    this.invertorSelect[key] = $event.checked;
   }
 
-  toggleAll($event: any, selected: string) {
+  toggleAll($event, selected) {
     let result = true;
 
     for (const key in this.invertorSelect) {
       if (key != selected && key.startsWith(selected)) {
-        result = (this.invertorSelect as any)[key] && result;
+        result = this.invertorSelect[key] && result;
       }
 
       if (!result) {
@@ -103,7 +103,7 @@ export class DownloadInvertorComponent implements OnInit {
 
     for (const key in this.invertorSelect) {
       if (key != selected && key.startsWith(selected)) {
-        (this.invertorSelect as any)[key] = !result;
+        this.invertorSelect[key] = !result;
       }
     }
   }
@@ -113,7 +113,7 @@ export class DownloadInvertorComponent implements OnInit {
 
     for (const key in this.invertorSelect) {
       if (key != selected && key.startsWith(selected)) {
-        result = (this.invertorSelect as any)[key] && result;
+        result = this.invertorSelect[key] && result;
       }
 
       if (!result) {
@@ -121,10 +121,10 @@ export class DownloadInvertorComponent implements OnInit {
       }
     }
 
-    (this.invertorSelect as any)[selected] = result;
+    this.invertorSelect[selected] = result;
   }
 
-  checkAllAca($event: any, isAll: boolean) {
+  checkAllAca($event, isAll) {
     if (isAll) {
       this.invertorSelect.acaT = $event.checked;
       this.invertorSelect.acaR = $event.checked;
@@ -137,7 +137,7 @@ export class DownloadInvertorComponent implements OnInit {
     }
   }
 
-  checkAllAcv($event: any, isAll: boolean) {
+  checkAllAcv($event, isAll) {
     if (isAll) {
       this.invertorSelect.acvTR = $event.checked;
       this.invertorSelect.acvRS = $event.checked;
@@ -150,7 +150,7 @@ export class DownloadInvertorComponent implements OnInit {
     }
   }
 
-  toggleAllEtc($event: any) {
+  toggleAllEtc($event) {
     let result =
       this.invertorSelect.eday &&
       this.invertorSelect.accumulatePower &&
@@ -198,155 +198,14 @@ export class DownloadInvertorComponent implements OnInit {
         this.invertors,
         this.invertorSelect
       )
-      .subscribe({
-        next: (res: any) => {
-          this.showProgressSpinner = false;
-          // 타입 안전한 파일 저장
-          this.saveFile(
-            res,
-            `invertor-download-${moment(moment.now()).toISOString()}.xlsx`
-          );
-        },
-        error: (error) => {
-          this.showProgressSpinner = false;
-          console.error('Invertor 데이터 다운로드 중 오류 발생:', error);
-        },
+      .subscribe((res) => {
+        this.showProgressSpinner = false;
+
+        saveAs(
+          res,
+          `invertor-download-${moment(moment.now()).toISOString()}.xlsx`
+        );
       });
-  }
-
-  // 파일 저장을 위한 별도 메서드
-  private saveFile(data: any, filename: string): void {
-    try {
-      // Case 1: 이미 Blob인 경우
-      if (data instanceof Blob) {
-        saveAs(data, filename);
-        return;
-      }
-
-      // Case 2: ArrayBuffer인 경우
-      if (data instanceof ArrayBuffer) {
-        //@ts-ignore
-        const blob = new Blob([data], {
-          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        });
-        saveAs(blob, filename);
-        return;
-      }
-
-      // Case 3: Uint8Array인 경우
-      if (data instanceof Uint8Array) {
-        //@ts-ignore
-        const blob = new Blob([data], {
-          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        });
-        saveAs(blob, filename);
-        return;
-      }
-
-      // Case 4: 문자열인 경우
-      if (typeof data === 'string') {
-        const blob = new Blob([data], {
-          type: 'text/plain;charset=utf-8',
-        });
-        saveAs(blob, filename);
-        return;
-      }
-
-      // Case 5: 배열이나 객체인 경우
-      if (Array.isArray(data) || (typeof data === 'object' && data !== null)) {
-        // Excel 형식이 필요한 경우 XLSX 라이브러리 사용
-        if (filename.endsWith('.xlsx')) {
-          this.saveAsExcel(data, filename);
-        } else {
-          // JSON 파일로 저장
-          const jsonString = JSON.stringify(data, null, 2);
-          const blob = new Blob([jsonString], {
-            type: 'application/json;charset=utf-8',
-          });
-          const jsonFilename = filename.replace('.xlsx', '.json');
-          saveAs(blob, jsonFilename);
-        }
-        return;
-      }
-
-      // Case 6: 기본값
-      const dataString = String(data);
-      const blob = new Blob([dataString], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      });
-      saveAs(blob, filename);
-    } catch (error) {
-      console.error('파일 저장 중 오류 발생:', error);
-
-      // 최후의 수단: 간단한 fallback
-      try {
-        const fallbackData =
-          typeof data === 'string' ? data : JSON.stringify(data);
-        const fallbackBlob = new Blob([fallbackData], {
-          type: 'application/octet-stream',
-        });
-        saveAs(fallbackBlob, filename);
-      } catch (fallbackError) {
-        console.error('Fallback 저장도 실패:', fallbackError);
-      }
-    }
-  }
-
-  // Excel 파일로 저장하는 메서드
-  private saveAsExcel(data: any, filename: string): void {
-    try {
-      // XLSX 라이브러리를 동적으로 import
-      import('xlsx')
-        .then((XLSX) => {
-          let worksheet: any;
-
-          if (Array.isArray(data)) {
-            // 배열 데이터를 워크시트로 변환
-            worksheet = XLSX.utils.json_to_sheet(data);
-          } else if (typeof data === 'object' && data !== null) {
-            // 객체 데이터를 워크시트로 변환
-            worksheet = XLSX.utils.json_to_sheet([data]);
-          } else {
-            // 기타 데이터
-            worksheet = XLSX.utils.aoa_to_sheet([[String(data)]]);
-          }
-
-          const workbook = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(workbook, worksheet, 'Invertor Data');
-
-          // Excel 파일 생성
-          const excelBuffer = XLSX.write(workbook, {
-            bookType: 'xlsx',
-            type: 'array',
-          });
-
-          // @ts-ignore를 사용하여 타입 오류 무시
-          //@ts-ignore
-          const blob = new Blob([excelBuffer], {
-            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          });
-          saveAs(blob, filename);
-        })
-        .catch((error) => {
-          console.error('XLSX 라이브러리 로드 실패:', error);
-          // XLSX 로드 실패시 JSON으로 저장
-          const jsonString = JSON.stringify(data, null, 2);
-          const blob = new Blob([jsonString], {
-            type: 'application/json;charset=utf-8',
-          });
-          const jsonFilename = filename.replace('.xlsx', '.json');
-          saveAs(blob, jsonFilename);
-        });
-    } catch (error) {
-      console.error('Excel 저장 중 오류:', error);
-      // Excel 저장 실패시 JSON으로 저장
-      const jsonString = JSON.stringify(data, null, 2);
-      const blob = new Blob([jsonString], {
-        type: 'application/json;charset=utf-8',
-      });
-      const jsonFilename = filename.replace('.xlsx', '.json');
-      saveAs(blob, jsonFilename);
-    }
   }
 
   showProgressOverlay() {
@@ -362,7 +221,7 @@ export class DownloadInvertorComponent implements OnInit {
     this.endDailyDate = normalizedDate.toDate();
   }
 
-  selectInvertor(insName: any, insNum: any) {
+  selectInvertor(insName, insNum) {
     console.log(insName);
     console.log(insNum);
     console.log(this.invertors);
@@ -377,7 +236,7 @@ export class DownloadInvertorComponent implements OnInit {
     }
   }
 
-  selectOptimizer(insName: any, insNum: any) {
+  selectOptimizer(insName, insNum) {
     console.log(this.invertors);
   }
 

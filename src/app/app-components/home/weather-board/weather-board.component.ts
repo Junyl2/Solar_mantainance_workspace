@@ -1,8 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ResizedEvent } from 'angular-resize-event';
 
 // Services ------------------------------------
 import { ThemeService } from '../../../services/theme-service';
-
+import { SemsService } from 'src/app/services/sems-service';
 // End Services
 
 import {
@@ -11,11 +12,9 @@ import {
   faSun,
   faTemperatureHigh,
   faWind,
-  faLocationArrow,
   faBolt,
 } from '@fortawesome/free-solid-svg-icons';
 import { OntestUtils } from 'src/app/utils/ontest-utils';
-import { SemsService } from 'src/app/services/sems-service';
 
 @Component({
   selector: 'app-weather-board',
@@ -25,11 +24,10 @@ import { SemsService } from 'src/app/services/sems-service';
 export class WeatherBoardComponent implements OnInit {
   private onTestUtil: OntestUtils = new OntestUtils(this.semsService);
 
-  // Font awesome -----------------
+  // Font awesome (wind direction removed)
   faTemperatureHigh = faTemperatureHigh;
   faTint = faTint;
   faWind = faWind;
-  faLocationArrow = faLocationArrow;
   faSun = faSun;
   faCloudSunRain = faCloudSunRain;
   faBolt = faBolt;
@@ -37,9 +35,12 @@ export class WeatherBoardComponent implements OnInit {
   // Data -------------------------
   @Input() temp: number = 0;
   @Input() humi: number = 0;
-  @Input() winddir: number = 0;
   @Input() wind: number = 0;
-  @Input() solar: number = 0;
+
+  // New solar radiation inputs (three types)
+  @Input() solarGHI: number = 0;
+  @Input() solarDNI: number = 0;
+  @Input() solarDHI: number = 0;
 
   constructor(
     public themeService: ThemeService,
@@ -47,4 +48,8 @@ export class WeatherBoardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {}
+
+  onResized(event: ResizedEvent) {
+    // this.canvasWidth = event.newRect.width;
+  }
 }

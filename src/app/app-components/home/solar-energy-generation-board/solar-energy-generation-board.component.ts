@@ -1,6 +1,11 @@
 import {
-  Component, OnInit, ViewChild,
-  AfterViewInit, AfterContentInit, Input
+  Component,
+  OnInit,
+  ViewChild,
+  AfterViewInit,
+  AfterContentInit,
+  OnDestroy,
+  Input,
 } from '@angular/core';
 
 // Timer
@@ -21,17 +26,19 @@ import { faSolarPanel } from '@fortawesome/free-solid-svg-icons';
 import { OntestUtils } from 'src/app/utils/ontest-utils';
 import { InvertorSummary } from 'src/app/models/invertor-summary';
 import moment from 'moment';
-import { TotalGenerationBoardComponent } from "../total-generation-board/total-generation-board.component";
-import { Config, Facility } from "../home.component";
+import { TotalGenerationBoardComponent } from '../total-generation-board/total-generation-board.component';
+import { Config, Facility } from '../home.component';
 
 @Component({
   selector: 'app-solar-power-board',
   templateUrl: './solar-energy-generation-board.component.html',
-  styleUrls: ['./solar-energy-generation-board.component.scss']
+  styleUrls: ['./solar-energy-generation-board.component.scss'],
 })
-export class SolarEnergyGenerationBoardComponent implements OnInit, AfterViewInit, AfterContentInit {
+export class SolarEnergyGenerationBoardComponent
+  implements OnInit, AfterViewInit, AfterContentInit, OnDestroy
+{
   @ViewChild('barChart') barChart!: BarChartComponent;
-  @Input() totalGenerationBoardComponent: TotalGenerationBoardComponent;
+  @Input() totalGenerationBoardComponent!: TotalGenerationBoardComponent;
 
   // Font awesome
   faSolarPanel = faSolarPanel;
@@ -39,20 +46,26 @@ export class SolarEnergyGenerationBoardComponent implements OnInit, AfterViewIni
   timeDate: Date = moment().toDate();
   startMonthlyDate!: Date;
   endMonthlyDate!: Date;
+
   chartLabels: string[] = [];
-  showLegend: boolean = false;
+  showLegend = false;
   animation: any = true;
+
   tableTimeData!: InvertorSummary[];
-  chartJsUtils = new ChartJsUtils();
-  private onTestUtil: OntestUtils = new OntestUtils(this.semsService);
-
-  apiData: InvertorSummary[];
+  apiData: InvertorSummary[] = [];
   resSite: any;
-  selectedFacility: number = 0;
-  facilities: { id: number, title: string }[];
 
-  private timer: Observable<number>;
-  private subscription: Subscription;
+  selectedFacility: number = 0; // 0 = 전체/All
+  facilities: { id: number; title: string }[] = [{ id: 0, title: '전체' }];
+
+  private onTestUtil: OntestUtils;
+  chartUtil: ChartJsUtils = new ChartJsUtils();
+
+  private timer$!: Observable<number>;
+  private subscription!: Subscription;
+
+  // Map backend facilityId -> display title (from API facilityTitle)
+  private facilityTitleMap = new Map<number, string>();
 
   @Input() config: Config = {
     title: '',
@@ -62,10 +75,8 @@ export class SolarEnergyGenerationBoardComponent implements OnInit, AfterViewIni
     colorIndex: 0,
     fieldName: '',
     unit: '',
-    barChartFieldName: ''
+    barChartFieldName: '',
   };
-
-  chartUtil: ChartJsUtils = new ChartJsUtils();
 
   constructor(
     private semsService: SemsService,
@@ -75,69 +86,126 @@ export class SolarEnergyGenerationBoardComponent implements OnInit, AfterViewIni
     this.startMonthlyDate = semsService.getInstalledDate();
     this.endMonthlyDate = new Date();
     this.chartLabels = DateUtils.getBarChartLabel(this.timeDate);
-    console.log('SolarEnergyGenerationBoardComponent', this.chartLabels);
+    console.log(
+      'SolarEnergyGenerationBoardComponent labels:',
+      this.chartLabels
+    );
+
+    this.onTestUtil = new OntestUtils(this.semsService);
   }
 
   ngOnInit(): void {
     console.log('[SolarEnergyGenerationBoardComponent] - ngOnInit');
-    this.timer = timer(0, 10000);
+    this.timer$ = timer(0, 10000);
 
-    this.subscription = this.timer.subscribe(n => {
-      this.barChart.resetDataset();
+    this.subscription = this.timer$.subscribe(() => {
+      if (this.barChart) this.barChart.resetDataset();
 
-      /**
-       * ================================
-       * MOCK DATA SECTION
-       * ================================
-       * NOTE: The real API calls are commented out below.
-       * Remove the mock block and uncomment the real API calls
-       * when backend data is ready.
-       */
-
-      // Mock site response (simulate API)
-     /*  this.resSite = { siteIndex: 1, siteName: 'Mock Solar Site' }; */
-
-      // Mock generation data (facilityId should match what chartRendering expects)
-      /* const mockData: InvertorSummary[] = [
-        { facilityId: 0, powerAvg: 20, date: '2025-08-01' } as any,
-        { facilityId: 0, powerAvg: 35, date: '2025-08-02' } as any,
-        { facilityId: 0, powerAvg: 50, date: '2025-08-03' } as any,
-        { facilityId: 0, powerAvg: 40, date: '2025-08-04' } as any,
-        { facilityId: 0, powerAvg: 60, date: '2025-08-05' } as any
-      ];
-
-      this.animation = false;
-      this.apiData = mockData;
-      this.chartRendering(0); */
-
-      // ================================
-      // REAL API CALLS (uncomment when backend is ready)
-      // ================================
-      this.semsService.getSite().subscribe(resSite => {
+      // REAL API CALLS
+      this.semsService.getSite().subscribe((resSite) => {
         this.resSite = resSite;
-        this.semsService.getGenerationQuantityWeek(this.timeDate, resSite.siteIndex, this.config)
-          .subscribe(res => {
+
+        this.semsService
+          .getGenerationQuantityWeek(
+            this.timeDate,
+            resSite.siteIndex,
+            this.config
+          )
+          .subscribe((res) => {
             this.animation = false;
-            console.log(res);
-            this.apiData = res;
-            this.chartRendering(0);
+            this.apiData = res || [];
+
+            // (Re)build title map from latest API data
+            this.buildFacilityTitleMap();
+
+            // Default to 전체 (all) on each refresh to avoid empty state
+            const nextSelected = this.selectedFacility || 0;
+            this.chartRendering(nextSelected);
           });
       });
     });
   }
 
-  private chartRendering(facilityId: number) {
-    console.log('chartRendering', this.config);
+  ngAfterViewInit() {}
+  ngAfterContentInit() {}
 
-    // Update facility list
-    for (let data of this.apiData) {
-      this.facilities = this.onTestUtil.facilities;
+  ngOnDestroy(): void {
+    if (this.subscription) this.subscription.unsubscribe();
+  }
+
+  // ---- helpers -------------------------------------------------------------
+
+  /** Build a map from backend facilityId -> API facilityTitle (with safe fallbacks). */
+  private buildFacilityTitleMap(): void {
+    this.facilityTitleMap.clear();
+    for (const d of this.apiData ?? []) {
+      const id = (d as any)?.facilityId as number | undefined;
+      const title = (d as any)?.facilityTitle as string | undefined;
+      if (typeof id === 'number' && !this.facilityTitleMap.has(id)) {
+        const safeTitle =
+          (title && title.trim()) ||
+          (this.onTestUtil as any)?.facilityNameMap?.[id] ||
+          `인버터 ${id}`;
+        this.facilityTitleMap.set(id, safeTitle);
+      }
+    }
+  }
+
+  /** Get the UI label for a given facility id (prefer API title, then OntestUtils, then fallback). */
+  private getFacilityTitle(id: number): string {
+    if (id === 0) return '전체';
+
+    // 1) API-provided title
+    const apiTitle = this.facilityTitleMap.get(id);
+    if (apiTitle) return apiTitle;
+
+    // 2) Optional pretty-name map from OntestUtils
+    const nameMap = (this.onTestUtil as any)?.facilityNameMap as
+      | Record<number, string>
+      | undefined;
+    if (nameMap?.[id]) return nameMap[id];
+
+    // 3) Final fallback
+    return `인버터 ${id}`;
+  }
+
+  /** Rebuild the chips from whatever facilityId's the API returns (using facilityTitle for labels). */
+  private rebuildFacilitiesFromApi(): void {
+    // Unique facility IDs found in apiData
+    const uniqueIds = Array.from(
+      new Set((this.apiData ?? []).map((d: any) => d?.facilityId))
+    )
+      .filter((id): id is number => typeof id === 'number')
+      .sort((a, b) => a - b);
+
+    // Always start with 전체
+    const list: { id: number; title: string }[] = [{ id: 0, title: '전체' }];
+
+    for (const id of uniqueIds) {
+      if (id === 0) continue; // already added
+      list.push({ id, title: this.getFacilityTitle(id) });
     }
 
-    // Filter by selected facility
-    let data = this.apiData.filter(value => value.facilityId == facilityId);
+    this.facilities = list;
 
-    // Sync data into the bar chart
+    // Keep selected valid; if it vanished, reset to 전체
+    const ids = new Set(this.facilities.map((f) => f.id));
+    if (!ids.has(this.selectedFacility)) this.selectedFacility = 0;
+  }
+
+  // ---- main render pipeline -----------------------------------------------
+
+  private chartRendering(facilityId: number): void {
+    // 1) Build/refresh facility chips (labels from API facilityTitle)
+    this.rebuildFacilitiesFromApi();
+
+    // 2) Filter by facility; 0 = 전체
+    const data =
+      facilityId === 0
+        ? this.apiData
+        : (this.apiData ?? []).filter((v: any) => v?.facilityId === facilityId);
+
+    // 3) Sync to chart
     this.tableTimeData = this.onTestUtil.syncGenerationGridDataByFacility(
       this.chartLabels,
       data,
@@ -152,27 +220,16 @@ export class SolarEnergyGenerationBoardComponent implements OnInit, AfterViewIni
     );
   }
 
-  ngOnDestroy(): void {
-    console.log(this.subscription);
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  ngAfterViewInit() { }
-
-  ngAfterContentInit() { }
-
-  addDataset() {
-    // Example placeholder
-    // this.barChart.addDataset("label", this.tableMonthlyData, this.chartJsUtils.getColorNext());
-  }
+  // ---- UI events -----------------------------------------------------------
 
   changeData(facility: Facility) {
-    console.log(facility);
     this.selectedFacility = facility.id;
-    this.barChart.resetDataset();
+    if (this.barChart) this.barChart.resetDataset();
     this.chartRendering(facility.id);
-    this.totalGenerationBoardComponent.getTotalData();
+
+    // If you really need to refresh totals in the parent board:
+    if (this.totalGenerationBoardComponent?.getTotalData) {
+      this.totalGenerationBoardComponent.getTotalData();
+    }
   }
 }

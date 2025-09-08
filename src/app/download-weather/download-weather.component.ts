@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Moment } from 'moment';
 import moment from 'moment';
-import { SemsService } from '../services/sems-service';
-import { Invertor } from '../models/invertor';
-import { WeatherSelect } from '../models/weather-select';
 import { saveAs } from 'file-saver';
+
+import { SemsService } from '../services/sems-service';
+import { WeatherSelect } from '../models/weather-select';
 import { Facility } from '../models/facility';
 
 @Component({
@@ -13,186 +13,222 @@ import { Facility } from '../models/facility';
   styleUrls: ['./download-weather.component.scss'],
 })
 export class DownloadWeatherComponent implements OnInit {
-  startDailyDate: Date;
-  endDailyDate: Date;
-  startMinDailyDate: Date;
-  startMaxDailyDate: Date;
-  endMinDailyDate: Date;
-  endMaxDailyDate: Date;
+  // Dates
+  startDailyDate!: Date;
+  endDailyDate!: Date;
+  startMinDailyDate!: Date;
+  startMaxDailyDate!: Date;
+  endMinDailyDate!: Date;
+  endMaxDailyDate!: Date;
 
-  invertors: Invertor[];
-  facilities: Facility[];
-  facilityAll: Facility;
+  // Data: facilities act as “inverters” for selection
+  facilities: (Facility & { selected?: boolean })[] = [];
+  facilityAll!: Facility & { selected?: boolean };
+
+  // Selection models
   weatherSelect: WeatherSelect = new WeatherSelect();
+  /** Plain object alias to avoid `(as any)` in templates */
+  weatherAny: any = this.weatherSelect;
 
-  public showProgressSpinner: boolean = false;
+  // UI
+  public showProgressSpinner = false;
+
+  // Inverter list loading state
+  loadingInverters = false;
+  loadInvertersError: string | null = null;
+
+  // DC groups index (1..10)
+  dcvIdx = Array.from({ length: 10 }, (_, i) => i + 1);
+  dcaIdx = Array.from({ length: 10 }, (_, i) => i + 1);
 
   constructor(private semsService: SemsService) {}
 
   ngOnInit(): void {
-    // Daily -------------------------
-    this.startMinDailyDate = this.endMinDailyDate =
-      this.semsService.getInstalledDate();
-    this.startMaxDailyDate = this.endMaxDailyDate = moment().toDate();
+    // Daily bounds
+    this.startMinDailyDate = this.semsService.getInstalledDate();
+    this.endMinDailyDate = this.startMinDailyDate;
+    this.startMaxDailyDate = moment().toDate();
+    this.endMaxDailyDate = this.startMaxDailyDate;
 
+    // Default range: last month to today
     this.endDailyDate = moment().toDate();
     this.startDailyDate = moment().add(-1, 'M').toDate();
-    this.semsService.getSite().subscribe((siteRes) => {
-      console.log(siteRes);
-      this.semsService.getWeatherInvertorList().subscribe((res) => {
-        console.log(res);
-        this.facilities = res;
-        for (let f of this.facilities) {
-          f.selected = true;
-        }
-        this.facilityAll = new Facility();
-        this.facilityAll.selected = true;
-      });
+
+    // Load site then facilities/inverters
+    this.loadingInverters = true;
+    this.loadInvertersError = null;
+
+    this.semsService.getSite().subscribe({
+      next: () => {
+        this.semsService.getWeatherInvertorList().subscribe({
+          next: (res: Facility[] = []) => {
+            // ---- DEBUG LOGS ----
+            console.log(
+              '%c[getWeatherInvertorList] raw response:',
+              'color:#0aa;',
+              res
+            );
+            console.log(
+              '[getWeatherInvertorList] length:',
+              Array.isArray(res) ? res.length : 'not an array'
+            );
+            if (Array.isArray(res) && res.length > 0) {
+              console.log('[getWeatherInvertorList] sample row:', res[0]);
+            }
+            // ---------------------
+
+            this.facilities = (res ?? []).map((f) => ({
+              ...f,
+              selected: true,
+            }));
+            this.facilityAll = {
+              id: 0,
+              title: '전체',
+              selected: true,
+            } as Facility & {
+              selected?: boolean;
+            };
+            this.loadingInverters = false;
+          },
+          error: (err) => {
+            this.loadingInverters = false;
+            this.loadInvertersError = '인버터 목록을 불러오지 못했습니다.';
+            console.error('[getWeatherInvertorList] ERROR:', err);
+          },
+        });
+      },
+      error: (err) => {
+        this.loadingInverters = false;
+        this.loadInvertersError = '사이트 정보를 불러오지 못했습니다.';
+        console.error('[getSite] ERROR:', err);
+      },
     });
   }
 
-  toggleCheckbox($event: any, key: string) {
-    this.weatherSelect[key] = $event.checked;
+  // -------- Label helper (index-signature safe) --------
+  displayFacilityLabel(f: Facility): string {
+    const anyF = f as unknown as { [key: string]: unknown };
+    const name =
+      (anyF['insName'] as string | undefined) ??
+      f.title ??
+      (anyF['name'] as string | undefined) ??
+      `인버터 ${f.id}`;
+    const num = anyF['insNum'] as string | number | undefined;
+    return num != null && String(num).length > 0 ? `${name} (${num})` : name;
   }
 
-  toggleAll() {
-    let result =
-      this.weatherSelect.temperature &&
-      this.weatherSelect.wd &&
-      this.weatherSelect.ws &&
-      this.weatherSelect.humidity &&
-      this.weatherSelect.irradiance &&
-      this.weatherSelect.eday;
-    console.log(result);
-
-    this.weatherSelect.temperature =
-      this.weatherSelect.wd =
-      this.weatherSelect.ws =
-      this.weatherSelect.humidity =
-      this.weatherSelect.irradiance =
-      this.weatherSelect.eday =
-      this.weatherSelect.all =
-        !result;
+  // -------- Meteorological toggles --------
+  toggleCheckbox($event: { checked: boolean }, key: string) {
+    this.weatherAny[key] = $event.checked;
   }
 
-  checkAll() {
-    let result =
-      this.weatherSelect.temperature &&
-      this.weatherSelect.wd &&
-      this.weatherSelect.ws &&
-      this.weatherSelect.humidity &&
-      this.weatherSelect.irradiance &&
-      this.weatherSelect.eday;
+  toggleAllWeather() {
+    const allOn =
+      !!this.weatherAny.temperature &&
+      !!this.weatherAny.wd &&
+      !!this.weatherAny.ws &&
+      !!this.weatherAny.humidity &&
+      !!this.weatherAny.irradiance &&
+      !!this.weatherAny.eday;
 
-    this.weatherSelect.all = result;
+    const target = !allOn;
+    this.weatherAny.temperature = target;
+    this.weatherAny.wd = target;
+    this.weatherAny.ws = target;
+    this.weatherAny.humidity = target;
+    this.weatherAny.irradiance = target;
+    this.weatherAny.eday = target;
+    this.weatherAny.all = target;
   }
 
+  checkAllWeather() {
+    const allOn =
+      !!this.weatherAny.temperature &&
+      !!this.weatherAny.wd &&
+      !!this.weatherAny.ws &&
+      !!this.weatherAny.humidity &&
+      !!this.weatherAny.irradiance &&
+      !!this.weatherAny.eday;
+    this.weatherAny.all = allOn;
+  }
+
+  // -------- DC group toggles (dcv*, dca*) --------
+  toggleAllGroup(groupPrefix: 'dcv' | 'dca') {
+    const idxs = groupPrefix === 'dcv' ? this.dcvIdx : this.dcaIdx;
+    let allOn = true;
+    for (const i of idxs)
+      allOn = allOn && !!this.weatherAny[`${groupPrefix}${i}`];
+    const target = !allOn;
+    for (const i of idxs) this.weatherAny[`${groupPrefix}${i}`] = target;
+    this.weatherAny[groupPrefix] = target;
+  }
+
+  checkAllGroup(groupPrefix: 'dcv' | 'dca') {
+    const idxs = groupPrefix === 'dcv' ? this.dcvIdx : this.dcaIdx;
+    let allOn = true;
+    for (const i of idxs)
+      allOn = allOn && !!this.weatherAny[`${groupPrefix}${i}`];
+    this.weatherAny[groupPrefix] = allOn;
+  }
+
+  // -------- Facilities (UI binding + select-all) --------
+  selectFacility(
+    _event: { checked: boolean },
+    _id: number | null,
+    isAll: boolean
+  ) {
+    if (isAll) {
+      const target = !!this.facilityAll?.selected;
+      for (const f of this.facilities) f.selected = target;
+    } else {
+      const allOn =
+        this.facilities.length > 0 &&
+        this.facilities.every((f) => !!f.selected);
+      if (this.facilityAll) this.facilityAll.selected = allOn;
+    }
+  }
+
+  // -------- Download --------
   download() {
+    const selected = this.facilities.filter((f) => !!f.selected);
+    const finalFacilities = selected.length ? selected : this.facilities;
+
     this.showProgressSpinner = true;
 
     this.semsService
       .downloadWeatherData(
         this.startDailyDate,
         this.endDailyDate,
-        this.facilities,
-        this.weatherSelect
+        finalFacilities, // service maps to weatherSelect.facilityIds
+        this.weatherAny
       )
       .subscribe({
-        next: (res: any) => {
+        next: (res) => {
           this.showProgressSpinner = false;
-          console.log(moment(moment.now()).toISOString());
-
-          // 타입 안전한 파일 저장
-          this.saveFile(
+          saveAs(
             res,
             `weather-download-${moment(moment.now()).toISOString()}.xlsx`
           );
         },
-        error: (error) => {
+        error: () => {
           this.showProgressSpinner = false;
-          console.error('다운로드 중 오류 발생:', error);
+          console.error('Failed to download weather data');
         },
       });
   }
 
-  // 파일 저장을 위한 별도 메서드 추가
-  private saveFile(data: any, filename: string) {
-    try {
-      // Case 1: 이미 Blob인 경우
-      if (data instanceof Blob) {
-        saveAs(data, filename);
-        return;
-      }
-
-      // Case 2: ArrayBuffer인 경우
-      if (data instanceof ArrayBuffer) {
-        const blob = new Blob([data], {
-          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        });
-        saveAs(blob, filename);
-        return;
-      }
-
-      // Case 3: 문자열인 경우
-      if (typeof data === 'string') {
-        const blob = new Blob([data], { type: 'text/plain;charset=utf-8' });
-        saveAs(blob, filename);
-        return;
-      }
-
-      // Case 4: 배열이나 객체인 경우 (JSON으로 변환)
-      if (Array.isArray(data) || typeof data === 'object') {
-        // Excel 파일로 저장하려면 적절한 형식으로 변환
-        const jsonString = JSON.stringify(data, null, 2);
-        const blob = new Blob([jsonString], {
-          type: 'application/json;charset=utf-8',
-        });
-        // .xlsx 대신 .json 확장자 사용
-        const jsonFilename = filename.replace('.xlsx', '.json');
-        saveAs(blob, jsonFilename);
-        return;
-      }
-
-      // Case 5: 기본값 - Blob으로 강제 변환
-      const blob = new Blob([data], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      });
-      saveAs(blob, filename);
-    } catch (error) {
-      console.error('파일 저장 중 오류 발생:', error);
-      // 최후의 수단: 타입 캐스팅 사용
-      saveAs(data as Blob, filename);
-    }
+  // -------- Date handlers --------
+  onStartDailyDaySelected(normalizedDate: Moment | Date | null) {
+    if (!normalizedDate) return;
+    this.startDailyDate =
+      (normalizedDate as Moment).toDate?.() ??
+      moment(normalizedDate as Date).toDate();
   }
 
-  selectFacilityAll($event: any) {
-    for (let facility of this.facilities) {
-      // facility.selected = $event;
-    }
-  }
-
-  selectFacility($event: any, id: any, isAll: boolean) {
-    if (isAll) {
-      for (let facility of this.facilities) {
-        facility.selected = $event.checked;
-      }
-    } else {
-      let isSelectedAll = true;
-      for (let facility of this.facilities) {
-        if (!facility.selected) {
-          isSelectedAll = false;
-        }
-      }
-      this.facilityAll.selected = isSelectedAll;
-    }
-  }
-
-  // Daily ----------------------------------------------------------
-  onStartDailyDaySelected(normalizedDate: Moment) {
-    this.startDailyDate = normalizedDate.toDate();
-  }
-
-  onEndDailyDaySelected(normalizedDate: Moment) {
-    this.endDailyDate = normalizedDate.toDate();
+  onEndDailyDaySelected(normalizedDate: Moment | Date | null) {
+    if (!normalizedDate) return;
+    this.endDailyDate =
+      (normalizedDate as Moment).toDate?.() ??
+      moment(normalizedDate as Date).toDate();
   }
 }

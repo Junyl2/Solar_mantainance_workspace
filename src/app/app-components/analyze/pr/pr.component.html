@@ -1,3 +1,4 @@
+<!-- pr.component.html -->
 <div class="main">
   <div class="col-md-12">
     <div class="box">
@@ -25,8 +26,11 @@
                 월별
               </div>
             </div>
+
             <div class="padding_text">조회기간 :</div>
+
             <div class="date_box">
+              <!-- day pickers -->
               <div id="date_start" class="data_box1">
                 <input
                   class="data_input"
@@ -64,8 +68,7 @@
                     onStartMonthMonthSelected($event, startMonthPicker)
                   "
                   panelClass="example-month-picker"
-                >
-                </mat-datepicker>
+                ></mat-datepicker>
               </div>
 
               <div id="date_space" class="date_space">~</div>
@@ -87,6 +90,7 @@
                   panelClass="example-month-picker"
                 ></mat-datepicker>
               </div>
+
               <div id="date_end_month" class="data_month_box">
                 <input
                   class="data_input"
@@ -106,10 +110,10 @@
                     onEndMonthMonthSelected($event, endMonthPicker)
                   "
                   panelClass="example-month-picker"
-                >
-                </mat-datepicker>
+                ></mat-datepicker>
               </div>
             </div>
+
             <div class="search_box">
               <button class="search_btn" (click)="search_click()">조회</button>
             </div>
@@ -128,15 +132,22 @@
         </div>
       </div>
 
+      <!-- Custom split legend -->
+      <div class="legend-wrap">
+        <span #legendGen></span>
+        <span #legendPR></span>
+      </div>
+
       <div class="box2">
         <div class="box2_chart_box" id="box2_chart_box">
-          <canvas id="chart_pr" class="chart_module">{{ chart }}</canvas>
+          <canvas #chart_pr id="chart_pr" class="chart_module"></canvas>
         </div>
 
         <div class="box2_table_box" id="box2_table_box">
           <table id="table" class="table">
             <tr class="table_tr">
-              <td class="table_td_header">구분</td>
+              <td class="table_td_header sticky-col first-division">구분</td>
+
               <ng-container *ngIf="gbn === 'time'">
                 <ng-container *ngFor="let data1 of tableData[0]; index as i">
                   <td *ngIf="i.toString().length === 1" class="table_td_header">
@@ -147,16 +158,20 @@
                   </td>
                 </ng-container>
               </ng-container>
+
               <ng-container *ngIf="gbn !== 'time'">
                 <ng-container *ngFor="let data1 of dateList; index as i">
                   <td class="table_td_header">{{ data1 }}</td>
                 </ng-container>
               </ng-container>
             </tr>
+
             <ng-container *ngFor="let data1 of tableData; index as i">
               <tr class="table_tr">
-                <td class="table_td">{{ tableHeadData[i] }}</td>
+                <td class="table_td sticky-col">{{ tableHeadData[i] }}</td>
+
                 <ng-container *ngFor="let data2 of data1">
+                  <!-- Non-environment rows treated as energy unless specified otherwise -->
                   <td
                     *ngIf="
                       tableHeadData[i] !== '온도' &&

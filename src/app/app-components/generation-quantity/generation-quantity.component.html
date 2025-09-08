@@ -1,4 +1,4 @@
-<h2 class="f-page-title">스트링 발전량</h2>
+<h2 class="f-page-title">인버터별 발전량</h2>
 <mat-tab-group>
   <!-- Timely -------------------------------------------------------------------------------------->
   <mat-tab label="시간별 발전량">
@@ -17,8 +17,10 @@
           matSuffix
           [for]="timePicker"
         ></mat-datepicker-toggle>
-        <mat-datepicker #timePicker panelClass="example-month-picker">
-        </mat-datepicker>
+        <mat-datepicker
+          #timePicker
+          panelClass="example-month-picker"
+        ></mat-datepicker>
       </mat-form-field>
       <a
         mat-raised-button
@@ -37,9 +39,6 @@
       <tr>
         <th *ngFor="let x of tableTimeLabels">{{ x }}</th>
       </tr>
-      <!-- <tr *ngFor="let y of tableTimeData; index as i">
-        <td *ngFor="let z of tableTimeData[i]; index as t">{{z|number}}</td>
-      </tr> -->
       <tr *ngFor="let timeData of tableTimeData; index as i">
         <td *ngIf="timeData.name != ''">{{ timeData.name }}</td>
         <td *ngIf="timeData.name == ''">
@@ -69,8 +68,10 @@
           matSuffix
           [for]="startDailyPicker"
         ></mat-datepicker-toggle>
-        <mat-datepicker #startDailyPicker panelClass="example-month-picker">
-        </mat-datepicker>
+        <mat-datepicker
+          #startDailyPicker
+          panelClass="example-month-picker"
+        ></mat-datepicker>
       </mat-form-field>
       <mat-form-field class="input" appearance="fill">
         <mat-label>끝일 선택</mat-label>
@@ -86,8 +87,10 @@
           matSuffix
           [for]="endDailyPicker"
         ></mat-datepicker-toggle>
-        <mat-datepicker #endDailyPicker panelClass="example-month-picker">
-        </mat-datepicker>
+        <mat-datepicker
+          #endDailyPicker
+          panelClass="example-month-picker"
+        ></mat-datepicker>
       </mat-form-field>
       <a
         mat-raised-button

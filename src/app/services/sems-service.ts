@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
+
+import { Observable, of, tap, throwError } from 'rxjs';
+import { retry, catchError } from 'rxjs';
 
 // Date formatter
 import { format } from 'date-fns';
@@ -22,8 +29,6 @@ import { Config } from '../app-components/home/home.component';
 import { OptimizerSelect } from '../models/optimizer-select';
 import { Optimizers } from '../models/optimizers';
 import { Facility } from '../models/facility';
-import { catchError, tap } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -152,6 +157,16 @@ export class SemsService {
     weatherSelect.endDate = endDate.toISOString().split('.')[0];
     weatherSelect.facilityIds = facilities.map((value) => String(value.id));
     let query = null;
+
+    // for (let i = 0; i < invertors.length; i++) {
+    //   if (invertors[i].selected) {
+    //     if (query == null) {
+    //       query = `insName==${invertors[i].insName};insNum==${invertors[i].insNum}`;
+    //     } else {
+    //       query = `${query},insName==${invertors[i].insName};insNum==${invertors[i].insNum}`;
+    //     }
+    //   }
+    // }
 
     if (query != null && query.length > 0) {
       api = `${api};(${query})`;
@@ -283,6 +298,13 @@ export class SemsService {
     return result;
   }
 
+  // getGenerationQuantityMonthly
+  // 1 Description
+  //
+  // 2 Arguments
+  // inverter : index of inverter
+  //
+  // 3 Return values
   postQnA(qna: QnAEntity): Observable<any> {
     let postQnaApi = `/question/create`;
 
@@ -475,18 +497,18 @@ export class SemsService {
     startDate: string,
     endDate: string
   ): Observable<InvertorSummary[]> {
-    const efficiencyApi = `/invertor/summary/efficiency?summaryType=${type}&startDate=${startDate}&endDate=${endDate}`;
+    var efficiencyApi = `/invertor/summary/efficiency?summaryType=${type}&startDate=${startDate}&endDate=${endDate}`;
 
-    return this.http // 바로 return
+    var result = this.http
       .get<InvertorSummary[]>(this.REST_API_SERVER + efficiencyApi)
       .pipe(
         tap((res) => {
           // console.log(`get efficiency: ${res}`)
         }),
-        catchError(
-          this.handleError<InvertorSummary[]>('getEfficiencySummary', [])
-        )
+        catchError(this.handleError('getEfficiencySummary', []))
       );
+
+    return result;
   }
 
   getPowerIrradianceMonthly(
@@ -525,43 +547,51 @@ export class SemsService {
     startDate: string,
     endDate: string
   ): Observable<InvertorSummary[]> {
-    const generationApi = `/invertor/summary/irradiance?summaryType=${type}&startDate=${startDate}&endDate=${endDate}`;
+    var generationApi = `/invertor/summary/irradiance?summaryType=${type}&startDate=${startDate}&endDate=${endDate}`;
 
-    return this.http
+    var result = this.http
       .get<InvertorSummary[]>(this.REST_API_SERVER + generationApi)
       .pipe(
         tap((res) => {
           // console.log(`get power irradiance: ${res}`)
         }),
-        catchError(
-          this.handleError<InvertorSummary[]>('getPowerIrradiance', [])
-        )
+        catchError(this.handleError('getPowerIrradiance', []))
       );
+
+    return result;
   }
 
   getInvertorList(startDate?: Date, endDate?: Date): Observable<Invertor[]> {
     const api = `/invertor/instances`;
 
-    return this.http
+    const result = this.http
       .get<Invertor[]>(this.REST_API_SERVER + api)
-      .pipe(catchError(this.handleError<Invertor[]>('getInvertorList', [])));
+      .pipe(catchError(this.handleError('getInvertorList', [])));
+
+    return result;
   }
 
   getOptimizerList(startDate?: Date, endDate?: Date): Observable<Invertor[]> {
     const api = `/invertor/optimizer-instances`;
 
-    return this.http
+    const result = this.http
       .get<Invertor[]>(this.REST_API_SERVER + api)
-      .pipe(catchError(this.handleError<Invertor[]>('getOptimizerList', [])));
+      .pipe(catchError(this.handleError('getOptimizerList', [])));
+
+    return result;
   }
 
   getInvertorLastData(): Observable<InvertorPower[]> {
     const api = `/invertor/last`;
 
-    return this.http.get<InvertorPower[]>(this.REST_API_SERVER + api).pipe(
-      tap((res) => {}),
-      catchError(this.handleError<InvertorPower[]>('getInvertorLastData', []))
-    );
+    const result = this.http
+      .get<InvertorPower[]>(this.REST_API_SERVER + api)
+      .pipe(
+        tap((res) => {}),
+        catchError(this.handleError('getInvertorLastData', []))
+      );
+
+    return result;
   }
 
   getGenerationQuantityMonthly(
@@ -617,18 +647,18 @@ export class SemsService {
     startDate: string,
     endDate: string
   ): Observable<InvertorSummary[]> {
-    const generationApi = `/invertor/summary?summaryType=${type}&startDate=${startDate}&endDate=${endDate}`;
+    var generationApi = `/invertor/summary?summaryType=${type}&startDate=${startDate}&endDate=${endDate}`;
 
-    return this.http
+    var result = this.http
       .get<InvertorSummary[]>(this.REST_API_SERVER + generationApi)
       .pipe(
         tap((res) =>
           console.log(`get generation quantity: ${JSON.stringify(res)}`)
         ),
-        catchError(
-          this.handleError<InvertorSummary[]>('getGenerationQuantityDaily', [])
-        )
+        catchError(this.handleError('getGenerationQuantityDaily', []))
       );
+
+    return result;
   }
 
   getGenerationQuantitySummary2(
@@ -638,18 +668,18 @@ export class SemsService {
     siteIndex: string,
     api: string
   ): Observable<InvertorSummary[]> {
-    const generationApi = `${api}?summaryType=${type}&startDate=${startDate}&endDate=${endDate}&siteIndex=${siteIndex}`;
+    var generationApi = `${api}?summaryType=${type}&startDate=${startDate}&endDate=${endDate}&siteIndex=${siteIndex}`;
 
-    return this.http
+    var result = this.http
       .get<InvertorSummary[]>(this.REST_API_SERVER + generationApi)
       .pipe(
         tap((res) =>
           console.log(`get generation quantity: ${JSON.stringify(res)}`)
         ),
-        catchError(
-          this.handleError<InvertorSummary[]>('getGenerationQuantityDaily', [])
-        )
+        catchError(this.handleError('getGenerationQuantityDaily', []))
       );
+
+    return result;
   }
 
   getGenerationQuantityInstanceSummary(
@@ -660,20 +690,19 @@ export class SemsService {
   ): Observable<InvertorSummary[]> {
     startDate = moment('2021-10-01').toDate();
     endDate = moment('2021-10-03').toDate();
-
-    const generationApi = `/invertor/summary/${insName}/${insNum}?startDate=${format(
+    var generationApi = `/invertor/summary/${insName}/${insNum}?startDate=${format(
       startDate,
       'yyyy-MM-dd'
     )}&endDate=${format(endDate, 'yyyy-MM-dd')}`;
 
-    return this.http
+    var result = this.http
       .get<InvertorSummary[]>(this.REST_API_SERVER + generationApi)
       .pipe(
         tap((res) => console.log(`get generation quantity: ${res}`)),
-        catchError(
-          this.handleError<InvertorSummary[]>('getGenerationQuantityDaily', [])
-        )
+        catchError(this.handleError('getGenerationQuantityDaily', []))
       );
+
+    return result;
   }
 
   getWeatherStatRadiation(today?: Date) {
@@ -695,16 +724,16 @@ export class SemsService {
     startDate: string,
     endDate: string
   ): Observable<WeatherInfoSummary[]> {
-    const generationDailyApi = `/weather/history/summary?summaryType=${type}&startDate=${startDate}&endDate=${endDate}`;
+    var generationDailyApi = `/weather/history/summary?summaryType=${type}&startDate=${startDate}&endDate=${endDate}`;
 
-    return this.http
+    var result = this.http
       .get<WeatherInfoSummary[]>(this.REST_API_SERVER + generationDailyApi)
       .pipe(
         tap((res) => console.log(`fetched weather: ${res}`)),
-        catchError(
-          this.handleError<WeatherInfoSummary[]>('getWeatherSummary', [])
-        )
+        catchError(this.handleError('getWeatherSummary', []))
       );
+
+    return result;
   }
 
   getWeatherLastInformation(): Observable<any> {

@@ -4,36 +4,77 @@
     <span class="title-description">WEATHER STATION DATA</span>
   </div>
 
-  <ul>
+  <ul class="weather-wrapper">
+    <!-- Temperature -->
     <li>
-      <img class="dashboard-icon" [src]="'assets/Images/icon-round-temperature.svg'" alt="온도 아이콘" />
+      <img
+        class="dashboard-icon"
+        [src]="'assets/Images/icon-round-temperature.svg'"
+        alt="온도 아이콘"
+      />
       <p class="color-grey">온도</p>
-      <strong>{{temp|number:'1.1-1'}}</strong>
+      <strong>{{ temp | number : "1.1-1" }}</strong>
       <span> ℃</span>
     </li>
+
+    <!-- Humidity -->
     <li>
-      <img class="dashboard-icon" [src]="'assets/Images/icon-round-humidity.svg'" alt="습도 아이콘" />
+      <img
+        class="dashboard-icon"
+        [src]="'assets/Images/icon-round-humidity.svg'"
+        alt="습도 아이콘"
+      />
       <p class="color-grey">습도</p>
-      <strong>{{humi|number:'1.1-1'}}</strong>
+      <strong>{{ humi | number : "1.1-1" }}</strong>
       <span> %</span>
     </li>
+
+    <!-- Wind Speed -->
     <li>
-      <img class="dashboard-icon" [src]="'assets/Images/icon-round-wind-direction.svg'" alt="풍향 아이콘" />
-      <p class="color-grey">풍향</p>
-      <strong>{{winddir|number:'1.1-1'}}</strong>
-      <span> Dir.</span>
-    </li>
-    <li>
-      <img class="dashboard-icon" [src]="'assets/Images/icon-round-wind-speed.svg'" alt="풍속 아이콘" />
+      <img
+        class="dashboard-icon"
+        [src]="'assets/Images/icon-round-wind-speed.svg'"
+        alt="풍속 아이콘"
+      />
       <p class="color-grey">풍속</p>
-      <strong>{{wind|number:'1.1-1'}}</strong>
+      <strong>{{ wind | number : "1.1-1" }}</strong>
       <span> m/s</span>
     </li>
+
+    <!-- Solar Radiation - GHI -->
     <li>
-      <img class="dashboard-icon" [src]="'assets/Images/icon-round-insolation.svg'" alt="일사량 아이콘" />
-      <p class="color-grey">일사량</p>
-      <strong>{{solar|number:'1.1-1'}}</strong>
-      <span> Kw/m²</span>
+      <img
+        class="dashboard-icon"
+        [src]="'assets/Images/icon-round-insolation.svg'"
+        alt="일사량(GHI) 아이콘"
+      />
+      <p class="color-grey">일사량 (GHI)</p>
+      <strong>{{ solarGHI | number : "1.1-1" }}</strong>
+      <span> kW/m²</span>
+    </li>
+
+    <!-- Solar Radiation - DNI -->
+    <li>
+      <img
+        class="dashboard-icon"
+        [src]="'assets/Images/icon-round-insolation.svg'"
+        alt="일사량(DNI) 아이콘"
+      />
+      <p class="color-grey">일사량 (DNI)</p>
+      <strong>{{ solarDNI | number : "1.1-1" }}</strong>
+      <span> kW/m²</span>
+    </li>
+
+    <!-- Solar Radiation - DHI -->
+    <li>
+      <img
+        class="dashboard-icon"
+        [src]="'assets/Images/icon-round-insolation.svg'"
+        alt="일사량(DHI) 아이콘"
+      />
+      <p class="color-grey">일사량 (DHI)</p>
+      <strong>{{ solarDHI | number : "1.1-1" }}</strong>
+      <span> kW/m²</span>
     </li>
   </ul>
 </section>

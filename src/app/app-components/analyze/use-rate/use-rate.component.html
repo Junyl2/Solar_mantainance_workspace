@@ -5,6 +5,7 @@
         <div class="box1_header">
           <div class="box1_header_1">
             <div class="title">이용률 추이</div>
+
             <div class="radio_box">
               <div class="radio_input1" (click)="radio_input1_click()">
                 <input
@@ -25,8 +26,11 @@
                 월별
               </div>
             </div>
+
             <div class="padding_text">조회기간 :</div>
+
             <div class="date_box">
+              <!-- Day pickers -->
               <div id="date_start" class="data_box1">
                 <input
                   class="data_input"
@@ -64,8 +68,7 @@
                     onStartMonthMonthSelected($event, startMonthPicker)
                   "
                   panelClass="example-month-picker"
-                >
-                </mat-datepicker>
+                ></mat-datepicker>
               </div>
 
               <div id="date_space" class="date_space">~</div>
@@ -87,6 +90,7 @@
                   panelClass="example-month-picker"
                 ></mat-datepicker>
               </div>
+
               <div id="date_end_month" class="data_month_box">
                 <input
                   class="data_input"
@@ -106,10 +110,10 @@
                     onEndMonthMonthSelected($event, endMonthPicker)
                   "
                   panelClass="example-month-picker"
-                >
-                </mat-datepicker>
+                ></mat-datepicker>
               </div>
             </div>
+
             <div class="search_box">
               <button class="search_btn" (click)="search_click()">조회</button>
             </div>
@@ -128,72 +132,106 @@
         </div>
       </div>
 
+      <!-- Custom split legend (same placement/layout as PR) -->
+      <div class="legend-wrap">
+        <span #legendGen></span>
+        <span #legendRate></span>
+      </div>
+
       <div class="box2">
         <div class="box2_chart_box" id="box2_chart_box">
-          <canvas id="chart_use_rate" class="chart_module">{{ chart }}</canvas>
+          <!-- Horizontal scroll wrapper; fixed-height viewport prevents vertical growth -->
+          <div class="chart-scroll">
+            <div class="chart-viewport">
+              <canvas id="chart_use_rate" class="chart_module">{{
+                chart
+              }}</canvas>
+            </div>
+          </div>
         </div>
 
         <div class="box2_table_box" id="box2_table_box">
-          <table id="table" class="table">
-            <tr class="table_tr">
-              <td class="table_td_header">구분</td>
-              <ng-container *ngIf="gbn === 'time'">
-                <ng-container *ngFor="let data1 of tableData[0]; index as i">
-                  <td *ngIf="i.toString().length === 1" class="table_td_header">
-                    0{{ i }} 시
-                  </td>
-                  <td *ngIf="i.toString().length !== 1" class="table_td_header">
-                    {{ i }} 시
-                  </td>
-                </ng-container>
-              </ng-container>
-              <ng-container *ngIf="gbn !== 'time'">
-                <ng-container *ngFor="let data1 of dateList; index as i">
-                  <td class="table_td_header">{{ data1 }}</td>
-                </ng-container>
-              </ng-container>
-            </tr>
-            <ng-container *ngFor="let data1 of tableData; index as i">
+          <div class="table-scroll">
+            <table id="table" class="table">
               <tr class="table_tr">
-                <td class="table_td">{{ tableHeadData[i] }}</td>
-                <ng-container *ngFor="let data2 of data1">
-                  <td
-                    *ngIf="
-                      tableHeadData[i].indexOf('이용률') === -1 && data2 !== 0
-                    "
-                    class="table_td"
-                  >
-                    {{ data2 }} kWh
-                  </td>
-                  <td
-                    *ngIf="
-                      tableHeadData[i].indexOf('이용률') === -1 && data2 === 0
-                    "
-                    class="table_td"
-                  >
-                    -
-                  </td>
+                <!-- sticky first header cell -->
+                <td class="table_td_header sticky-col">구분</td>
 
-                  <td
+                <!-- TIME HEADER -->
+                <ng-container *ngIf="gbn === 'time'; else dateHeader">
+                  <ng-container
                     *ngIf="
-                      tableHeadData[i].indexOf('이용률') !== -1 && data2 !== 0
+                      tableData?.length && tableData[0]?.length;
+                      else timeHeaderFallback
                     "
-                    class="table_td"
                   >
-                    {{ data2 }} %
-                  </td>
-                  <td
-                    *ngIf="
-                      tableHeadData[i].indexOf('이용률') !== -1 && data2 === 0
-                    "
-                    class="table_td"
-                  >
-                    -
-                  </td>
+                    <ng-container *ngFor="let _ of tableData[0]; index as i">
+                      <td class="table_td_header">
+                        {{ i < 10 ? "0" + i : i }}시
+                      </td>
+                    </ng-container>
+                  </ng-container>
+                  <ng-template #timeHeaderFallback>
+                    <ng-container
+                      *ngFor="
+                        let i of [
+                          0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+                          16, 17, 18, 19, 20, 21, 22, 23
+                        ]
+                      "
+                    >
+                      <td class="table_td_header">
+                        {{ i < 10 ? "0" + i : i }}시
+                      </td>
+                    </ng-container>
+                  </ng-template>
                 </ng-container>
+
+                <!-- DAY / MONTH HEADER (Korean strings: YYYY.MM.DD / YYYY.MM) -->
+                <ng-template #dateHeader>
+                  <ng-container *ngFor="let d of dateList">
+                    <td class="table_td_header">{{ d }}</td>
+                  </ng-container>
+                </ng-template>
               </tr>
-            </ng-container>
-          </table>
+
+              <!-- BODY -->
+              <ng-container *ngFor="let row of tableData; index as i">
+                <tr class="table_tr">
+                  <!-- sticky first column -->
+                  <td class="table_td sticky-col">{{ tableHeadData[i] }}</td>
+
+                  <!-- Exactly one <td> per column (either kWh or %) -->
+                  <ng-container *ngFor="let val of row">
+                    <!-- Power Generation row -->
+                    <ng-container
+                      *ngIf="
+                        !tableHeadData[i]?.includes('이용률');
+                        else rateCell
+                      "
+                    >
+                      <td class="table_td td-num">
+                        {{ isNonZero(val) ? val + " kWh" : "-" }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Utilization Rate row -->
+                    <ng-template #rateCell>
+                      <td class="table_td td-num">
+                        {{ isNonZero(val) ? val + " %" : "-" }}
+                      </td>
+                    </ng-template>
+                  </ng-container>
+                </tr>
+              </ng-container>
+
+              <!-- Empty-state row -->
+              <tr *ngIf="!tableData || !tableData.length">
+                <td class="table_td" colspan="1000">데이터가 없습니다.</td>
+              </tr>
+            </table>
+          </div>
+          <!-- /table-scroll -->
         </div>
       </div>
     </div>
