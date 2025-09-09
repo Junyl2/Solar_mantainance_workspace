@@ -201,10 +201,22 @@ export class DownloadInvertorComponent implements OnInit {
       .subscribe((res) => {
         this.showProgressSpinner = false;
 
-        saveAs(
-          res,
-          `invertor-download-${moment(moment.now()).toISOString()}.xlsx`
-        );
+        let blob: Blob;
+
+        if (res instanceof Blob) {
+          // Already a Blob
+          blob = res;
+        } else if (Array.isArray(res)) {
+          // If res is an array of bytes
+          blob = new Blob([new Uint8Array(res as number[])], {
+            type: 'application/octet-stream',
+          });
+        } else {
+          // fallback for string or other types
+          blob = new Blob([res as any], { type: 'application/octet-stream' });
+        }
+
+        saveAs(blob, `invertor-download-${moment().toISOString()}.xlsx`);
       });
   }
 

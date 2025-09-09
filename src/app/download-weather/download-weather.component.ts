@@ -199,16 +199,26 @@ export class DownloadWeatherComponent implements OnInit {
       .downloadWeatherData(
         this.startDailyDate,
         this.endDailyDate,
-        finalFacilities, // service maps to weatherSelect.facilityIds
+        finalFacilities,
         this.weatherAny
       )
       .subscribe({
         next: (res) => {
           this.showProgressSpinner = false;
-          saveAs(
-            res,
-            `weather-download-${moment(moment.now()).toISOString()}.xlsx`
-          );
+
+          let blob: Blob;
+
+          if (res instanceof Blob) {
+            blob = res;
+          } else if (Array.isArray(res)) {
+            blob = new Blob([new Uint8Array(res as number[])], {
+              type: 'application/octet-stream',
+            });
+          } else {
+            blob = new Blob([res as any], { type: 'application/octet-stream' });
+          }
+
+          saveAs(blob, `weather-download-${moment().toISOString()}.xlsx`);
         },
         error: () => {
           this.showProgressSpinner = false;

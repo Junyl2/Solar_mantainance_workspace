@@ -122,7 +122,21 @@ export class DownloadOptimizerComponent implements OnInit {
       .subscribe((res) => {
         this.showProgressSpinner = false;
 
-        saveAs(res, `pv-download-${moment(moment.now()).toISOString()}.xlsx`);
+        // Make sure `res` is always a Blob
+        let blob: Blob;
+        if (res instanceof Blob) {
+          blob = res;
+        } else if (Array.isArray(res)) {
+          // If res is an array of bytes
+          blob = new Blob([new Uint8Array(res as number[])], {
+            type: 'application/octet-stream',
+          });
+        } else {
+          // fallback for any other type
+          blob = new Blob([res as any], { type: 'application/octet-stream' });
+        }
+
+        saveAs(blob, `pv-download-${moment().toISOString()}.xlsx`);
       });
   }
 

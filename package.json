@@ -33,6 +33,8 @@
     "@ng-bootstrap/ng-bootstrap": "^12.1.2",
     "ag-grid-angular": "^27.3.0",
     "ag-grid-community": "^27.3.0",
+    "angular-resize-event": "^2.1.0",
+    "angular-resize-event-package": "^3.7.0",
     "bootstrap": "^5.1.3",
     "bootstrap-icons": "^1.8.1",
     "chart.js": "^3.7.1",
@@ -42,7 +44,7 @@
     "moment": "^2.30.1",
     "ngx-gauge": "^5.0.0",
     "ngx-pagination": "^6.0.3",
-    "rxjs": "^6.6.7",
+    "rxjs": "^7.8.2",
     "xlsx": "^0.18.5",
     "zone.js": "~0.11.4"
   },
