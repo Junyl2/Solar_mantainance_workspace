@@ -5,8 +5,10 @@ import {
   HttpHeaders,
 } from '@angular/common/http';
 
-import { Observable, of, tap, throwError } from 'rxjs';
-import { retry, catchError } from 'rxjs';
+/* import { Observable, of, tap, throwError } from 'rxjs';
+import { retry, catchError } from 'rxjs'; */
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, tap, retry, shareReplay } from 'rxjs/operators';
 
 // Date formatter
 import { format } from 'date-fns';
