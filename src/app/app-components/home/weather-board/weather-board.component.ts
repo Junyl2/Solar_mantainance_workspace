@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ResizedEvent } from 'angular-resize-event';
+// import { ResizedEvent } from 'angular-resize-event';  // ❌ No longer used
 
 // Services ------------------------------------
 import { ThemeService } from '../../../services/theme-service';
@@ -49,7 +49,8 @@ export class WeatherBoardComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  onResized(event: ResizedEvent) {
-    // this.canvasWidth = event.newRect.width;
-  }
+  // onResized(event: ResizedEvent) {
+  //   // Example: this.canvasWidth = event.newRect.width;
+  //   // Currently not in use
+  // }
 }
