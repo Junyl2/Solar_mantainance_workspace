@@ -1,6 +1,7 @@
 <h2 class="f-page-title">인버터별 발전량</h2>
+
 <mat-tab-group>
-  <!-- Timely -------------------------------------------------------------------------------------->
+  <!-- ───────────────────── Timely (Hourly) ───────────────────── -->
   <mat-tab label="시간별 발전량">
     <div class="f-text-vct">
       <mat-form-field class="input" appearance="fill">
@@ -8,7 +9,7 @@
         <input
           matInput
           [matDatepicker]="timePicker"
-          [value]="timeDate"
+          [(ngModel)]="timeDate"
           [min]="minTimeDate"
           [max]="maxTimeDate"
           (dateChange)="onHourlyDateSelected($event.value)"
@@ -29,29 +30,49 @@
         >조회</a
       >
     </div>
-    <bar-chart
-      [hidden]="!showChart"
-      class="chart"
-      #barchartHourly
-      [labels]="chartTimeLabels"
-    ></bar-chart>
-    <table *ngIf="!showChart" class="table">
-      <tr>
-        <th *ngFor="let x of tableTimeLabels">{{ x }}</th>
-      </tr>
-      <tr *ngFor="let timeData of tableTimeData; index as i">
-        <td *ngIf="timeData.name != ''">{{ timeData.name }}</td>
-        <td *ngIf="timeData.name == ''">
-          {{ timeData.insName }}[{{ timeData.insNum }}]
-        </td>
-        <td *ngFor="let data of timeData.data; index as t">
-          {{ data }}
-        </td>
-      </tr>
-    </table>
+
+    <!-- Fixed (non-scrolling) legend -->
+    <div class="legend-fixed" *ngIf="hourlyLegend?.length">
+      <ul class="legend-list">
+        <li class="legend-item" *ngFor="let it of hourlyLegend">
+          <span class="swatch" [style.background]="it.color"></span>
+          <span class="legend-label" [title]="it.label">{{ it.label }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Chart viewport: fixed height; horizontal scroll only -->
+    <div class="chart-viewport">
+      <div class="chart-scroll" [style.--cols]="chartTimeLabels?.length || 0">
+        <bar-chart
+          [hidden]="!showChart"
+          class="chart chart-fluid"
+          #barchartHourly
+          [labels]="chartTimeLabels"
+        ></bar-chart>
+      </div>
+      <div class="loading-overlay" *ngIf="isLoadingHourly">
+        <mat-spinner diameter="36"></mat-spinner>
+      </div>
+    </div>
+
+    <div class="table-scroll" *ngIf="!showChart">
+      <table class="table">
+        <tr>
+          <th *ngFor="let x of tableTimeLabels">{{ x }}</th>
+        </tr>
+        <tr *ngFor="let timeData of tableTimeData; index as i">
+          <td *ngIf="timeData.name != ''">{{ timeData.name }}</td>
+          <td *ngIf="timeData.name == ''">
+            {{ timeData.insName }}[{{ timeData.insNum }}]
+          </td>
+          <td *ngFor="let data of timeData.data; index as t">{{ data }}</td>
+        </tr>
+      </table>
+    </div>
   </mat-tab>
 
-  <!-- Daily -------------------------------------------------------------------------------------->
+  <!-- ───────────────────── Daily ───────────────────── -->
   <mat-tab label="일별 발전량">
     <div class="f-text-vct">
       <mat-form-field class="input" appearance="fill">
@@ -59,7 +80,7 @@
         <input
           matInput
           [matDatepicker]="startDailyPicker"
-          [value]="startDailyDate"
+          [(ngModel)]="startDailyDate"
           [min]="startMinDailyDate"
           [max]="startMaxDailyDate"
           (dateChange)="onStartDailyDaySelected($event.value)"
@@ -73,12 +94,13 @@
           panelClass="example-month-picker"
         ></mat-datepicker>
       </mat-form-field>
+
       <mat-form-field class="input" appearance="fill">
         <mat-label>끝일 선택</mat-label>
         <input
           matInput
           [matDatepicker]="endDailyPicker"
-          [value]="endDailyDate"
+          [(ngModel)]="endDailyDate"
           [min]="endMinDailyDate"
           [max]="endMaxDailyDate"
           (dateChange)="onEndDailyDaySelected($event.value)"
@@ -92,6 +114,7 @@
           panelClass="example-month-picker"
         ></mat-datepicker>
       </mat-form-field>
+
       <a
         mat-raised-button
         class="f-form-field-button"
@@ -99,37 +122,56 @@
         >조회</a
       >
     </div>
-    <bar-chart
-      [hidden]="!showChart"
-      class="chart"
-      #barchartDaily
-      [labels]="chartDailyLabels"
-    ></bar-chart>
-    <table *ngIf="!showChart" class="table">
-      <tr>
-        <th *ngFor="let x of tableDailyLabels">{{ x }}</th>
-      </tr>
-      <tr *ngFor="let dailyData of tableDailyData; index as i">
-        <td *ngIf="dailyData.name != ''">{{ dailyData.name }}</td>
-        <td *ngIf="dailyData.name == ''">
-          {{ dailyData.insName }}[{{ dailyData.insNum }}]
-        </td>
-        <td *ngFor="let data of dailyData.data; index as t">
-          {{ data }}
-        </td>
-      </tr>
-    </table>
+
+    <!-- Fixed legend -->
+    <div class="legend-fixed" *ngIf="dailyLegend?.length">
+      <ul class="legend-list">
+        <li class="legend-item" *ngFor="let it of dailyLegend">
+          <span class="swatch" [style.background]="it.color"></span>
+          <span class="legend-label" [title]="it.label">{{ it.label }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="chart-viewport">
+      <div class="chart-scroll" [style.--cols]="chartDailyLabels?.length || 0">
+        <bar-chart
+          [hidden]="!showChart"
+          class="chart chart-fluid"
+          #barchartDaily
+          [labels]="chartDailyLabels"
+        ></bar-chart>
+      </div>
+      <div class="loading-overlay" *ngIf="isLoadingDaily">
+        <mat-spinner diameter="36"></mat-spinner>
+      </div>
+    </div>
+
+    <div class="table-scroll" *ngIf="!showChart">
+      <table class="table">
+        <tr>
+          <th *ngFor="let x of tableDailyLabels">{{ x }}</th>
+        </tr>
+        <tr *ngFor="let dailyData of tableDailyData; index as i">
+          <td *ngIf="dailyData.name != ''">{{ dailyData.name }}</td>
+          <td *ngIf="dailyData.name == ''">
+            {{ dailyData.insName }}[{{ dailyData.insNum }}]
+          </td>
+          <td *ngFor="let data of dailyData.data; index as t">{{ data }}</td>
+        </tr>
+      </table>
+    </div>
   </mat-tab>
 
-  <!-- Monthly  -------------------------------------------------------------------------------------->
+  <!-- ───────────────────── Monthly ───────────────────── -->
   <mat-tab label="월별 발전량">
     <div class="f-text-vct">
-      <mat-form-field class="input f-text-vct" appearance="fill">
+      <mat-form-field class="input" appearance="fill">
         <mat-label>시작년월 선택</mat-label>
         <input
           matInput
           [matDatepicker]="startMonthlyPicker"
-          [value]="startMonthlyDate"
+          [(ngModel)]="startMonthlyDate"
           [min]="startMinMonthlyDate"
           [max]="startMaxMonthlyDate"
         />
@@ -145,15 +187,15 @@
             onStartMonthlyMonthSelected($event, startMonthlyPicker)
           "
           panelClass="example-month-picker"
-        >
-        </mat-datepicker>
+        ></mat-datepicker>
       </mat-form-field>
+
       <mat-form-field class="input" appearance="fill">
         <mat-label>끝년월 선택</mat-label>
         <input
           matInput
           [matDatepicker]="endMonthlyPicker"
-          [value]="endMonthlyDate"
+          [(ngModel)]="endMonthlyDate"
           [min]="endMinMonthlyDate"
           [max]="endMaxMonthlyDate"
         />
@@ -167,9 +209,9 @@
           (yearSelected)="onEndMonthlyYearSelected($event)"
           (monthSelected)="onEndMonthlyMonthSelected($event, endMonthlyPicker)"
           panelClass="example-month-picker"
-        >
-        </mat-datepicker>
+        ></mat-datepicker>
       </mat-form-field>
+
       <a
         mat-raised-button
         class="f-form-field-button"
@@ -177,30 +219,52 @@
         >조회</a
       >
     </div>
-    <bar-chart
-      [hidden]="!showChart"
-      class="chart"
-      responsive="true"
-      #barchartMonthly
-      [labels]="chartMonthlyLabels"
-    >
-    </bar-chart>
-    <table *ngIf="!showChart" class="table">
-      <tr>
-        <th *ngFor="let x of tableMonthlyLabels">{{ x }}</th>
-      </tr>
-      <tr *ngFor="let monthlyData of tableMonthlyData; index as i">
-        <td *ngIf="monthlyData.name != ''">{{ monthlyData.name }}</td>
-        <td *ngIf="monthlyData.name == ''">
-          {{ monthlyData.insName }}[{{ monthlyData.insNum }}]
-        </td>
-        <td *ngFor="let data of monthlyData.data; index as t">
-          {{ data }}
-        </td>
-      </tr>
-    </table>
+
+    <!-- Fixed legend -->
+    <div class="legend-fixed" *ngIf="monthlyLegend?.length">
+      <ul class="legend-list">
+        <li class="legend-item" *ngFor="let it of monthlyLegend">
+          <span class="swatch" [style.background]="it.color"></span>
+          <span class="legend-label" [title]="it.label">{{ it.label }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="chart-viewport">
+      <div
+        class="chart-scroll"
+        [style.--cols]="chartMonthlyLabels?.length || 0"
+      >
+        <bar-chart
+          [hidden]="!showChart"
+          class="chart chart-fluid"
+          responsive="true"
+          #barchartMonthly
+          [labels]="chartMonthlyLabels"
+        ></bar-chart>
+      </div>
+      <div class="loading-overlay" *ngIf="isLoadingMonthly">
+        <mat-spinner diameter="36"></mat-spinner>
+      </div>
+    </div>
+
+    <div class="table-scroll" *ngIf="!showChart">
+      <table class="table">
+        <tr>
+          <th *ngFor="let x of tableMonthlyLabels">{{ x }}</th>
+        </tr>
+        <tr *ngFor="let monthlyData of tableMonthlyData; index as i">
+          <td *ngIf="monthlyData.name != ''">{{ monthlyData.name }}</td>
+          <td *ngIf="monthlyData.name == ''">
+            {{ monthlyData.insName }}[{{ monthlyData.insNum }}]
+          </td>
+          <td *ngFor="let data of monthlyData.data; index as t">{{ data }}</td>
+        </tr>
+      </table>
+    </div>
   </mat-tab>
 
+  <!-- Toggle -->
   <mat-tab disabled>
     <ng-template mat-tab-label>
       <button
