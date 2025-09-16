@@ -41,40 +41,40 @@
         <span> m/s</span>
       </li>
 
-      <!-- Solar Radiation - GHI -->
+      <!-- Solar Radiation - Horizontal -->
       <li>
         <img
           class="dashboard-icon"
           [src]="'assets/Images/icon-round-insolation.svg'"
-          alt="일사량(GHI) 아이콘"
+          alt="일사량(수평) 아이콘"
         />
-        <p class="color-grey">일사량 (GHI)</p>
+        <p class="color-grey">일사량(수평)</p>
         <strong>{{ solarGHI | number : "1.1-1" }}</strong>
-        <span> kW/m²</span>
+        <span> W/m²</span>
       </li>
 
-      <!-- Solar Radiation - DNI -->
+      <!-- Solar Radiation - 203동 -->
       <li>
         <img
           class="dashboard-icon"
           [src]="'assets/Images/icon-round-insolation.svg'"
-          alt="일사량(DNI) 아이콘"
+          alt="일사량(203동) 아이콘"
         />
-        <p class="color-grey">일사량 (DNI)</p>
+        <p class="color-grey">일사량(203동)</p>
         <strong>{{ solarDNI | number : "1.1-1" }}</strong>
-        <span> kW/m²</span>
+        <span> W/m²</span>
       </li>
 
-      <!-- Solar Radiation - DHI -->
+      <!-- Solar Radiation - 204동 -->
       <li>
         <img
           class="dashboard-icon"
           [src]="'assets/Images/icon-round-insolation.svg'"
-          alt="일사량(DHI) 아이콘"
+          alt="일사량(204동) 아이콘"
         />
-        <p class="color-grey">일사량 (DHI)</p>
+        <p class="color-grey">일사량(204동)</p>
         <strong>{{ solarDHI | number : "1.1-1" }}</strong>
-        <span> kW/m²</span>
+        <span> W/m²</span>
       </li>
     </ul>
   </div>
