@@ -4,7 +4,6 @@ import {
   SimpleChanges,
   AfterViewInit,
   ViewChild,
-  ElementRef,
   AfterContentChecked,
   ChangeDetectorRef,
 } from '@angular/core';
@@ -12,7 +11,6 @@ import {
 // Angular Material Datepicker
 import { MatDatepicker } from '@angular/material/datepicker';
 import { Moment } from 'moment';
-
 import moment from 'moment';
 
 // Services
@@ -52,13 +50,7 @@ export class SolarQuantityComponent
   startYMat!: Date;
   endYMat!: Date;
 
-  viewChart = (show: boolean) => {
-    if (show) {
-      this.showChart = true;
-    } else {
-      this.showChart = false;
-    }
-  };
+  viewChart = (show: boolean) => (this.showChart = !!show);
 
   // Monthly ----------------------
   startMonthlyDate: Date = new Date();
@@ -116,25 +108,23 @@ export class SolarQuantityComponent
     this.minTimeDate = this.semsService.getInstalledDate();
   }
 
-  site;
+  site: any;
 
-  /** Keep only IRRADIANCE1/2/3 and label as IRRADIANCE{N}[insNum] */
-  private toIrradianceLegend<T extends { insName: string; insNum?: any }>(
-    rows: T[]
-  ): (T & { displayName: string })[] {
-    const ALLOWED = new Set(['IRRADIANCE1', 'IRRADIANCE2', 'IRRADIANCE3']);
-    return rows
-      .filter((r) => ALLOWED.has(r.insName))
-      .map((r) => ({
-        ...r,
-        displayName: r.insNum != null ? `${r.insName}[${r.insNum}]` : r.insName,
-      }));
+  /* legend mapping (no insNum anywhere) */
+  private readonly IRR_LABELS: Record<string, string> = {
+    IRRADIANCE1: '일사량(수평)',
+    IRRADIANCE2: '일사량(203동)',
+    IRRADIANCE3: '일사량(204동)',
+  };
+
+  private mapIrradianceLabel(key: string): string {
+    return this.IRR_LABELS[key] ?? key;
   }
 
-  /** If a stray dataset named '일사량' ever appears, remove it */
+  /** Remove a stray dataset named '일사량' if it appears */
   private stripStrayDailySum(chartRef: BarChartComponent | undefined) {
     const c: any = chartRef as any;
-    const chart = c?.chart; // underlying Chart.js instance if exposed
+    const chart = c?.chart;
     if (!chart?.data?.datasets) return;
     chart.data.datasets = chart.data.datasets.filter(
       (d: any) => d?.label !== '일사량'
@@ -142,10 +132,23 @@ export class SolarQuantityComponent
     chart.update?.();
   }
 
-  ngOnInit(): void {
-    this.semsService.getSite().subscribe((res) => {
-      this.site = res;
+  /** Force dataset labels to mapped Korean text and strip trailing [numbers] */
+  private sanitizeLegendLabels(chartRef: BarChartComponent | undefined) {
+    const c: any = chartRef as any;
+    const chart = c?.chart;
+    if (!chart?.data?.datasets) return;
+    chart.data.datasets.forEach((ds: any) => {
+      const raw = typeof ds.label === 'string' ? ds.label : '';
+      // remove " [123]" or "[123]" at the end, with or without preceding space
+      const noBracket = raw.replace(/\s*\[\d+\]\s*$/i, '');
+      // map IRRADIANCE* codes to Korean labels if present
+      ds.label = this.mapIrradianceLabel(noBracket);
     });
+    chart.update?.();
+  }
+
+  ngOnInit(): void {
+    this.semsService.getSite().subscribe((res) => (this.site = res));
   }
 
   ngAfterContentChecked(): void {}
@@ -173,15 +176,12 @@ export class SolarQuantityComponent
 
     this.cdRef.detectChanges();
 
-    // Monthly ---------------------------
+    // initial loads
     this.updateMonthlyPage();
-
-    // Daily -----------------------------
     this.updateDailyPage();
-
-    // Hours -----------------------------
     this.updateHourlyPage();
   }
+
   updateMonthlyPage(): void {
     this.chartMonthlyLabels = DateUtils.getSpanYYMMStringArray(
       this.endMonthlyDate,
@@ -204,14 +204,16 @@ export class SolarQuantityComponent
         this.tableMonthlyData = [];
 
         for (const key of irradianceKeys) {
+          // map to Korean label BEFORE charting; do not append insNum
           const filtered = apiData
-            .filter((item) => item.insName === key)
-            .map((item) => ({
+            .filter((item: any) => item.insName === key)
+            .map((item: any) => ({
               ...item,
-              displayName: item.insName,
+              insName: this.mapIrradianceLabel(item.insName),
+              displayName: this.mapIrradianceLabel(item.insName),
             }));
 
-          const valueKey = key.toLowerCase(); // 'irradiance1', 'irradiance2', 'irradiance3'
+          const valueKey = key.toLowerCase(); // 'irradiance1' etc.
 
           const result = this.onTestUtil.syncInvertorGridData(
             this.chartMonthlyLabels,
@@ -226,20 +228,19 @@ export class SolarQuantityComponent
 
           this.tableMonthlyData.push(...result);
         }
+
+        this.stripStrayDailySum(this.barchartMonthly);
+        this.sanitizeLegendLabels(this.barchartMonthly);
       });
   }
 
   updateDailyPage(): void {
-    // Chart Label
     this.chartDailyLabels = DateUtils.getSpanMonthDayStringArray(
       this.startDailyDate,
       this.endDailyDate
     );
 
-    // Table First Labels
     this.tableDailyLabels = ['일사량계', ...this.chartDailyLabels];
-
-    // Empty dataset
     this.barchartDaily.resetDataset();
 
     this.semsService
@@ -256,13 +257,14 @@ export class SolarQuantityComponent
 
         for (const key of irradianceKeys) {
           const filtered = apiData
-            .filter((item) => item.insName === key)
-            .map((item) => ({
+            .filter((item: any) => item.insName === key)
+            .map((item: any) => ({
               ...item,
-              displayName: item.insName,
+              insName: this.mapIrradianceLabel(item.insName),
+              displayName: this.mapIrradianceLabel(item.insName),
             }));
 
-          const valueKey = key.toLowerCase(); // 'irradiance1', 'irradiance2', 'irradiance3'
+          const valueKey = key.toLowerCase();
 
           const result = this.onTestUtil.syncInvertorGridData(
             this.chartDailyLabels,
@@ -277,22 +279,19 @@ export class SolarQuantityComponent
 
           this.tableDailyData.push(...result);
         }
+
+        this.stripStrayDailySum(this.barchartDaily);
+        this.sanitizeLegendLabels(this.barchartDaily);
       });
   }
 
   updateHourlyPage(): void {
     console.log('🌞 updateHourlyPage 호출됨, timeDate:', this.timeDate);
 
-    // Chart Label
     this.chartTimeLabels = DateUtils.getSpanTimeStringArray();
-
-    // Table First Labels
     this.tableTimeLabels = ['일사량계', ...this.chartTimeLabels];
-
-    // Empty dataset
     this.barchartHourly.resetDataset();
 
-    const inverterCount = this.semsService.getSolarCheckerCount();
     const dateParam = new Date(this.timeDate);
     const nextDate = new Date(dateParam);
     nextDate.setDate(nextDate.getDate() + 1);
@@ -317,13 +316,14 @@ export class SolarQuantityComponent
 
         for (const key of irradianceKeys) {
           const filtered = apiData
-            .filter((item) => item.insName === key)
-            .map((item) => ({
+            .filter((item: any) => item.insName === key)
+            .map((item: any) => ({
               ...item,
-              displayName: item.insName,
+              insName: this.mapIrradianceLabel(item.insName),
+              displayName: this.mapIrradianceLabel(item.insName),
             }));
 
-          const valueKey = key.toLowerCase(); // 'irradiance1', 'irradiance2', 'irradiance3'
+          const valueKey = key.toLowerCase();
 
           const result = this.onTestUtil.syncInvertorGridData(
             this.chartTimeLabels,
@@ -338,6 +338,9 @@ export class SolarQuantityComponent
 
           this.tableTimeData.push(...result);
         }
+
+        this.stripStrayDailySum(this.barchartHourly);
+        this.sanitizeLegendLabels(this.barchartHourly);
       });
   }
 
@@ -356,7 +359,6 @@ export class SolarQuantityComponent
     this.startMonthlyDate = new Date(this.startMonthlyDate);
 
     datepicker.close();
-    // 자동으로 월별 데이터 업데이트
     this.updateMonthlyPage();
   }
 
@@ -368,22 +370,18 @@ export class SolarQuantityComponent
     datepicker: MatDatepicker<Date>
   ) {
     this.endMonthlyDate = normalizedMonth.endOf('month').toDate();
-
     datepicker.close();
-    // 자동으로 월별 데이터 업데이트
     this.updateMonthlyPage();
   }
 
   // Daily ----------------------------------------------------------
   onStartDailyDaySelected(normalizedDate: Moment) {
     this.startDailyDate = normalizedDate.toDate();
-    // 자동으로 일별 데이터 업데이트
     this.updateDailyPage();
   }
 
   onEndDailyDaySelected(normalizedDate: Moment) {
     this.endDailyDate = normalizedDate.toDate();
-    // 자동으로 일별 데이터 업데이트
     this.updateDailyPage();
   }
 
@@ -392,16 +390,12 @@ export class SolarQuantityComponent
     console.log('🌞 선택된 날짜 원본:', selectedDate);
     console.log('🌞 선택된 날짜 타입:', typeof selectedDate);
 
-    // 다양한 날짜 타입 처리
     let newDate: Date;
     if (selectedDate && typeof selectedDate.toDate === 'function') {
-      // Moment 객체인 경우
-      newDate = selectedDate.toDate();
+      newDate = selectedDate.toDate(); // moment
     } else if (selectedDate instanceof Date) {
-      // Date 객체인 경우
       newDate = selectedDate;
     } else if (typeof selectedDate === 'string') {
-      // 문자열인 경우
       newDate = new Date(selectedDate);
     } else {
       console.error('❌ 지원하지 않는 날짜 형식:', selectedDate);
@@ -412,7 +406,6 @@ export class SolarQuantityComponent
     this.timeDate = newDate;
     console.log('🌞 설정된 timeDate:', this.timeDate);
 
-    // 날짜 변경 시 자동 조회
     setTimeout(() => {
       console.log('⏰ updateHourlyPage 호출 시점의 timeDate:', this.timeDate);
       this.updateHourlyPage();
