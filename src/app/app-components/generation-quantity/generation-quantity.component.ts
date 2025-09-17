@@ -151,6 +151,41 @@ export class GenerationQuantityComponent
     this.updateHourlyPage();
   }
 
+  /* helpers for legend */
+  /** Normalize dataset/legend labels like "203 inverter 203" -> "203 inverter" */
+  private normalizeLabel(label?: string): string {
+    if (!label) return '';
+
+    //  Fix for 203INVERTER1[203] → "203 inverter"
+    const m203 = label.match(/^203\s*INVERTER1?\s*\[?203\]?$/i);
+    if (m203) return '203 inverter';
+
+    // Generic deduplication: "(\d+) ... \1" → "..."
+    const m = label.match(/^(\d+)\s+(.+?)\s+\1$/);
+    if (m) return `${m[1]} ${m[2]}`.trim();
+
+    return label.trim();
+  }
+
+  /** Table label formatter: prefer 'name'; else insName[insNum], but avoid "203 inverter 203" */
+  formatInvLabel(row: InvertorSummary): string {
+    const name = (row?.name ?? '').trim();
+    if (name) return this.normalizeLabel(name);
+
+    const insName = (row?.insName ?? '').trim();
+    const insNum = `${row?.insNum ?? ''}`.trim();
+
+    // If insName already ends with that number (e.g., "203 inverter"), don't add [203]
+    if (insName && insNum && new RegExp(`\\b${insNum}$`).test(insName)) {
+      return this.normalizeLabel(insName);
+    }
+
+    // Default: "insName[insNum]"
+    return this.normalizeLabel(
+      insName && insNum ? `${insName} [${insNum}]` : insName || insNum
+    );
+  }
+
   private toMoment(
     d: Date | Moment | string | null | undefined
   ): moment.Moment {
@@ -216,6 +251,10 @@ export class GenerationQuantityComponent
       const c = colorAt(idx);
       ds.backgroundColor = c;
       ds.borderColor = c;
+
+      // Normalize dataset label to remove duplicates like "203 inverter 203"
+      ds.label = this.normalizeLabel(ds.label);
+
       if (legendTarget) legendTarget.push({ label: ds.label, color: c });
     });
 
