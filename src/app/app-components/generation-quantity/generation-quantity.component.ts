@@ -42,9 +42,9 @@ export class GenerationQuantityComponent
   private chartUtil: ChartJsUtils = new ChartJsUtils();
   private onTestUtil: OntestUtils = new OntestUtils(this.semsService);
 
-  monthlyLegend: { label: string; color: string }[] = [];
-  dailyLegend: { label: string; color: string }[] = [];
-  hourlyLegend: { label: string; color: string }[] = [];
+  monthlyLegend: { label: string; color: string; hidden?: boolean }[] = [];
+  dailyLegend: { label: string; color: string; hidden?: boolean }[] = [];
+  hourlyLegend: { label: string; color: string; hidden?: boolean }[] = [];
 
   isLoadingMonthly = false;
   isLoadingDaily = false;
@@ -151,6 +151,84 @@ export class GenerationQuantityComponent
     this.updateHourlyPage();
   }
 
+  /* helpers for legend */
+  /** Normalize dataset/legend labels like "203 inverter 203" -> "203 inverter" */
+  private normalizeLabel(label?: string): string {
+    if (!label) return '';
+
+    //  Fix for 203INVERTER1[203] → "203 inverter"
+    const m203 = label.match(/^203\s*INVERTER1?\s*\[?203\]?$/i);
+    if (m203) return '203 inverter';
+
+    // Generic deduplication: "(\d+) ... \1" → "..."
+    const m = label.match(/^(\d+)\s+(.+?)\s+\1$/);
+    if (m) return `${m[1]} ${m[2]}`.trim();
+
+    return label.trim();
+  }
+
+  /** Table label formatter: prefer 'name'; else insName[insNum], but avoid "203 inverter 203" */
+  formatInvLabel(row: InvertorSummary): string {
+    const name = (row?.name ?? '').trim();
+    if (name) return this.normalizeLabel(name);
+
+    const insName = (row?.insName ?? '').trim();
+    const insNum = `${row?.insNum ?? ''}`.trim();
+
+    // If insName already ends with that number (e.g., "203 inverter"), don't add [203]
+    if (insName && insNum && new RegExp(`\\b${insNum}$`).test(insName)) {
+      return this.normalizeLabel(insName);
+    }
+
+    // Default: "insName[insNum]"
+    return this.normalizeLabel(
+      insName && insNum ? `${insName} [${insNum}]` : insName || insNum
+    );
+  }
+
+  /** Toggle dataset visibility when legend item is clicked */
+  toggleDatasetVisibility(
+    chartType: 'hourly' | 'daily' | 'monthly',
+    label: string
+  ): void {
+    let chart: BarChartComponent;
+    let legend: { label: string; color: string; hidden?: boolean }[];
+
+    switch (chartType) {
+      case 'hourly':
+        chart = this.barchartHourly;
+        legend = this.hourlyLegend;
+        break;
+      case 'daily':
+        chart = this.barchartDaily;
+        legend = this.dailyLegend;
+        break;
+      case 'monthly':
+        chart = this.barchartMonthly;
+        legend = this.monthlyLegend;
+        break;
+    }
+
+    // Find the legend item and toggle its hidden state
+    const legendItem = legend.find((item) => item.label === label);
+    if (legendItem) {
+      legendItem.hidden = !legendItem.hidden;
+
+      // Toggle the corresponding dataset visibility in the chart
+      const chartInstance: any = (chart as any)?.chart;
+      if (chartInstance && chartInstance.data && chartInstance.data.datasets) {
+        const datasetIndex = chartInstance.data.datasets.findIndex(
+          (ds: any) => ds.label === label
+        );
+        if (datasetIndex !== -1) {
+          const meta = chartInstance.getDatasetMeta(datasetIndex);
+          meta.hidden = legendItem.hidden;
+          chartInstance.update();
+        }
+      }
+    }
+  }
+
   private toMoment(
     d: Date | Moment | string | null | undefined
   ): moment.Moment {
@@ -216,7 +294,12 @@ export class GenerationQuantityComponent
       const c = colorAt(idx);
       ds.backgroundColor = c;
       ds.borderColor = c;
-      if (legendTarget) legendTarget.push({ label: ds.label, color: c });
+
+      // Normalize dataset label to remove duplicates like "203 inverter 203"
+      ds.label = this.normalizeLabel(ds.label);
+
+      if (legendTarget)
+        legendTarget.push({ label: ds.label, color: c, hidden: false });
     });
 
     if (typeof chart.update === 'function') chart.update('none');

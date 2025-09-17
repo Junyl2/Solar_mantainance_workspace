@@ -34,9 +34,18 @@
     <!-- Fixed (non-scrolling) legend -->
     <div class="legend-fixed" *ngIf="hourlyLegend?.length">
       <ul class="legend-list">
-        <li class="legend-item" *ngFor="let it of hourlyLegend">
+        <li
+          class="legend-item"
+          *ngFor="let it of hourlyLegend"
+          (click)="toggleDatasetVisibility('hourly', it.label)"
+        >
           <span class="swatch" [style.background]="it.color"></span>
-          <span class="legend-label" [title]="it.label">{{ it.label }}</span>
+          <span
+            class="legend-label"
+            [title]="it.label"
+            [class.strikethrough]="it.hidden"
+            >{{ it.label }}</span
+          >
         </li>
       </ul>
     </div>
@@ -62,10 +71,7 @@
           <th *ngFor="let x of tableTimeLabels">{{ x }}</th>
         </tr>
         <tr *ngFor="let timeData of tableTimeData; index as i">
-          <td *ngIf="timeData.name != ''">{{ timeData.name }}</td>
-          <td *ngIf="timeData.name == ''">
-            {{ timeData.insName }}[{{ timeData.insNum }}]
-          </td>
+          <td>{{ formatInvLabel(timeData) }}</td>
           <td *ngFor="let data of timeData.data; index as t">{{ data }}</td>
         </tr>
       </table>
@@ -126,9 +132,18 @@
     <!-- Fixed legend -->
     <div class="legend-fixed" *ngIf="dailyLegend?.length">
       <ul class="legend-list">
-        <li class="legend-item" *ngFor="let it of dailyLegend">
+        <li
+          class="legend-item"
+          *ngFor="let it of dailyLegend"
+          (click)="toggleDatasetVisibility('daily', it.label)"
+        >
           <span class="swatch" [style.background]="it.color"></span>
-          <span class="legend-label" [title]="it.label">{{ it.label }}</span>
+          <span
+            class="legend-label"
+            [title]="it.label"
+            [class.strikethrough]="it.hidden"
+            >{{ it.label }}</span
+          >
         </li>
       </ul>
     </div>
@@ -153,10 +168,7 @@
           <th *ngFor="let x of tableDailyLabels">{{ x }}</th>
         </tr>
         <tr *ngFor="let dailyData of tableDailyData; index as i">
-          <td *ngIf="dailyData.name != ''">{{ dailyData.name }}</td>
-          <td *ngIf="dailyData.name == ''">
-            {{ dailyData.insName }}[{{ dailyData.insNum }}]
-          </td>
+          <td>{{ formatInvLabel(dailyData) }}</td>
           <td *ngFor="let data of dailyData.data; index as t">{{ data }}</td>
         </tr>
       </table>
@@ -223,9 +235,18 @@
     <!-- Fixed legend -->
     <div class="legend-fixed" *ngIf="monthlyLegend?.length">
       <ul class="legend-list">
-        <li class="legend-item" *ngFor="let it of monthlyLegend">
+        <li
+          class="legend-item"
+          *ngFor="let it of monthlyLegend"
+          (click)="toggleDatasetVisibility('monthly', it.label)"
+        >
           <span class="swatch" [style.background]="it.color"></span>
-          <span class="legend-label" [title]="it.label">{{ it.label }}</span>
+          <span
+            class="legend-label"
+            [title]="it.label"
+            [class.strikethrough]="it.hidden"
+            >{{ it.label }}</span
+          >
         </li>
       </ul>
     </div>
@@ -254,10 +275,7 @@
           <th *ngFor="let x of tableMonthlyLabels">{{ x }}</th>
         </tr>
         <tr *ngFor="let monthlyData of tableMonthlyData; index as i">
-          <td *ngIf="monthlyData.name != ''">{{ monthlyData.name }}</td>
-          <td *ngIf="monthlyData.name == ''">
-            {{ monthlyData.insName }}[{{ monthlyData.insNum }}]
-          </td>
+          <td>{{ formatInvLabel(monthlyData) }}</td>
           <td *ngFor="let data of monthlyData.data; index as t">{{ data }}</td>
         </tr>
       </table>

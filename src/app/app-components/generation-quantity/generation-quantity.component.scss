@@ -70,6 +70,15 @@
     align-items: center;
     gap: 8px;
     max-width: 240px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
     /* prevent super long labels from pushing layout */
 }
 
@@ -89,6 +98,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 200px;
+
+    &.strikethrough {
+        text-decoration: line-through;
+        opacity: 0.6;
+    }
 }
 
 /* Table horizontal scroll */
