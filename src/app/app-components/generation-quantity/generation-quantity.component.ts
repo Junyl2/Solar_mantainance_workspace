@@ -42,9 +42,9 @@ export class GenerationQuantityComponent
   private chartUtil: ChartJsUtils = new ChartJsUtils();
   private onTestUtil: OntestUtils = new OntestUtils(this.semsService);
 
-  monthlyLegend: { label: string; color: string }[] = [];
-  dailyLegend: { label: string; color: string }[] = [];
-  hourlyLegend: { label: string; color: string }[] = [];
+  monthlyLegend: { label: string; color: string; hidden?: boolean }[] = [];
+  dailyLegend: { label: string; color: string; hidden?: boolean }[] = [];
+  hourlyLegend: { label: string; color: string; hidden?: boolean }[] = [];
 
   isLoadingMonthly = false;
   isLoadingDaily = false;
@@ -186,6 +186,49 @@ export class GenerationQuantityComponent
     );
   }
 
+  /** Toggle dataset visibility when legend item is clicked */
+  toggleDatasetVisibility(
+    chartType: 'hourly' | 'daily' | 'monthly',
+    label: string
+  ): void {
+    let chart: BarChartComponent;
+    let legend: { label: string; color: string; hidden?: boolean }[];
+
+    switch (chartType) {
+      case 'hourly':
+        chart = this.barchartHourly;
+        legend = this.hourlyLegend;
+        break;
+      case 'daily':
+        chart = this.barchartDaily;
+        legend = this.dailyLegend;
+        break;
+      case 'monthly':
+        chart = this.barchartMonthly;
+        legend = this.monthlyLegend;
+        break;
+    }
+
+    // Find the legend item and toggle its hidden state
+    const legendItem = legend.find((item) => item.label === label);
+    if (legendItem) {
+      legendItem.hidden = !legendItem.hidden;
+
+      // Toggle the corresponding dataset visibility in the chart
+      const chartInstance: any = (chart as any)?.chart;
+      if (chartInstance && chartInstance.data && chartInstance.data.datasets) {
+        const datasetIndex = chartInstance.data.datasets.findIndex(
+          (ds: any) => ds.label === label
+        );
+        if (datasetIndex !== -1) {
+          const meta = chartInstance.getDatasetMeta(datasetIndex);
+          meta.hidden = legendItem.hidden;
+          chartInstance.update();
+        }
+      }
+    }
+  }
+
   private toMoment(
     d: Date | Moment | string | null | undefined
   ): moment.Moment {
@@ -255,7 +298,8 @@ export class GenerationQuantityComponent
       // Normalize dataset label to remove duplicates like "203 inverter 203"
       ds.label = this.normalizeLabel(ds.label);
 
-      if (legendTarget) legendTarget.push({ label: ds.label, color: c });
+      if (legendTarget)
+        legendTarget.push({ label: ds.label, color: c, hidden: false });
     });
 
     if (typeof chart.update === 'function') chart.update('none');

@@ -34,9 +34,18 @@
     <!-- Fixed (non-scrolling) legend -->
     <div class="legend-fixed" *ngIf="hourlyLegend?.length">
       <ul class="legend-list">
-        <li class="legend-item" *ngFor="let it of hourlyLegend">
+        <li
+          class="legend-item"
+          *ngFor="let it of hourlyLegend"
+          (click)="toggleDatasetVisibility('hourly', it.label)"
+        >
           <span class="swatch" [style.background]="it.color"></span>
-          <span class="legend-label" [title]="it.label">{{ it.label }}</span>
+          <span
+            class="legend-label"
+            [title]="it.label"
+            [class.strikethrough]="it.hidden"
+            >{{ it.label }}</span
+          >
         </li>
       </ul>
     </div>
@@ -123,9 +132,18 @@
     <!-- Fixed legend -->
     <div class="legend-fixed" *ngIf="dailyLegend?.length">
       <ul class="legend-list">
-        <li class="legend-item" *ngFor="let it of dailyLegend">
+        <li
+          class="legend-item"
+          *ngFor="let it of dailyLegend"
+          (click)="toggleDatasetVisibility('daily', it.label)"
+        >
           <span class="swatch" [style.background]="it.color"></span>
-          <span class="legend-label" [title]="it.label">{{ it.label }}</span>
+          <span
+            class="legend-label"
+            [title]="it.label"
+            [class.strikethrough]="it.hidden"
+            >{{ it.label }}</span
+          >
         </li>
       </ul>
     </div>
@@ -217,9 +235,18 @@
     <!-- Fixed legend -->
     <div class="legend-fixed" *ngIf="monthlyLegend?.length">
       <ul class="legend-list">
-        <li class="legend-item" *ngFor="let it of monthlyLegend">
+        <li
+          class="legend-item"
+          *ngFor="let it of monthlyLegend"
+          (click)="toggleDatasetVisibility('monthly', it.label)"
+        >
           <span class="swatch" [style.background]="it.color"></span>
-          <span class="legend-label" [title]="it.label">{{ it.label }}</span>
+          <span
+            class="legend-label"
+            [title]="it.label"
+            [class.strikethrough]="it.hidden"
+            >{{ it.label }}</span
+          >
         </li>
       </ul>
     </div>
