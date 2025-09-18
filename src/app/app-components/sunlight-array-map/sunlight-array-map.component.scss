@@ -1,12 +1,54 @@
 .apartment-image {
   width: 100%;
-  padding-left: 10px;
+  max-width: 300px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sunlight-array-images {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.image-item {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.images-section {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.table-section {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .apartment-image-div {
-  width: 50%;
+  width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  margin-bottom: 20px;
+}
+
+.apartment-image-div h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #343a40;
+  font-size: 20px;
+  font-weight: 600;
 }
 
 .table-container {
@@ -50,16 +92,14 @@
 .container {
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 30px 16px 0px 16px;
-  display: flex;
   align-items: flex-start;
+  justify-content: space-between;
+  padding: 30px 16px 0px 16px;
   width: 100%;
+  gap: 20px;
 }
 
 @media(max-width:768px) {
-
   .container {
     flex-direction: column;
     align-items: center;
@@ -68,9 +108,80 @@
     width: 100%;
   }
 
-  /* .td_border {
-    min-width: 100px;
-  } */
+  .images-section {
+    width: 100%;
+  }
+
+  .table-section {
+    width: 100%;
+  }
+
+  .sunlight-array-images {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .apartment-image {
+    max-width: 100%;
+  }
 }
 
 @media(max-width:768px) {}
+
+/* Loading and Error States */
+.loading-container,
+.error-container,
+.hardware-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 16px;
+  margin-bottom: 1rem;
+}
+
+.retry-button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.retry-button:hover {
+  background-color: #2980b9;
+}
+
+.hardware-loading {
+  min-height: 200px;
+}

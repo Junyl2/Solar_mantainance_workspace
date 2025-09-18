@@ -1,16 +1,122 @@
-<mat-tab-group (selectedIndexChange)="myTabSelectedIndexChange($event)">
+<!-- Loading State -->
+<div *ngIf="loading" class="loading-container">
+  <div class="loading-spinner"></div>
+  <p>Loading site data...</p>
+</div>
+
+<!-- Error State -->
+<div *ngIf="errorMessage && !loading" class="error-container">
+  <p class="error-message">{{ errorMessage }}</p>
+  <button (click)="ngOnInit()" class="retry-button">Retry</button>
+</div>
+
+<!-- Main Content -->
+<mat-tab-group
+  *ngIf="!loading && !errorMessage"
+  (selectedIndexChange)="myTabSelectedIndexChange($event)"
+>
   <mat-tab *ngFor="let facility of sites; index as i">
     <ng-template mat-tab-label>
       <span>{{ facility.title }}</span>
     </ng-template>
 
     <div class="container">
-      <div class="apartment-image-div">
-        <img class="apartment-image" [src]="facility.imageUrl" />
+      <!-- Images Section (Left Side) -->
+      <div class="images-section">
+        <!-- Debug info -->
+        <!--    <div
+          style="
+            background: #f0f0f0;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+          "
+        >
+          <strong>Debug Info:</strong> Facility Title: "{{ facility.title }}" |
+          Contains 201: {{ facility.title.includes("201") }} | Contains 202:
+          {{ facility.title.includes("202") }} | Contains 203:
+          {{ facility.title.includes("203") }}
+        </div> -->
+
+        <div class="sunlight-array-images">
+          <!-- 201동 Image -->
+          <div *ngIf="facility.title.includes('201')" class="image-item">
+            <img
+              class="apartment-image"
+              src="assets/Images/sunlight-array/201.jpg"
+              alt="201동 Array"
+              (error)="onImageError($event, '201')"
+              (load)="onImageLoad($event, '201')"
+            />
+          </div>
+
+          <!-- 202동 Image -->
+          <div *ngIf="facility.title.includes('202')" class="image-item">
+            <img
+              class="apartment-image"
+              src="assets/Images/sunlight-array/202.jpg"
+              alt="202동 Array"
+              (error)="onImageError($event, '202')"
+              (load)="onImageLoad($event, '202')"
+            />
+          </div>
+
+          <!-- 203동 Image -->
+          <div *ngIf="facility.title.includes('203')" class="image-item">
+            <img
+              class="apartment-image"
+              src="assets/Images/sunlight-array/203.png"
+              alt="203동 Array"
+              (error)="onImageError($event, '203')"
+              (load)="onImageLoad($event, '203')"
+            />
+          </div>
+
+          <!-- 204동 Image -->
+          <div *ngIf="facility.title.includes('204')" class="image-item">
+            <img
+              class="apartment-image"
+              src="assets/Images/sunlight-array/204.png"
+              alt="204동 Array"
+              (error)="onImageError($event, '204')"
+              (load)="onImageLoad($event, '204')"
+            />
+          </div>
+
+          <!-- 205동 Image -->
+          <div *ngIf="facility.title.includes('205')" class="image-item">
+            <img
+              class="apartment-image"
+              src="assets/Images/sunlight-array/205.jpg"
+              alt="205동 Array"
+              (error)="onImageError($event, '205')"
+              (load)="onImageLoad($event, '205')"
+            />
+          </div>
+
+          <!-- 206동 Image -->
+          <div *ngIf="facility.title.includes('206')" class="image-item">
+            <img
+              class="apartment-image"
+              src="assets/Images/sunlight-array/206.jpg"
+              alt="206동 Array"
+              (error)="onImageError($event, '206')"
+              (load)="onImageLoad($event, '206')"
+            />
+          </div>
+        </div>
       </div>
 
-      <div class="apartment-image-div">
-        <table class="table-container">
+      <!-- Table Section (Right Side) -->
+      <div class="table-section">
+        <!-- Hardware Loading State -->
+        <div *ngIf="hardwareLoading" class="hardware-loading">
+          <div class="loading-spinner"></div>
+          <p>Loading hardware data...</p>
+        </div>
+
+        <!-- Table Content -->
+        <table *ngIf="!hardwareLoading" class="table-container">
           <thead>
             <tr style="background-color: #8f8f8f; color: white">
               <td class="td_border" colspan="3" rowSpan="2">구분</td>
