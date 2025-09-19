@@ -1,4 +1,13 @@
-import { Component, OnInit, SimpleChanges, AfterViewInit, ViewChild, ElementRef, AfterContentChecked, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  SimpleChanges,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+  AfterContentChecked,
+  ChangeDetectorRef,
+} from '@angular/core';
 
 // Angular Material Datepicker
 import { MatDatepicker } from '@angular/material/datepicker';
@@ -19,19 +28,18 @@ import { InvertorSummary } from 'src/app/models/invertor-summary';
 import { format, roundToNearestMinutes } from 'date-fns';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { OntestUtils } from 'src/app/utils/ontest-utils';
-
 
 @Component({
   selector: 'app-efficiency',
   templateUrl: './efficiency.component.html',
   styleUrls: ['./efficiency.component.scss'],
-  providers: [
-  ],
+  providers: [],
 })
-export class EfficiencyComponent implements OnInit, AfterViewInit, AfterContentChecked {
-
+export class EfficiencyComponent
+  implements OnInit, AfterViewInit, AfterContentChecked
+{
   @ViewChild('barchartMonthly') barchartMonthly!: BarChartComponent;
   @ViewChild('barchartDaily') barchartDaily!: BarChartComponent;
   @ViewChild('barchartHourly') barchartHourly!: BarChartComponent;
@@ -44,12 +52,8 @@ export class EfficiencyComponent implements OnInit, AfterViewInit, AfterContentC
   showChart = true;
 
   viewChart = (show: boolean) => {
-    if (show) {
-      this.showChart = true;
-    } else {
-      this.showChart = false;
-    }
-  }
+    this.showChart = !!show;
+  };
 
   startYMat!: Date;
   endYMat!: Date;
@@ -99,36 +103,37 @@ export class EfficiencyComponent implements OnInit, AfterViewInit, AfterContentC
 
   isOpen = false;
 
-  public roundDate = roundToNearestMinutes(new Date('2021-10-07 16:10:00'), { nearestTo: 10 });
+  public roundDate = roundToNearestMinutes(new Date('2021-10-07 16:10:00'), {
+    nearestTo: 10,
+  });
 
   public dateControl = new FormControl(this.roundDate);
   public dateControlMinMax = new FormControl(new Date());
 
   updateDCData = () => {
-    const param = new Date(this.dateControl.value).toISOString();
+    const param = new Date(this.dateControl.value as Date).toISOString();
     console.log(param);
 
-    this.semsService.getInvertorDataByDatetime(param)
-      .subscribe((res) => {
-        console.log(res);
-      })
-  }
+    this.semsService.getInvertorDataByDatetime(param).subscribe((res) => {
+      console.log(res);
+    });
+  };
 
   public options = [
     { value: true, label: 'True' },
-    { value: false, label: 'False' }
+    { value: false, label: 'False' },
   ];
 
   public listColors = ['primary', 'accent', 'warn'];
   site: {};
 
-  constructor(private semsService: SemsService,
+  constructor(
+    private semsService: SemsService,
     private dateAdapter: DateAdapter<any>,
     private cdRef: ChangeDetectorRef,
     public dialog: MatDialog,
-    private router: Router,
+    private router: Router
   ) {
-
     // Monthly ----------------------
     this.startMinMonthlyDate = this.semsService.getInstalledDate();
     this.startMaxMonthlyDate = moment().toDate();
@@ -137,10 +142,13 @@ export class EfficiencyComponent implements OnInit, AfterViewInit, AfterContentC
     this.startMonthlyDate = this.startMinMonthlyDate;
     this.endMonthlyDate = moment().toDate();
 
-
     // Daily -------------------------
-    this.startMinDailyDate = this.endMinDailyDate = this.semsService.getInstalledDate();
-    this.startMaxDailyDate = this.endMaxDailyDate = this.endDailyDate = moment().toDate();
+    this.startMinDailyDate = this.endMinDailyDate =
+      this.semsService.getInstalledDate();
+    this.startMaxDailyDate =
+      this.endMaxDailyDate =
+      this.endDailyDate =
+        moment().toDate();
     this.startDailyDate = moment().add(-1, 'M').toDate();
 
     // Time ---------------------------
@@ -153,17 +161,15 @@ export class EfficiencyComponent implements OnInit, AfterViewInit, AfterContentC
   }
 
   ngOnInit(): void {
-    this.semsService.getSite().subscribe(res => {
+    this.semsService.getSite().subscribe((res) => {
       this.site = res;
-
       console.log(this.site);
-    })
+    });
   }
 
-  ngAfterContentChecked(): void {
-  }
+  ngAfterContentChecked(): void {}
 
-  ngAfterViewChecked(){
+  ngAfterViewChecked() {
     this.cdRef.detectChanges();
   }
 
@@ -182,11 +188,11 @@ export class EfficiencyComponent implements OnInit, AfterViewInit, AfterContentC
           display: true,
           position: 'left',
         },
-      }
-    }
-    this.barchartMonthly.addConfigOptions(scalesOption)
-    this.barchartHourly.addConfigOptions(scalesOption)
-    this.barchartDaily.addConfigOptions(scalesOption)
+      },
+    };
+    this.barchartMonthly.addConfigOptions(scalesOption);
+    this.barchartHourly.addConfigOptions(scalesOption);
+    this.barchartDaily.addConfigOptions(scalesOption);
 
     this.cdRef.detectChanges();
 
@@ -200,94 +206,196 @@ export class EfficiencyComponent implements OnInit, AfterViewInit, AfterContentC
     this.updateHourlyPage();
   }
 
+  /** -------- LABEL NORMALIZATION (203 ONLY) -------- */
+  /** Maps any raw name that contains "203" into Korean "203 인버터" */
+  private getDisplayName(raw: string | undefined | null): string {
+    if (!raw) return '';
+    return raw.includes('203') ? '203 인버터' : raw;
+  }
+
+  /** Overwrite dataset legend labels on a BarChartComponent, if accessible. */
+  private normalizeChartLegendLabels(chartRef: BarChartComponent) {
+    try {
+      // Support both Chart.js instance access or wrapper data access
+      const chart: any = (chartRef as any)?.chart || (chartRef as any)?._chart;
+      const datasets: any[] =
+        chart?.data?.datasets || (chartRef as any)?.datasets || [];
+
+      if (Array.isArray(datasets)) {
+        datasets.forEach((ds) => {
+          if (typeof ds?.label === 'string') {
+            ds.label = this.getDisplayName(ds.label);
+          }
+        });
+      }
+
+      // Trigger chart update if available
+      if (chart?.update) chart.update();
+      else if ((chartRef as any)?.update) (chartRef as any).update();
+    } catch (e) {
+      // Non-fatal: if BarChartComponent doesn't expose internals, skip
+      console.warn('Could not normalize chart legend labels:', e);
+    }
+  }
+
+  /** Add displayName to table rows (used by template) */
+  private attachDisplayNames<T extends { insName?: string; name?: string }>(
+    rows: T[]
+  ): (T & { displayName: string })[] {
+    return (rows || []).map((r) => ({
+      ...(r as any),
+      displayName: this.getDisplayName(r.insName || r.name || ''),
+    }));
+  }
+
+  /** (Optional) Normalize API payload before chart/table sync */
+  private normalizeApiPayload(apiData: any[]): any[] {
+    // If backend sometimes sends noisy strings like "[203]IVERFTER[203]",
+    // sanitize those *before* they are converted to datasets/rows.
+    return (apiData || []).map((item) => {
+      const raw = item?.insName || item?.name || '';
+      const normalized = this.getDisplayName(raw);
+      return {
+        ...item,
+        // keep original fields but ensure name/insName are clean for legend use
+        insName: normalized.includes('203 인버터')
+          ? '203 인버터'
+          : item.insName,
+        name: normalized.includes('203 인버터') ? '203 인버터' : item.name,
+      };
+    });
+  }
+
+  /** --------------- MONTHLY ----------------- */
   updateMonthlyPage(): void {
     // Chart Label
-    this.chartMonthlyLabels = [];
-    this.chartMonthlyLabels = DateUtils.getSpanYYMMStringArray(this.endMonthlyDate, this.startMonthlyDate);
-    var dataCount = this.chartMonthlyLabels.length;
+    this.chartMonthlyLabels = DateUtils.getSpanYYMMStringArray(
+      this.endMonthlyDate,
+      this.startMonthlyDate
+    );
 
     // Table First Labels
-    this.tableMonthlyLabels = [];
-    this.tableMonthlyLabels.push("인버터");
-    this.tableMonthlyLabels = this.tableMonthlyLabels.concat(this.chartMonthlyLabels);
+    this.tableMonthlyLabels = ['인버터', ...this.chartMonthlyLabels];
 
-    // Chart Data & Table Data ---------------------------------------------
-    var inverterCount = this.semsService.getInverterCount();
     // Empty dataset
     this.barchartMonthly.resetDataset();
 
-    this.semsService.getEfficiencyMonthly(this.startMonthlyDate, this.endMonthlyDate)
-      .subscribe(res => {
-        const apiData = res;
+    this.semsService
+      .getEfficiencyMonthly(this.startMonthlyDate, this.endMonthlyDate)
+      .subscribe((res) => {
+        const apiData = this.normalizeApiPayload(res);
 
-        this.tableMonthlyData = this.ontestUtil.syncGenerationGridData(this.chartMonthlyLabels, apiData, 'efficiency', this.barchartMonthly, 'yy-MM', undefined, undefined, this.site)
-      })
+        const synced = this.ontestUtil.syncGenerationGridData(
+          this.chartMonthlyLabels,
+          apiData,
+          'efficiency',
+          this.barchartMonthly,
+          'yy-MM',
+          undefined,
+          undefined,
+          this.site
+        );
+
+        // Table rows with clean displayName
+        this.tableMonthlyData = this.attachDisplayNames(synced);
+
+        // Ensure legend labels are also normalized
+        this.normalizeChartLegendLabels(this.barchartMonthly);
+      });
   }
 
+  /** --------------- DAILY ----------------- */
   async updateDailyPage(): Promise<void> {
     // Chart Label
-    this.chartDailyLabels = [];
-    this.chartDailyLabels = DateUtils.getSpanMonthDayStringArray(this.startDailyDate, this.endDailyDate);
+    this.chartDailyLabels = DateUtils.getSpanMonthDayStringArray(
+      this.startDailyDate,
+      this.endDailyDate
+    );
 
     // Table First Labels
-    this.tableDailyLabels = [];
-    this.tableDailyLabels.push("인버터");
-    this.tableDailyLabels = this.tableDailyLabels.concat(this.chartDailyLabels);
+    this.tableDailyLabels = ['인버터', ...this.chartDailyLabels];
 
-    // Chart Data & Table Data ---------------------------------------------
     // Empty dataset
     this.barchartDaily.resetDataset();
 
-    this.semsService.getEfficiencyDaily(this.startDailyDate, this.endDailyDate)
-      .subscribe(res => {
-        const apiData = res;
+    this.semsService
+      .getEfficiencyDaily(this.startDailyDate, this.endDailyDate)
+      .subscribe((res) => {
+        const apiData = this.normalizeApiPayload(res);
 
-        this.tableDailyData = this.ontestUtil.syncGenerationGridData(this.chartDailyLabels, apiData, 'efficiency', this.barchartDaily, 'MM-dd', undefined, undefined, this.site)
-      })
+        const synced = this.ontestUtil.syncGenerationGridData(
+          this.chartDailyLabels,
+          apiData,
+          'efficiency',
+          this.barchartDaily,
+          'MM-dd',
+          undefined,
+          undefined,
+          this.site
+        );
+
+        this.tableDailyData = this.attachDisplayNames(synced);
+
+        // Normalize legend labels
+        this.normalizeChartLegendLabels(this.barchartDaily);
+      });
   }
 
+  /** --------------- HOURLY ----------------- */
   updateHourlyPage(): void {
     // Chart Label
-    this.chartTimeLabels = [];
     this.chartTimeLabels = DateUtils.getSpanTimeStringArray();
 
     // Table First Labels
-    this.tableTimeLabels = [];
-    this.tableTimeLabels.push("인버터");
-    this.tableTimeLabels = this.tableTimeLabels.concat(this.chartTimeLabels);
+    this.tableTimeLabels = ['인버터', ...this.chartTimeLabels];
 
-    // Chart Data & Table Data ---------------------------------------------
-    var inverterCount = this.semsService.getInverterCount();
     // Empty dataset
     this.barchartHourly.resetDataset();
 
-    this.semsService.getEfficiencyHourly(this.timeDate)
-      .subscribe(res => {
-        const apiData = res;
+    this.semsService.getEfficiencyHourly(this.timeDate).subscribe((res) => {
+      const apiData = this.normalizeApiPayload(res);
 
-        this.tableTimeData = this.ontestUtil.syncGenerationGridData(this.chartTimeLabels, apiData, 'efficiency', this.barchartHourly, 'HH', 'hourly', undefined, this.site)
-      })
+      const synced = this.ontestUtil.syncGenerationGridData(
+        this.chartTimeLabels,
+        apiData,
+        'efficiency',
+        this.barchartHourly,
+        'HH',
+        'hourly',
+        undefined,
+        this.site
+      );
+
+      this.tableTimeData = this.attachDisplayNames(synced);
+
+      // Normalize legend labels
+      this.normalizeChartLegendLabels(this.barchartHourly);
+    });
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-  }
+  ngOnChanges(changes: SimpleChanges) {}
 
   // Monthly ------------------------------------------------------
   onStartMonthlyYearSelected(normalizedYear: Moment) {
     this.startMonthlyDate.setFullYear(normalizedYear.year());
   }
-  onStartMonthlyMonthSelected(normalizedMonth: Moment, datepicker: MatDatepicker<Date>) {
+  onStartMonthlyMonthSelected(
+    normalizedMonth: Moment,
+    datepicker: MatDatepicker<Date>
+  ) {
     this.startMonthlyDate.setFullYear(normalizedMonth.year());
     this.startMonthlyDate.setMonth(normalizedMonth.month());
     this.startMonthlyDate = new Date(this.startMonthlyDate);
-
     datepicker.close();
   }
 
   onEndMonthlyYearSelected(normalizedYear: Moment) {
     this.endMonthlyDate.setFullYear(normalizedYear.year());
   }
-  onEndMonthlyMonthSelected(normalizedMonth: Moment, datepicker: MatDatepicker<Date>) {
+  onEndMonthlyMonthSelected(
+    normalizedMonth: Moment,
+    datepicker: MatDatepicker<Date>
+  ) {
     this.endMonthlyDate = normalizedMonth.endOf('month').toDate();
     datepicker.close();
   }
@@ -302,7 +410,6 @@ export class EfficiencyComponent implements OnInit, AfterViewInit, AfterContentC
   }
 
   // Time ------------------------------------------------------------
-
   onHourlyDateSelected(normalizedDate: Moment) {
     this.timeDate = normalizedDate.toDate();
   }
@@ -310,5 +417,4 @@ export class EfficiencyComponent implements OnInit, AfterViewInit, AfterContentC
   openDialog() {
     this.router.navigate(['/invertor/alarm']);
   }
-
 }
