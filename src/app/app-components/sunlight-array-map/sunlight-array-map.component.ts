@@ -17,12 +17,98 @@ export class SunlightArrayMapComponent implements OnInit {
   public errorMessage = '';
   public hardwareLoading = false;
 
+  // Cached data to avoid method calls in template
+  public sitesWithData: any[] = [];
+
   constructor(private semsService: SemsService) {}
 
   ngOnInit(): void {
     this.loading = true;
     this.errorMessage = '';
-    this.loadSiteData();
+    // Since we're using hardcoded data, we don't need API calls
+    this.initializeHardcodedData();
+    this.loading = false;
+  }
+
+  private initializeHardcodedData(): void {
+    // Initialize hardcoded sites data with all computed properties
+    this.sitesWithData = [
+      {
+        title: '201동',
+        id: '201',
+        pvTypes: this.getBuildingPVTypes({ title: '201동' }),
+        totalQuantity: this.getFacilityTotalQuantity({ title: '201동' }),
+        totalSolarCapacity: this.getFacilityTotalSolarCapacity({
+          title: '201동',
+        }),
+        totalLabel: this.getTotalLabel({ title: '201동' }),
+        hasEquipment: this.hasFacilityEquipment({ title: '201동' }),
+        equipment: this.getFacilityEquipment({ title: '201동' }),
+      },
+      {
+        title: '202동',
+        id: '202',
+        pvTypes: this.getBuildingPVTypes({ title: '202동' }),
+        totalQuantity: this.getFacilityTotalQuantity({ title: '202동' }),
+        totalSolarCapacity: this.getFacilityTotalSolarCapacity({
+          title: '202동',
+        }),
+        totalLabel: this.getTotalLabel({ title: '202동' }),
+        hasEquipment: this.hasFacilityEquipment({ title: '202동' }),
+        equipment: this.getFacilityEquipment({ title: '202동' }),
+      },
+      {
+        title: '203동',
+        id: '203',
+        pvTypes: this.getBuildingPVTypes({ title: '203동' }),
+        totalQuantity: this.getFacilityTotalQuantity({ title: '203동' }),
+        totalSolarCapacity: this.getFacilityTotalSolarCapacity({
+          title: '203동',
+        }),
+        totalLabel: this.getTotalLabel({ title: '203동' }),
+        hasEquipment: this.hasFacilityEquipment({ title: '203동' }),
+        equipment: this.getFacilityEquipment({ title: '203동' }),
+      },
+      {
+        title: '204동',
+        id: '204',
+        pvTypes: this.getBuildingPVTypes({ title: '204동' }),
+        totalQuantity: this.getFacilityTotalQuantity({ title: '204동' }),
+        totalSolarCapacity: this.getFacilityTotalSolarCapacity({
+          title: '204동',
+        }),
+        totalLabel: this.getTotalLabel({ title: '204동' }),
+        hasEquipment: this.hasFacilityEquipment({ title: '204동' }),
+        equipment: this.getFacilityEquipment({ title: '204동' }),
+      },
+      {
+        title: '205동',
+        id: '205',
+        pvTypes: this.getBuildingPVTypes({ title: '205동' }),
+        totalQuantity: this.getFacilityTotalQuantity({ title: '205동' }),
+        totalSolarCapacity: this.getFacilityTotalSolarCapacity({
+          title: '205동',
+        }),
+        totalLabel: this.getTotalLabel({ title: '205동' }),
+        hasEquipment: this.hasFacilityEquipment({ title: '205동' }),
+        equipment: this.getFacilityEquipment({ title: '205동' }),
+      },
+      {
+        title: '206동',
+        id: '206',
+        pvTypes: this.getBuildingPVTypes({ title: '206동' }),
+        totalQuantity: this.getFacilityTotalQuantity({ title: '206동' }),
+        totalSolarCapacity: this.getFacilityTotalSolarCapacity({
+          title: '206동',
+        }),
+        totalLabel: this.getTotalLabel({ title: '206동' }),
+        hasEquipment: this.hasFacilityEquipment({ title: '206동' }),
+        equipment: this.getFacilityEquipment({ title: '206동' }),
+      },
+    ];
+
+    // Keep the original sites array for compatibility
+    this.sites = this.sitesWithData;
   }
 
   private loadSiteData(): void {
@@ -48,9 +134,7 @@ export class SunlightArrayMapComponent implements OnInit {
   }
 
   private processSiteData(facilities: any[]): void {
-    // Clear cache when processing new data
-    this.pvTypesCache.clear();
-    this.totalsCache.clear();
+    // Process site data (not used with hardcoded data)
 
     const tempMap = new Map<string, any>();
 
@@ -326,9 +410,6 @@ export class SunlightArrayMapComponent implements OnInit {
     return totalKilowatts.toFixed(3);
   }
 
-  // Cache for building PV types to prevent repeated calculations
-  private pvTypesCache = new Map<string, any[]>();
-
   // Get building-specific PV data with hardcoded data from the image
   getBuildingPVTypes(facility: any): any[] {
     if (!facility?.title) return [];
@@ -413,12 +494,6 @@ export class SunlightArrayMapComponent implements OnInit {
 
     return hardcodedData[buildingKey] || [];
   }
-
-  // Cache for facility totals
-  private totalsCache = new Map<
-    string,
-    { quantity: number; capacity: string }
-  >();
 
   // Calculate total quantity from hardcoded data
   getFacilityTotalQuantity(facility: any): number {

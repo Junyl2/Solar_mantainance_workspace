@@ -158,7 +158,7 @@ export class GenerationQuantityComponent
 
     //  Fix for 203INVERTER1[203] → "203 inverter"
     const m203 = label.match(/^203\s*INVERTER1?\s*\[?203\]?$/i);
-    if (m203) return '203 inverter';
+    if (m203) return '203 인버터';
 
     // Generic deduplication: "(\d+) ... \1" → "..."
     const m = label.match(/^(\d+)\s+(.+?)\s+\1$/);

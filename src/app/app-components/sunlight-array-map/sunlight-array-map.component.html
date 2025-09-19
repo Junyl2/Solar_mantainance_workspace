@@ -133,9 +133,7 @@
               </thead>
               <tbody>
                 <!-- Show only PV types that have data for this building -->
-                <ng-container
-                  *ngFor="let pvType of getBuildingPVTypes(facility)"
-                >
+                <ng-container *ngFor="let pvType of facility.pvTypes">
                   <tr class="data-row">
                     <td class="td_border category-cell">{{ pvType.type }}</td>
                     <td class="td_border data-cell">{{ pvType.capacity }}W</td>
@@ -149,25 +147,22 @@
                 <!-- Total Row - calculated from API data -->
                 <tr class="total-row">
                   <td class="td_border total-cell">
-                    {{ getTotalLabel(facility) }}
+                    {{ facility.totalLabel }}
                   </td>
                   <td class="td_border total-cell">-</td>
                   <td class="td_border total-cell">
-                    {{ getFacilityTotalQuantity(facility) }}개
+                    {{ facility.totalQuantity }}개
                   </td>
                   <td class="td_border total-cell">
-                    {{ getFacilityTotalSolarCapacity(facility) }}kW
+                    {{ facility.totalSolarCapacity }}kW
                   </td>
                 </tr>
 
                 <!-- Installed Equipment Row - from API data -->
-                <tr
-                  *ngIf="hasFacilityEquipment(facility)"
-                  class="equipment-row"
-                >
+                <tr *ngIf="facility.hasEquipment" class="equipment-row">
                   <td class="td_border equipment-cell" colspan="4">
                     <strong>설치장비:</strong>
-                    {{ getFacilityEquipment(facility) }}
+                    {{ facility.equipment }}
                   </td>
                 </tr>
               </tbody>
