@@ -17,12 +17,98 @@ export class SunlightArrayMapComponent implements OnInit {
   public errorMessage = '';
   public hardwareLoading = false;
 
+  // Cached data to avoid method calls in template
+  public sitesWithData: any[] = [];
+
   constructor(private semsService: SemsService) {}
 
   ngOnInit(): void {
     this.loading = true;
     this.errorMessage = '';
-    this.loadSiteData();
+    // Since we're using hardcoded data, we don't need API calls
+    this.initializeHardcodedData();
+    this.loading = false;
+  }
+
+  private initializeHardcodedData(): void {
+    // Initialize hardcoded sites data with all computed properties
+    this.sitesWithData = [
+      {
+        title: '201동',
+        id: '201',
+        pvTypes: this.getBuildingPVTypes({ title: '201동' }),
+        totalQuantity: this.getFacilityTotalQuantity({ title: '201동' }),
+        totalSolarCapacity: this.getFacilityTotalSolarCapacity({
+          title: '201동',
+        }),
+        totalLabel: this.getTotalLabel({ title: '201동' }),
+        hasEquipment: this.hasFacilityEquipment({ title: '201동' }),
+        equipment: this.getFacilityEquipment({ title: '201동' }),
+      },
+      {
+        title: '202동',
+        id: '202',
+        pvTypes: this.getBuildingPVTypes({ title: '202동' }),
+        totalQuantity: this.getFacilityTotalQuantity({ title: '202동' }),
+        totalSolarCapacity: this.getFacilityTotalSolarCapacity({
+          title: '202동',
+        }),
+        totalLabel: this.getTotalLabel({ title: '202동' }),
+        hasEquipment: this.hasFacilityEquipment({ title: '202동' }),
+        equipment: this.getFacilityEquipment({ title: '202동' }),
+      },
+      {
+        title: '203동',
+        id: '203',
+        pvTypes: this.getBuildingPVTypes({ title: '203동' }),
+        totalQuantity: this.getFacilityTotalQuantity({ title: '203동' }),
+        totalSolarCapacity: this.getFacilityTotalSolarCapacity({
+          title: '203동',
+        }),
+        totalLabel: this.getTotalLabel({ title: '203동' }),
+        hasEquipment: this.hasFacilityEquipment({ title: '203동' }),
+        equipment: this.getFacilityEquipment({ title: '203동' }),
+      },
+      {
+        title: '204동',
+        id: '204',
+        pvTypes: this.getBuildingPVTypes({ title: '204동' }),
+        totalQuantity: this.getFacilityTotalQuantity({ title: '204동' }),
+        totalSolarCapacity: this.getFacilityTotalSolarCapacity({
+          title: '204동',
+        }),
+        totalLabel: this.getTotalLabel({ title: '204동' }),
+        hasEquipment: this.hasFacilityEquipment({ title: '204동' }),
+        equipment: this.getFacilityEquipment({ title: '204동' }),
+      },
+      {
+        title: '205동',
+        id: '205',
+        pvTypes: this.getBuildingPVTypes({ title: '205동' }),
+        totalQuantity: this.getFacilityTotalQuantity({ title: '205동' }),
+        totalSolarCapacity: this.getFacilityTotalSolarCapacity({
+          title: '205동',
+        }),
+        totalLabel: this.getTotalLabel({ title: '205동' }),
+        hasEquipment: this.hasFacilityEquipment({ title: '205동' }),
+        equipment: this.getFacilityEquipment({ title: '205동' }),
+      },
+      {
+        title: '206동',
+        id: '206',
+        pvTypes: this.getBuildingPVTypes({ title: '206동' }),
+        totalQuantity: this.getFacilityTotalQuantity({ title: '206동' }),
+        totalSolarCapacity: this.getFacilityTotalSolarCapacity({
+          title: '206동',
+        }),
+        totalLabel: this.getTotalLabel({ title: '206동' }),
+        hasEquipment: this.hasFacilityEquipment({ title: '206동' }),
+        equipment: this.getFacilityEquipment({ title: '206동' }),
+      },
+    ];
+
+    // Keep the original sites array for compatibility
+    this.sites = this.sitesWithData;
   }
 
   private loadSiteData(): void {
@@ -48,9 +134,7 @@ export class SunlightArrayMapComponent implements OnInit {
   }
 
   private processSiteData(facilities: any[]): void {
-    // Clear cache when processing new data
-    this.pvTypesCache.clear();
-    this.totalsCache.clear();
+    // Process site data (not used with hardcoded data)
 
     const tempMap = new Map<string, any>();
 
@@ -326,242 +410,163 @@ export class SunlightArrayMapComponent implements OnInit {
     return totalKilowatts.toFixed(3);
   }
 
-  // Cache for building PV types to prevent repeated calculations
-  private pvTypesCache = new Map<string, any[]>();
-
-  // Get building-specific PV data with hardcoded first column labels
+  // Get building-specific PV data with hardcoded data from the image
   getBuildingPVTypes(facility: any): any[] {
     if (!facility?.title) return [];
 
     const buildingKey = facility.title.replace('동', '');
 
-    // Check cache first
-    if (this.pvTypesCache.has(buildingKey)) {
-      return this.pvTypesCache.get(buildingKey)!;
-    }
-
-    const pvTypes: any[] = [];
-
-    // Hardcode the first column labels based on building requirements
-    const buildingPVStructure: any = {
+    // Hardcoded data from the image
+    const hardcodedData: any = {
       '201': [
-        { type: 'Dark Blue', pvKey: 'pv3' },
-        { type: 'Dark Gray', pvKey: 'pv1' },
+        {
+          type: 'Dark Blue',
+          capacity: '143',
+          quantity: '44',
+          solarCapacity: '6.292',
+        },
+        {
+          type: 'Dark Gray',
+          capacity: '150',
+          quantity: '46',
+          solarCapacity: '6.900',
+        },
       ],
       '202': [
-        { type: 'Dark Blue', pvKey: 'pv3' },
-        { type: 'Dark Gray', pvKey: 'pv1' },
+        {
+          type: 'Dark Blue',
+          capacity: '143',
+          quantity: '60',
+          solarCapacity: '8.580',
+        },
+        {
+          type: 'Dark Gray',
+          capacity: '150',
+          quantity: '168',
+          solarCapacity: '25.200',
+        },
       ],
-      '203': [{ type: 'Dark Gray', pvKey: 'pv1' }],
+      '203': [
+        {
+          type: 'Dark Gray',
+          capacity: '150',
+          quantity: '54',
+          solarCapacity: '8.100',
+        },
+      ],
       '204': [
-        { type: 'Terra Cotta', pvKey: 'pv2' },
-        { type: 'Dark Gray', pvKey: 'pv1' },
+        {
+          type: 'Terra Cotta',
+          capacity: '124',
+          quantity: '21',
+          solarCapacity: '2.604',
+        },
+        {
+          type: 'Dark Gray',
+          capacity: '150',
+          quantity: '17',
+          solarCapacity: '2.550',
+        },
       ],
       '205': [
-        { type: 'Terra Cotta', pvKey: 'pv2' },
-        { type: 'Dark Gray', pvKey: 'pv1' },
+        {
+          type: 'Terra Cotta',
+          capacity: '124',
+          quantity: '29',
+          solarCapacity: '3.596',
+        },
+        {
+          type: 'Dark Gray',
+          capacity: '150',
+          quantity: '94',
+          solarCapacity: '14.100',
+        },
       ],
-      '206': [{ type: 'Dark Gray', pvKey: 'pv1' }],
+      '206': [
+        {
+          type: 'Dark Gray',
+          capacity: '150',
+          quantity: '148',
+          solarCapacity: '22.200',
+        },
+      ],
     };
 
-    const structure = buildingPVStructure[buildingKey] || [];
-
-    if (!facility?.resultObject?.invList) {
-      // If no API data, return structure with default values
-      const defaultData = structure.map((item) => ({
-        type: item.type,
-        capacity: '0',
-        quantity: '0',
-        solarCapacity: '0.000',
-      }));
-      this.pvTypesCache.set(buildingKey, defaultData);
-      return defaultData;
-    }
-
-    // Process API data and map to the required structure
-    for (const pvItem of structure) {
-      let foundData = false;
-
-      for (const data of facility.resultObject.invList) {
-        const pvObject = data[pvItem.pvKey + 'Object'];
-        if (pvObject && Object.keys(pvObject).length > 0) {
-          for (const [capacity, quantity] of Object.entries(pvObject)) {
-            if (Number(quantity) > 0) {
-              pvTypes.push({
-                type: pvItem.type,
-                capacity: capacity,
-                quantity: quantity,
-                solarCapacity: this.calculateSolarCapacity(capacity, quantity),
-              });
-              foundData = true;
-              break; // Take first non-zero entry
-            }
-          }
-        }
-        if (foundData) break;
-      }
-
-      // If no API data found for this PV type, add with default values
-      if (!foundData) {
-        pvTypes.push({
-          type: pvItem.type,
-          capacity: '0',
-          quantity: '0',
-          solarCapacity: '0.000',
-        });
-      }
-    }
-
-    // Cache the result
-    this.pvTypesCache.set(buildingKey, pvTypes);
-    return pvTypes;
+    return hardcodedData[buildingKey] || [];
   }
 
-  // Cache for facility totals
-  private totalsCache = new Map<
-    string,
-    { quantity: number; capacity: string }
-  >();
-
-  // Calculate total quantity from API data only
+  // Calculate total quantity from hardcoded data
   getFacilityTotalQuantity(facility: any): number {
     if (!facility?.title) return 0;
 
     const buildingKey = facility.title.replace('동', '');
-    const cacheKey = `${buildingKey}_totals`;
 
-    if (this.totalsCache.has(cacheKey)) {
-      return this.totalsCache.get(cacheKey)!.quantity;
-    }
-
-    if (!facility?.resultObject?.invList) {
-      this.totalsCache.set(cacheKey, { quantity: 0, capacity: '0.000' });
-      return 0;
-    }
-
-    let total = 0;
-    for (const data of facility.resultObject.invList) {
-      // Sum all PV quantities from API data
-      for (const item of Object.values(data.pv1Object || {})) {
-        total += Number(item) || 0;
-      }
-      for (const item of Object.values(data.pv2Object || {})) {
-        total += Number(item) || 0;
-      }
-      for (const item of Object.values(data.pv3Object || {})) {
-        total += Number(item) || 0;
-      }
-    }
-
-    // Cache the result
-    const existing = this.totalsCache.get(cacheKey) || {
-      quantity: 0,
-      capacity: '0.000',
+    // Hardcoded total quantities from the image
+    const hardcodedTotals: any = {
+      '201': 90, // 종합계
+      '202': 228, // 총합계
+      '203': 54, // 종합계
+      '204': 38, // 종합계
+      '205': 123, // 종합계
+      '206': 148, // 총합계
     };
-    this.totalsCache.set(cacheKey, { ...existing, quantity: total });
 
-    return total;
+    return hardcodedTotals[buildingKey] || 0;
   }
 
   getFacilityTotalSolarCapacity(facility: any): string {
     if (!facility?.title) return '0.000';
 
     const buildingKey = facility.title.replace('동', '');
-    const cacheKey = `${buildingKey}_totals`;
 
-    if (this.totalsCache.has(cacheKey)) {
-      return this.totalsCache.get(cacheKey)!.capacity;
-    }
-
-    if (!facility?.resultObject?.invList) {
-      this.totalsCache.set(cacheKey, { quantity: 0, capacity: '0.000' });
-      return '0.000';
-    }
-
-    let totalWatts = 0;
-    for (const data of facility.resultObject.invList) {
-      // Calculate total watts for all PV modules from API data
-      for (const [capacity, quantity] of Object.entries(data.pv1Object || {})) {
-        totalWatts += (Number(capacity) || 0) * (Number(quantity) || 0);
-      }
-      for (const [capacity, quantity] of Object.entries(data.pv2Object || {})) {
-        totalWatts += (Number(capacity) || 0) * (Number(quantity) || 0);
-      }
-      for (const [capacity, quantity] of Object.entries(data.pv3Object || {})) {
-        totalWatts += (Number(capacity) || 0) * (Number(quantity) || 0);
-      }
-    }
-
-    const totalKilowatts = totalWatts / 1000;
-    const capacityStr = totalKilowatts.toFixed(3);
-
-    // Cache the result
-    const existing = this.totalsCache.get(cacheKey) || {
-      quantity: 0,
-      capacity: '0.000',
+    // Hardcoded total solar capacities from the image
+    const hardcodedCapacities: any = {
+      '201': '13.192', // 종합계
+      '202': '33.780', // 총합계
+      '203': '8.100', // 종합계
+      '204': '5.154', // 종합계
+      '205': '17.696', // 종합계
+      '206': '22.200', // 총합계
     };
-    this.totalsCache.set(cacheKey, { ...existing, capacity: capacityStr });
 
-    return capacityStr;
+    return hardcodedCapacities[buildingKey] || '0.000';
   }
 
   // Get the correct total label for each building
   getTotalLabel(facility: any): string {
     const buildingKey = facility.title.replace('동', '');
-    return buildingKey === '201' ? '종합계' : '총합계';
+
+    // Based on the image data labels
+    const totalLabels: any = {
+      '201': '종합계',
+      '202': '총합계',
+      '203': '종합계',
+      '204': '종합계',
+      '205': '종합계',
+      '206': '총합계',
+    };
+
+    return totalLabels[buildingKey] || '총합계';
   }
 
   hasFacilityEquipment(facility: any): boolean {
     const buildingKey = facility.title.replace('동', '');
-    // Only buildings 202 and 205 have equipment based on your requirements
-    return ['202', '205'].includes(buildingKey);
+    // Buildings 202 and 204 have equipment based on the image
+    return ['202', '204'].includes(buildingKey);
   }
 
   getFacilityEquipment(facility: any): string {
     const buildingKey = facility.title.replace('동', '');
 
-    if (!facility?.resultObject) {
-      return buildingKey === '202' ? '데이터 없음' : '데이터 없음';
+    // Hardcoded equipment data from the image
+    if (buildingKey === '202') {
+      return '온도센서 모듈후면 3개/공기층 3개';
+    }
+    if (buildingKey === '204') {
+      return '일사량계 3개. 기상반. 온도센서 모듈후면 3개/공기층 3개';
     }
 
-    const resultObject = facility.resultObject;
-    const equipment: string[] = [];
-
-    // Weather equipment from API
-    if (resultObject.whether1Count > 0) {
-      equipment.push(`일사량계 ${resultObject.whether1Count}개`);
-    }
-    if (resultObject.whether2Count > 0) {
-      equipment.push(`풍향계 ${resultObject.whether2Count}개`);
-    }
-    if (resultObject.whether3Count > 0) {
-      equipment.push(`풍속계 ${resultObject.whether3Count}개`);
-    }
-    if (resultObject.whether4Count > 0) {
-      equipment.push(`온도계 ${resultObject.whether4Count}개`);
-    }
-    if (resultObject.whether5Count > 0) {
-      equipment.push(`습도계 ${resultObject.whether5Count}개`);
-    }
-    if (resultObject.whether6Count > 0) {
-      equipment.push(`강우량계 ${resultObject.whether6Count}개`);
-    }
-    if (resultObject.elecCount > 0) {
-      equipment.push(`전력품질분석기 ${resultObject.elecCount}개`);
-    }
-
-    // Temperature sensors from API
-    const tempSensors = this.getTemperatureSensors(facility);
-    if (tempSensors) {
-      equipment.push(tempSensors);
-    }
-
-    // If no equipment data found, return Korean fallback message
-    if (equipment.length === 0) {
-      return '데이터 없음';
-    }
-
-    return equipment.join(', ');
+    return '데이터 없음';
   }
 
   private hasTemperatureSensors(facility: any): boolean {
