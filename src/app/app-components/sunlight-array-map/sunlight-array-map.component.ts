@@ -44,6 +44,7 @@ export class SunlightArrayMapComponent implements OnInit {
         totalLabel: this.getTotalLabel({ title: '201동' }),
         hasEquipment: this.hasFacilityEquipment({ title: '201동' }),
         equipment: this.getFacilityEquipment({ title: '201동' }),
+        equipmentLabel: this.getFacilityEquipmentLabel({ title: '201동' }),
       },
       {
         title: '202동',
@@ -56,6 +57,7 @@ export class SunlightArrayMapComponent implements OnInit {
         totalLabel: this.getTotalLabel({ title: '202동' }),
         hasEquipment: this.hasFacilityEquipment({ title: '202동' }),
         equipment: this.getFacilityEquipment({ title: '202동' }),
+        equipmentLabel: this.getFacilityEquipmentLabel({ title: '202동' }),
       },
       {
         title: '203동',
@@ -68,6 +70,7 @@ export class SunlightArrayMapComponent implements OnInit {
         totalLabel: this.getTotalLabel({ title: '203동' }),
         hasEquipment: this.hasFacilityEquipment({ title: '203동' }),
         equipment: this.getFacilityEquipment({ title: '203동' }),
+        equipmentLabel: this.getFacilityEquipmentLabel({ title: '203동' }),
       },
       {
         title: '204동',
@@ -80,6 +83,7 @@ export class SunlightArrayMapComponent implements OnInit {
         totalLabel: this.getTotalLabel({ title: '204동' }),
         hasEquipment: this.hasFacilityEquipment({ title: '204동' }),
         equipment: this.getFacilityEquipment({ title: '204동' }),
+        equipmentLabel: this.getFacilityEquipmentLabel({ title: '204동' }),
       },
       {
         title: '205동',
@@ -92,6 +96,7 @@ export class SunlightArrayMapComponent implements OnInit {
         totalLabel: this.getTotalLabel({ title: '205동' }),
         hasEquipment: this.hasFacilityEquipment({ title: '205동' }),
         equipment: this.getFacilityEquipment({ title: '205동' }),
+        equipmentLabel: this.getFacilityEquipmentLabel({ title: '205동' }),
       },
       {
         title: '206동',
@@ -104,6 +109,7 @@ export class SunlightArrayMapComponent implements OnInit {
         totalLabel: this.getTotalLabel({ title: '206동' }),
         hasEquipment: this.hasFacilityEquipment({ title: '206동' }),
         equipment: this.getFacilityEquipment({ title: '206동' }),
+        equipmentLabel: this.getFacilityEquipmentLabel({ title: '206동' }),
       },
     ];
 
@@ -536,14 +542,14 @@ export class SunlightArrayMapComponent implements OnInit {
   getTotalLabel(facility: any): string {
     const buildingKey = facility.title.replace('동', '');
 
-    // Based on the image data labels
+    // Based on the user specifications
     const totalLabels: any = {
-      '201': '종합계',
-      '202': '총합계',
-      '203': '종합계',
+      '201': '촘합계',
+      '202': '좁합계',
+      '203': '총합계',
       '204': '종합계',
       '205': '종합계',
-      '206': '총합계',
+      '206': '종합계',
     };
 
     return totalLabels[buildingKey] || '총합계';
@@ -558,15 +564,29 @@ export class SunlightArrayMapComponent implements OnInit {
   getFacilityEquipment(facility: any): string {
     const buildingKey = facility.title.replace('동', '');
 
-    // Hardcoded equipment data from the image
+    // Hardcoded equipment data from user specifications
     if (buildingKey === '202') {
-      return '온도센서 모듈후면 3개/공기층 3개';
+      return '온도센서 모듬후면 3개/공기출 3개';
     }
     if (buildingKey === '204') {
-      return '일사량계 3개. 기상반. 온도센서 모듈후면 3개/공기층 3개';
+      return '일사량계 3개. 기상반, 은도센서 모들후면 3개/공기층 3개';
     }
 
     return '데이터 없음';
+  }
+
+  getFacilityEquipmentLabel(facility: any): string {
+    const buildingKey = facility.title.replace('동', '');
+
+    // Equipment labels for first column
+    if (buildingKey === '202') {
+      return '설치작비';
+    }
+    if (buildingKey === '204') {
+      return '설치장비';
+    }
+
+    return '';
   }
 
   private hasTemperatureSensors(facility: any): boolean {
