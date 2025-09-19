@@ -160,8 +160,10 @@
 
                 <!-- Installed Equipment Row - from API data -->
                 <tr *ngIf="facility.hasEquipment" class="equipment-row">
-                  <td class="td_border equipment-cell" colspan="4">
-                    <strong>설치장비:</strong>
+                  <td class="td_border category-cell">
+                    {{ facility.equipmentLabel }}
+                  </td>
+                  <td class="td_border data-cell equipment-cell" colspan="3">
                     {{ facility.equipment }}
                   </td>
                 </tr>
