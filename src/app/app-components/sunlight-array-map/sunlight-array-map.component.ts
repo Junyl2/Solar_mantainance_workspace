@@ -544,12 +544,12 @@ export class SunlightArrayMapComponent implements OnInit {
 
     // Based on the user specifications
     const totalLabels: any = {
-      '201': '촘합계',
-      '202': '좁합계',
+      '201': '총합계',
+      '202': '총합계',
       '203': '총합계',
-      '204': '종합계',
-      '205': '종합계',
-      '206': '종합계',
+      '204': '총합계',
+      '205': '총합계',
+      '206': '총합계',
     };
 
     return totalLabels[buildingKey] || '총합계';
@@ -566,10 +566,10 @@ export class SunlightArrayMapComponent implements OnInit {
 
     // Hardcoded equipment data from user specifications
     if (buildingKey === '202') {
-      return '온도센서 모듬후면 3개/공기출 3개';
+      return '온도센서 모듈후면 3개/공기층 3개';
     }
     if (buildingKey === '204') {
-      return '일사량계 3개. 기상반, 은도센서 모들후면 3개/공기층 3개';
+      return '일사량계 3개, 기상반, 온도센서 모듈후면 3개/공기층 3개';
     }
 
     return '데이터 없음';
@@ -580,7 +580,7 @@ export class SunlightArrayMapComponent implements OnInit {
 
     // Equipment labels for first column
     if (buildingKey === '202') {
-      return '설치작비';
+      return '설치장비';
     }
     if (buildingKey === '204') {
       return '설치장비';
