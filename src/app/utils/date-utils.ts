@@ -2,19 +2,19 @@ import moment from 'moment';
 import { format } from 'date-fns';
 
 export class DateUtils {
-  constructor() {
-  }
+  constructor() {}
   static getSpanYearMonthStringArray(endDate: Date, startDate: Date) {
     var endYear = endDate.getFullYear();
     var startYear = startDate.getFullYear();
     let yearMonthStringArray: string[] = [];
     if (endDate.getFullYear() > startDate.getFullYear()) {
       while (endDate > startDate) {
-        yearMonthStringArray.push(startDate.getFullYear() + '-' + (startDate.getMonth() + 1));
+        yearMonthStringArray.push(
+          startDate.getFullYear() + '-' + (startDate.getMonth() + 1)
+        );
         startDate = moment(startDate).add(1, 'M').toDate();
       }
-
-    } else if (endDate.getFullYear() == startDate.getFullYear()){
+    } else if (endDate.getFullYear() == startDate.getFullYear()) {
       for (let m = startDate.getMonth(); m <= endDate.getMonth(); m++) {
         yearMonthStringArray.push(endDate.getFullYear() + '-' + (m + 1));
       }
@@ -24,29 +24,35 @@ export class DateUtils {
 
   static getSpanYYMMStringArray(endDate: Date, startDate: Date) {
     let yearMonthStringArray: string[] = [];
-    if (endDate > startDate) {
-      while (endDate > startDate) {
-        yearMonthStringArray.push(format(startDate, 'yy-MM'));
-        startDate = moment(startDate).add(1, 'M').toDate();
-      }
+    let currentDate = new Date(startDate);
 
-    } else if (endDate.getFullYear() == startDate.getFullYear()){
-      for (let m = startDate.getMonth(); m <= endDate.getMonth(); m++) {
-        yearMonthStringArray.push(endDate.getFullYear() + '-' + (m + 1));
-      }
+    console.log('getSpanYYMMStringArray called with:', {
+      startDate: startDate,
+      endDate: endDate,
+    });
+
+    // Normalize dates to first day of month for proper comparison
+    currentDate.setDate(1);
+    const normalizedEndDate = new Date(endDate);
+    normalizedEndDate.setDate(1);
+
+    while (currentDate <= normalizedEndDate) {
+      yearMonthStringArray.push(format(currentDate, 'yy-MM'));
+      currentDate = moment(currentDate).add(1, 'M').toDate();
     }
+
+    console.log('Generated monthly labels:', yearMonthStringArray);
     return yearMonthStringArray;
   }
 
-  static getSpanMonthCount (endDate: Date, startDate: Date) : number {
+  static getSpanMonthCount(endDate: Date, startDate: Date): number {
     var count = 0;
     if (endDate.getFullYear() > startDate.getFullYear()) {
       while (endDate > startDate) {
         count++;
         startDate = moment(startDate).add(1, 'M').toDate();
       }
-
-    } else if (endDate.getFullYear() == startDate.getFullYear()){
+    } else if (endDate.getFullYear() == startDate.getFullYear()) {
       for (let m = startDate.getMonth(); m <= endDate.getMonth(); m++) {
         count++;
       }
@@ -54,27 +60,32 @@ export class DateUtils {
     return count;
   }
 
-
-  static getSpanMonthDayStringArray(startDate: Date, endDate: Date) : string[] {
+  static getSpanMonthDayStringArray(startDate: Date, endDate: Date): string[] {
     let monthDayStringArray: string[] = [];
+    let currentDate = new Date(startDate);
 
-    while (endDate >= startDate) {
-      monthDayStringArray.push(format(startDate, 'MM-dd'));
-      startDate = moment(startDate).add(1, 'd').toDate();
+    console.log('getSpanMonthDayStringArray called with:', {
+      startDate: startDate,
+      endDate: endDate,
+    });
+
+    while (currentDate <= endDate) {
+      monthDayStringArray.push(format(currentDate, 'MM-dd'));
+      currentDate = moment(currentDate).add(1, 'd').toDate();
     }
 
+    console.log('Generated date labels:', monthDayStringArray);
     return monthDayStringArray;
   }
 
-  static getSpanDayCount(endDate: Date, startDate: Date) : number {
-    let count : number = 0;
+  static getSpanDayCount(endDate: Date, startDate: Date): number {
+    let count: number = 0;
     while (endDate > startDate) {
       count++;
       startDate = moment(startDate).add(1, 'd').toDate();
     }
     return count;
   }
-
 
   static getSpanTimeStringArray(): string[] {
     let timeStringArray: string[] = [];

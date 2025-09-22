@@ -268,11 +268,18 @@ export class EfficiencyComponent
 
   /** --------------- MONTHLY ----------------- */
   updateMonthlyPage(): void {
+    console.log('updateMonthlyPage called with:', {
+      startDate: this.startMonthlyDate,
+      endDate: this.endMonthlyDate,
+    });
+
     // Chart Label
     this.chartMonthlyLabels = DateUtils.getSpanYYMMStringArray(
       this.endMonthlyDate,
       this.startMonthlyDate
     );
+
+    console.log('Generated monthly chart labels:', this.chartMonthlyLabels);
 
     // Table First Labels
     this.tableMonthlyLabels = ['인버터', ...this.chartMonthlyLabels];
@@ -306,11 +313,18 @@ export class EfficiencyComponent
 
   /** --------------- DAILY ----------------- */
   async updateDailyPage(): Promise<void> {
+    console.log('updateDailyPage called with:', {
+      startDate: this.startDailyDate,
+      endDate: this.endDailyDate,
+    });
+
     // Chart Label
     this.chartDailyLabels = DateUtils.getSpanMonthDayStringArray(
       this.startDailyDate,
       this.endDailyDate
     );
+
+    console.log('Generated chart labels:', this.chartDailyLabels);
 
     // Table First Labels
     this.tableDailyLabels = ['인버터', ...this.chartDailyLabels];
@@ -386,7 +400,11 @@ export class EfficiencyComponent
     this.startMonthlyDate.setFullYear(normalizedMonth.year());
     this.startMonthlyDate.setMonth(normalizedMonth.month());
     this.startMonthlyDate = new Date(this.startMonthlyDate);
+    // Update min constraint for end date
+    this.endMinMonthlyDate = this.startMonthlyDate;
     datepicker.close();
+    // Automatically update the chart when start date is changed
+    this.updateMonthlyPage();
   }
 
   onEndMonthlyYearSelected(normalizedYear: Moment) {
@@ -398,20 +416,32 @@ export class EfficiencyComponent
   ) {
     this.endMonthlyDate = normalizedMonth.endOf('month').toDate();
     datepicker.close();
+    // Automatically update the chart when end date is changed
+    this.updateMonthlyPage();
   }
 
   // Daily ----------------------------------------------------------
   onStartDailyDaySelected(normalizedDate: Moment) {
+    console.log('Start date selected:', normalizedDate.toDate());
     this.startDailyDate = normalizedDate.toDate();
+    // Update min/max constraints for end date
+    this.endMinDailyDate = this.startDailyDate;
+    // Automatically update the chart when start date is changed
+    this.updateDailyPage();
   }
 
   onEndDailyDaySelected(normalizedDate: Moment) {
+    console.log('End date selected:', normalizedDate.toDate());
     this.endDailyDate = normalizedDate.toDate();
+    // Automatically update the chart when end date is changed
+    this.updateDailyPage();
   }
 
   // Time ------------------------------------------------------------
   onHourlyDateSelected(normalizedDate: Moment) {
     this.timeDate = normalizedDate.toDate();
+    // Automatically update the chart when date is changed
+    this.updateHourlyPage();
   }
 
   openDialog() {

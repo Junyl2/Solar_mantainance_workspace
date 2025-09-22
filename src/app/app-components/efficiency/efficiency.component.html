@@ -8,7 +8,7 @@
         <input
           matInput
           [matDatepicker]="timePicker"
-          [value]="timeDate"
+          [(ngModel)]="timeDate"
           [min]="minTimeDate"
           [max]="maxTimeDate"
           (dateChange)="onHourlyDateSelected($event.value)"
@@ -57,7 +57,7 @@
         <input
           matInput
           [matDatepicker]="startDailyPicker"
-          [value]="startDailyDate"
+          [(ngModel)]="startDailyDate"
           [min]="startMinDailyDate"
           [max]="startMaxDailyDate"
           (dateChange)="onStartDailyDaySelected($event.value)"
@@ -74,7 +74,7 @@
         <input
           matInput
           [matDatepicker]="endDailyPicker"
-          [value]="endDailyDate"
+          [(ngModel)]="endDailyDate"
           [min]="endMinDailyDate"
           [max]="endMaxDailyDate"
           (dateChange)="onEndDailyDaySelected($event.value)"
@@ -123,7 +123,7 @@
         <input
           matInput
           [matDatepicker]="startMonthlyPicker"
-          [value]="startMonthlyDate"
+          [(ngModel)]="startMonthlyDate"
           [min]="startMinMonthlyDate"
           [max]="startMaxMonthlyDate"
         />
@@ -147,7 +147,7 @@
         <input
           matInput
           [matDatepicker]="endMonthlyPicker"
-          [value]="endMonthlyDate"
+          [(ngModel)]="endMonthlyDate"
           [min]="endMinMonthlyDate"
           [max]="endMaxMonthlyDate"
         />

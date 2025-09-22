@@ -477,11 +477,12 @@ export class SemsService {
     startDate: Date,
     endDate: Date
   ): Observable<InvertorSummary[]> {
-    endDate = moment().add(1, 'd').toDate();
+    // Use the actual endDate provided by the user, add 1 day to include the end date
+    const adjustedEndDate = moment(endDate).add(1, 'd').toDate();
     return this.getEfficiencySummary(
       'DAILY',
       format(startDate, 'yyyy-MM-dd'),
-      format(endDate, 'yyyy-MM-dd')
+      format(adjustedEndDate, 'yyyy-MM-dd')
     );
   }
 
