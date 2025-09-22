@@ -150,23 +150,26 @@
 .box2_chart_box {
   display: flex;
   padding: 10px;
-  justify-content: center;
+}
+
+.chart-container {
+  min-width: 100%;
+  width: max-content;
+  height: 400px;
+  /* Fixed height for the chart */
 }
 
 .chart {
-  width: 85%;
+  width: 100%;
+  min-width: 1200px;
+  /* Base minimum width for readability */
+  height: 400px !important;
+  /* Fixed height - never shrinks */
 }
 
-/* Horizontal scroll + smooth momentum */
 .box2_table_box {
   display: flex;
-  /*   padding: 10px; */
   padding: 0px;
-  overflow-x: auto;
-  /* was 'overflow: auto' */
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  white-space: nowrap;
 }
 
 .table {
@@ -177,9 +180,10 @@
   background: #4e4e4e;
   color: #fff;
   text-align: center;
-  padding: 5px;
+  padding: 8px 12px;
   border: 1px solid #fff;
   white-space: nowrap;
+  font-weight: bold;
 }
 
 .table_tr {
@@ -189,8 +193,9 @@
 .table_td {
   border: 1px solid #000;
   text-align: center;
-  padding: 5px;
+  padding: 8px 12px;
   white-space: nowrap;
+  background: #fff;
 }
 
 /* Date inputs */
@@ -218,21 +223,4 @@
   background: rgb(0 0 0 / 0%);
   padding-left: 20px;
   width: 140px;
-}
-
-/* NEW: keep first column visible while scrolling */
-.sticky-col {
-  position: sticky;
-  left: 0;
-  background: #fff;
-  color: #100c0c;
-  z-index: 2;
-  box-shadow: 2px 0 0 rgba(0, 0, 0, 0.05);
-}
-
-.table_td_header.sticky-col {
-  background: #4e4e4e !important;
-  color: #fff !important;
-  font-weight: bold;
-  z-index: 3;
 }

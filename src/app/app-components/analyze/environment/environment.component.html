@@ -34,7 +34,7 @@
                   class="data_input"
                   matInput
                   [matDatepicker]="startPicker"
-                  [value]="startDate"
+                  [(ngModel)]="startDate"
                   (dateChange)="onStartDaySelected($event.value)"
                 />
                 <mat-datepicker-toggle
@@ -53,7 +53,7 @@
                   class="data_input"
                   matInput
                   [matDatepicker]="startMonthPicker"
-                  [value]="startMonthDate"
+                  [(ngModel)]="startMonthDate"
                 />
                 <mat-datepicker-toggle
                   matSuffix
@@ -77,7 +77,7 @@
                   class="data_input"
                   matInput
                   [matDatepicker]="endPicker"
-                  [value]="endDate"
+                  [(ngModel)]="endDate"
                   (dateChange)="onEndDaySelected($event.value)"
                 />
                 <mat-datepicker-toggle
@@ -95,7 +95,7 @@
                   class="data_input"
                   matInput
                   [matDatepicker]="endMonthPicker"
-                  [value]="endMonthDate"
+                  [(ngModel)]="endMonthDate"
                 />
                 <mat-datepicker-toggle
                   matSuffix
@@ -104,7 +104,7 @@
                 <mat-datepicker
                   #endMonthPicker
                   startView="year"
-                  (yearSelected)="onStartMonthSelected($event)"
+                  (yearSelected)="onEndMonthSelected($event)"
                   (monthSelected)="
                     onEndMonthMonthSelected($event, endMonthPicker)
                   "
@@ -133,9 +133,11 @@
 
       <div class="box2">
         <div class="box2_chart_box" id="box2_chart_box">
-          <canvas id="chart_environment" class="chart_module">{{
-            chart
-          }}</canvas>
+          <div class="chart-container">
+            <canvas id="chart_environment" class="chart_module">{{
+              chart
+            }}</canvas>
+          </div>
         </div>
 
         <div class="box2_table_box" id="box2_table_box">

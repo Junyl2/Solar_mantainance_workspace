@@ -131,10 +131,30 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
         ],
       },
       options: {
-        aspectRatio: 2.5,
-        maintainAspectRatio: true,
+        maintainAspectRatio: false,
         responsive: true,
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+          },
+        },
         scales: {
+          x: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Time Period',
+            },
+            ticks: {
+              maxRotation: 45,
+              minRotation: 0,
+            },
+          },
           y1: {
             type: 'linear',
             display: true,
@@ -231,9 +251,13 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
 
   onStartDaySelected(normalizedDate: any) {
     this.startDate = normalizedDate.toDate();
+    // Automatically update the chart when start date is changed
+    this.search_click();
   }
   onEndDaySelected(normalizedDate: any) {
     this.endDate = normalizedDate.toDate();
+    // Automatically update the chart when end date is changed
+    this.search_click();
   }
   onStartMonthSelected(normalizedYear: any) {
     this.startMonthDate.setFullYear(normalizedYear.year());
@@ -247,6 +271,8 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
       1
     );
     datepicker.close();
+    // Automatically update the chart when start month is changed
+    this.search_click();
   }
   onEndMonthSelected(normalizedYear: any) {
     this.endMonthDate.setFullYear(normalizedYear.year());
@@ -265,6 +291,8 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
       last
     );
     datepicker.close();
+    // Automatically update the chart when end month is changed
+    this.search_click();
   }
 
   // ---------- search ----------
@@ -338,8 +366,30 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
             ],
           },
           options: {
-            aspectRatio: 2.5,
+            maintainAspectRatio: false,
+            responsive: true,
+            interaction: {
+              intersect: false,
+              mode: 'index',
+            },
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top',
+              },
+            },
             scales: {
+              x: {
+                display: true,
+                title: {
+                  display: true,
+                  text: 'Time Period',
+                },
+                ticks: {
+                  maxRotation: 45,
+                  minRotation: 0,
+                },
+              },
               y1: {
                 type: 'linear',
                 display: true,
@@ -404,6 +454,12 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
         let windList: number[] = [];
         let irrList: number[] = [];
 
+        // Chart environment data variables (for sampled data)
+        let chartTempList: number[] = [];
+        let chartHumList: number[] = [];
+        let chartWindList: number[] = [];
+        let chartIrrList: number[] = [];
+
         if (gbn === 'time') {
           this.gbn = 'time';
           chartObject.data.labels = Array.from(
@@ -429,6 +485,12 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
           humList = new Array(24).fill(0);
           windList = new Array(24).fill(0);
           irrList = new Array(24).fill(0);
+
+          // For time view, chart and table use the same data
+          chartTempList = tempList;
+          chartHumList = humList;
+          chartWindList = windList;
+          chartIrrList = irrList;
 
           for (const env of res[1]) {
             const hr = +env[0];
@@ -458,65 +520,202 @@ export class EnvironmentComponent implements OnInit, AfterViewInit {
             const s = moment(this.startDate).format('YYYY-MM-DD');
             const e = moment(this.endDate).format('YYYY-MM-DD');
             this.dateList = this.getDatesStartToLast(s, e);
+            console.log('Daily date range:', {
+              start: s,
+              end: e,
+              count: this.dateList.length,
+            });
           } else {
             this.gbn = 'month';
             const s = moment(this.startMonthDate).format('YYYY-MM');
             const e = moment(this.endMonthDate).format('YYYY-MM');
             this.dateList = this.getMonthDatesStartToLast(s, e);
+            console.log('Monthly date range:', {
+              start: s,
+              end: e,
+              count: this.dateList.length,
+            });
           }
+
+          // Always use ALL data for chart - no sampling, just enable scrolling for long ranges
           chartObject.data.labels = this.dateList;
           this.tableDayData = this.dateList;
 
+          console.log('Chart data setup:', {
+            totalDates: this.dateList.length,
+            firstDate: this.dateList[0],
+            lastDate: this.dateList[this.dateList.length - 1],
+            allLabels: this.dateList,
+          });
+
+          // Debug: Check if API data format matches our date format
+          console.log('API data format check:', {
+            sampleApiRow: res[0][0],
+            sampleEnvRow: res[1][0],
+            expectedDateFormat: gbn === 'day' ? 'YYYY-MM-DD' : 'YYYY-MM',
+            ourDateList: this.dateList.slice(0, 3),
+          });
+
           const titleSet = new Set<string>();
           for (const row of res[0]) titleSet.add(row[1]);
-          const invObject: Record<string, number[]> = {};
+
+          // Create separate data structures for chart and table
+          const chartLabels = chartObject.data.labels as string[];
+          const fullDateList = this.dateList; // Complete date list for table
+
+          // Chart data (sampled or full depending on range length)
+          const chartInvObject: Record<string, number[]> = {};
           for (const title of Array.from(titleSet))
-            invObject[title] = new Array(this.dateList.length).fill(0);
+            chartInvObject[title] = new Array(chartLabels.length).fill(0);
 
           for (const row of res[0]) {
             const dStr = row[0] as string; // 'YYYY-MM-DD' or 'YYYY-MM'
-            const idx = this.dateList.indexOf(dStr);
+            const idx = chartLabels.indexOf(dStr);
             if (idx >= 0) {
               const raw = +row[2] || 0;
-              invObject[row[1]][idx] = this.toDisplayKwh(raw); // <-- keep unrounded kWh
+              chartInvObject[row[1]][idx] = this.toDisplayKwh(raw);
             }
           }
 
-          tempList = new Array(this.dateList.length).fill(0);
-          humList = new Array(this.dateList.length).fill(0);
-          windList = new Array(this.dateList.length).fill(0);
-          irrList = new Array(this.dateList.length).fill(0);
+          console.log('Chart data mapping for all data:', {
+            chartLabelsCount: chartLabels.length,
+            fullDateListCount: fullDateList.length,
+            totalDataPoints: this.dateList.length,
+          });
+
+          console.log('Chart data mapping debug:', {
+            totalRows: res[0].length,
+            chartLabels: chartLabels,
+            sampleRow: res[0][0],
+            mappedData: Object.keys(chartInvObject).map((key) => ({
+              title: key,
+              dataLength: chartInvObject[key].length,
+              nonZeroCount: chartInvObject[key].filter((v) => v > 0).length,
+              dataArray: chartInvObject[key],
+            })),
+          });
+
+          // Table data (same as chart - all data)
+          const tableInvObject: Record<string, number[]> = {};
+          for (const title of Array.from(titleSet)) {
+            tableInvObject[title] = [...chartInvObject[title]];
+          }
+
+          // Environment data for chart (sampled or full depending on range length)
+          chartTempList = new Array(chartLabels.length).fill(0);
+          chartHumList = new Array(chartLabels.length).fill(0);
+          chartWindList = new Array(chartLabels.length).fill(0);
+          chartIrrList = new Array(chartLabels.length).fill(0);
 
           for (const env of res[1]) {
             const dStr = env[0] as string;
-            const idx = this.dateList.indexOf(dStr);
+            const idx = chartLabels.indexOf(dStr);
             if (idx >= 0) {
-              tempList[idx] = this.round(+env[1] || 0, this.ENV_DECIMALS);
-              humList[idx] = this.round(+env[2] || 0, this.ENV_DECIMALS);
-              windList[idx] = this.round(+env[3] || 0, this.ENV_DECIMALS);
-              irrList[idx] = this.round(+env[4] || 0, this.ENV_DECIMALS);
+              chartTempList[idx] = this.round(+env[1] || 0, this.ENV_DECIMALS);
+              chartHumList[idx] = this.round(+env[2] || 0, this.ENV_DECIMALS);
+              chartWindList[idx] = this.round(+env[3] || 0, this.ENV_DECIMALS);
+              chartIrrList[idx] = this.round(+env[4] || 0, this.ENV_DECIMALS);
             }
           }
 
-          Object.keys(invObject).forEach((key, i) => {
-            this.tableHeadData.push(key);
-            this.tableData.push(invObject[key]);
+          console.log('Environment data mapping for all data:', {
+            envDataPoints: res[1].length,
+            chartEnvDataLength: chartTempList.length,
+            nonZeroTemp: chartTempList.filter((v) => v > 0).length,
+            nonZeroHum: chartHumList.filter((v) => v > 0).length,
+          });
+
+          console.log('Chart environment data debug:', {
+            envRows: res[1].length,
+            chartEnvDataLength: chartTempList.length,
+            nonZeroTemp: chartTempList.filter((v) => v > 0).length,
+            nonZeroHum: chartHumList.filter((v) => v > 0).length,
+            sampleEnvRow: res[1][0],
+            tempDataArray: chartTempList,
+            humDataArray: chartHumList,
+            windDataArray: chartWindList,
+            irrDataArray: chartIrrList,
+          });
+
+          // Environment data for table (same as chart - all data)
+          tempList = [...chartTempList];
+          humList = [...chartHumList];
+          windList = [...chartWindList];
+          irrList = [...chartIrrList];
+
+          // Add chart datasets (sampled data)
+          Object.keys(chartInvObject).forEach((key, i) => {
             chartObject.data.datasets.push({
               label: key,
-              data: invObject[key],
+              data: chartInvObject[key],
               borderColor: this.colorArray[i % this.colorArray.length],
               backgroundColor: this.colorArray[i % this.colorArray.length],
               yAxisID: 'y1',
               type: 'bar',
             });
           });
+
+          // Add table data (complete data)
+          Object.keys(tableInvObject).forEach((key, i) => {
+            this.tableHeadData.push(key);
+            this.tableData.push(tableInvObject[key]);
+          });
+
+          console.log('Chart vs Table data comparison:', {
+            chartLabels: chartLabels.length,
+            tableLabels: fullDateList.length,
+            chartDataPoints:
+              chartInvObject[Object.keys(chartInvObject)[0]]?.length || 0,
+            tableDataPoints:
+              tableInvObject[Object.keys(tableInvObject)[0]]?.length || 0,
+          });
         }
 
-        // env lines & env rows
-        chartObject.data.datasets[0].data = tempList;
-        chartObject.data.datasets[1].data = humList;
-        chartObject.data.datasets[2].data = windList;
-        chartObject.data.datasets[3].data = irrList;
+        // env lines & env rows (use chart data for chart, table data for table)
+        chartObject.data.datasets[0].data = chartTempList;
+        chartObject.data.datasets[1].data = chartHumList;
+        chartObject.data.datasets[2].data = chartWindList;
+        chartObject.data.datasets[3].data = chartIrrList;
+
+        // Ensure line charts are properly configured
+        chartObject.data.datasets[0].tension = 0.1; // Smooth lines
+        chartObject.data.datasets[1].tension = 0.1;
+        chartObject.data.datasets[2].tension = 0.1;
+        chartObject.data.datasets[3].tension = 0.1;
+
+        chartObject.data.datasets[0].pointRadius = 3; // Visible points
+        chartObject.data.datasets[1].pointRadius = 3;
+        chartObject.data.datasets[2].pointRadius = 3;
+        chartObject.data.datasets[3].pointRadius = 3;
+
+        console.log('Final chart configuration:', {
+          totalDatasets: chartObject.data.datasets.length,
+          labels: chartObject.data.labels,
+          firstDatasetData: chartObject.data.datasets[0]?.data?.length || 0,
+          envDatasetData: chartObject.data.datasets[4]?.data?.length || 0,
+          tempDatasetData: chartObject.data.datasets[0]?.data,
+          humDatasetData: chartObject.data.datasets[1]?.data,
+          windDatasetData: chartObject.data.datasets[2]?.data,
+          irrDatasetData: chartObject.data.datasets[3]?.data,
+        });
+
+        // Inform user about data range scenarios
+        if (chartObject.data.labels.length === 1) {
+          console.log(
+            '📊 Single data point detected - showing individual values for',
+            chartObject.data.labels[0]
+          );
+          console.log(
+            '💡 Tip: Select a longer date range to see line graphs with multiple data points'
+          );
+        } else if (this.dateList.length > 5) {
+          console.log(
+            '📊 Long range detected - showing all',
+            this.dateList.length,
+            'data points'
+          );
+          console.log('💡 All data is displayed accurately in chart and table');
+        }
 
         this.tableHeadData.push('온도', '습도', '풍속', '일사량');
         this.tableData.push(tempList, humList, windList, irrList);
