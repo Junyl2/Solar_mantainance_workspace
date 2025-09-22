@@ -166,10 +166,17 @@
   display: flex;
   padding: 10px 10px 10px 10px;
   justify-content: center;
+  min-height: 400px; // Ensure minimum height
 }
 
 .chart {
   width: 85%;
+  height: 400px; // Fixed height for better readability
+  margin: 20px 0; // Add vertical margin for spacing
+}
+
+.chart.single-data-point {
+  height: 400px; // Fixed height for single data points
 }
 
 .box2_table_box {

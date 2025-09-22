@@ -36,7 +36,7 @@
                       class="data_input"
                       matInput
                       [matDatepicker]="startPicker"
-                      [value]="startDate"
+                      [(ngModel)]="startDate"
                       (dateChange)="onStartDaySelected($event.value)"
                     />
                     <mat-datepicker-toggle
@@ -54,7 +54,7 @@
                       class="data_input"
                       matInput
                       [matDatepicker]="startMonthPicker"
-                      [value]="startMonthDate"
+                      [(ngModel)]="startMonthDate"
                     />
                     <mat-datepicker-toggle
                       matSuffix
@@ -79,7 +79,7 @@
                       class="data_input"
                       matInput
                       [matDatepicker]="endPicker"
-                      [value]="endDate"
+                      [(ngModel)]="endDate"
                       (dateChange)="onEndDaySelected($event.value)"
                     />
                     <mat-datepicker-toggle
@@ -96,7 +96,7 @@
                       class="data_input"
                       matInput
                       [matDatepicker]="endMonthPicker"
-                      [value]="endMonthDate"
+                      [(ngModel)]="endMonthDate"
                     />
                     <mat-datepicker-toggle
                       matSuffix

@@ -370,10 +370,12 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
 
   onStartDaySelected(normalizedDate: any) {
     this.startDate = normalizedDate.toDate();
+    this.search_click(); // Automatically update chart when start date changes
   }
 
   onEndDaySelected(normalizedDate: any) {
     this.endDate = normalizedDate.toDate();
+    this.search_click(); // Automatically update chart when end date changes
   }
 
   onStartMonthSelected(normalizedYear: any) {
@@ -389,6 +391,7 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
       1
     );
     datepicker.close();
+    this.search_click(); // Automatically update chart when start month changes
   }
 
   onEndMonthSelected(normalizedYear: any) {
@@ -409,6 +412,7 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
       tempDate.getDate()
     );
     datepicker.close();
+    this.search_click(); // Automatically update chart when end month changes
   }
 
   search_click() {
@@ -416,6 +420,11 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
     let gbn: 'time' | 'day' | 'month';
     let startDate: string;
     let endDate: string;
+
+    // Declare variables for dynamic styling
+    let isSinglePoint = false;
+    let pointRadius = 4;
+    let borderWidth = 2;
 
     if ((document.getElementById('radio_time') as HTMLInputElement).checked) {
       gbn = 'time';
@@ -467,7 +476,51 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
             data: { labels: [], datasets: [] },
             options: {
               aspectRatio: this.isMobile ? 0.6 : this.isTablet ? 1.5 : 2.5,
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  display: true,
+                  position: 'top',
+                  labels: {
+                    padding: 20, // Add padding between legend items
+                    usePointStyle: true,
+                    pointStyle: 'circle',
+                    font: {
+                      size: 12,
+                    },
+                  },
+                },
+                tooltip: {
+                  enabled: true,
+                  mode: 'index',
+                  intersect: false,
+                  backgroundColor: 'rgba(0,0,0,0.8)',
+                  titleColor: '#fff',
+                  bodyColor: '#fff',
+                  borderColor: '#fff',
+                  borderWidth: 1,
+                  cornerRadius: 6,
+                  displayColors: true,
+                  padding: 12,
+                },
+              },
+              interaction: {
+                intersect: false,
+                mode: 'index',
+              },
               scales: {
+                x: {
+                  display: true,
+                  title: {
+                    display: true,
+                    text: 'Time Period',
+                  },
+                  ticks: {
+                    maxRotation: 45,
+                    minRotation: 0,
+                  },
+                },
                 yLeftMain: {
                   type: 'linear',
                   display: true,
@@ -479,22 +532,45 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
                   },
                   min: 0,
                   max: 20000,
-                  ticks: { stepSize: 200, color: '#000' },
-                  grid: { drawOnChartArea: true, color: 'rgba(0,0,0,0.1)' },
+                  ticks: {
+                    stepSize: 200,
+                    color: '#000',
+                    padding: 10, // Add padding between ticks
+                    font: {
+                      size: 12,
+                    },
+                  },
+                  grid: {
+                    drawOnChartArea: true,
+                    color: 'rgba(0,0,0,0.1)',
+                    lineWidth: 1,
+                  },
                 },
                 yRight: {
                   type: 'linear',
                   display: true,
                   position: 'right',
-                  title: { display: true, text: '온도 °C', color: '#000' }, // 온도 단위 추가
+                  title: {
+                    display: true,
+                    text: '온도 °C',
+                    color: '#000',
+                    padding: 20, // Add padding to title
+                  },
                   min: 0,
                   max: 100,
                   ticks: {
                     stepSize: 10,
                     color: '#000',
+                    padding: 10, // Add padding between ticks
+                    font: {
+                      size: 12,
+                    },
                     callback: (value: any) => Number(value).toFixed(0),
                   },
-                  grid: { drawOnChartArea: false },
+                  grid: {
+                    drawOnChartArea: false,
+                    lineWidth: 1,
+                  },
                 },
               },
             },
@@ -567,6 +643,15 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
                 backgroundColor: 'rgba(0,0,0,0.8)',
                 yAxisID: 'yLeftMain',
                 type: 'line',
+                tension: 0.1, // Smooth curves
+                pointRadius: 4, // Standard point size for hourly
+                pointHoverRadius: 6, // Hover effect
+                borderWidth: 2, // Standard line thickness for hourly
+                fill: false, // No fill under line
+                pointBorderWidth: 1,
+                pointBackgroundColor: 'rgba(0,0,0,0.8)',
+                pointBorderColor: 'rgba(0,0,0,0.8)',
+                spanGaps: true, // Connect lines across zero values
               });
               this.tableHeadData.push('인버터 발전량 (kWh)');
               this.tableData.push(this.formatPowerData(series)); // 인버터 데이터는 kWh로 포맷
@@ -587,6 +672,77 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
             ambientLowerList = this.buildHourSeries(ambientLower, [
               'temperature2',
             ]); // 어레이 주변은 temperature2만
+
+            // Add hourly temperature datasets to chart
+            const hourlyTempDatasets = [
+              {
+                label: '어레이 상부',
+                data: arrayUpperList,
+                color: 'rgba(255,99,132,0.8)',
+              },
+              {
+                label: '어레이 중부',
+                data: arrayMiddleList,
+                color: 'rgba(75,192,134,0.8)',
+              },
+              {
+                label: '어레이 하부',
+                data: arrayLowerList,
+                color: 'rgba(54,162,235,0.8)',
+              },
+              {
+                label: '주변 상부',
+                data: ambientUpperList,
+                color: 'rgba(255,159,64,0.8)',
+              },
+              {
+                label: '주변 중부',
+                data: ambientMiddleList,
+                color: 'rgba(153,102,255,0.8)',
+              },
+              {
+                label: '주변 하부',
+                data: ambientLowerList,
+                color: 'rgba(255,205,86,0.8)',
+              },
+            ];
+
+            hourlyTempDatasets.forEach((dataset) => {
+              chartObject.data.datasets.push({
+                label: dataset.label,
+                data: dataset.data,
+                borderColor: dataset.color,
+                backgroundColor: dataset.color,
+                yAxisID: 'yRight',
+                type: 'line',
+                tension: 0.1, // Smooth curves
+                pointRadius: 4, // Standard point size for hourly
+                pointHoverRadius: 6, // Hover effect
+                borderWidth: 2, // Standard line thickness for hourly
+                fill: false, // No fill under line
+                pointBorderWidth: 1,
+                pointBackgroundColor: dataset.color,
+                pointBorderColor: dataset.color,
+              });
+            });
+
+            // Add table entries for hourly temperatures
+            this.tableHeadData.push(
+              '어레이 상부 (°C)',
+              '어레이 중부 (°C)',
+              '어레이 하부 (°C)',
+              '주변 상부 (°C)',
+              '주변 중부 (°C)',
+              '주변 하부 (°C)'
+            );
+            this.tableData.push(
+              this.formatTemperatureData(arrayUpperList),
+              this.formatTemperatureData(arrayMiddleList),
+              this.formatTemperatureData(arrayLowerList),
+              this.formatTemperatureData(ambientUpperList),
+              this.formatTemperatureData(ambientMiddleList),
+              this.formatTemperatureData(ambientLowerList)
+            );
           } else if (gbn === 'day' || gbn === 'month') {
             if (gbn === 'day') {
               this.gbn = 'day';
@@ -601,6 +757,36 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
             }
             chartObject.data.labels = this.dateList;
             this.tableDayData = this.dateList;
+
+            // Check if we have single data points for dynamic sizing
+            isSinglePoint = this.dateList.length <= 1;
+            pointRadius = isSinglePoint ? 8 : 4; // Larger points for single data points
+            borderWidth = isSinglePoint ? 3 : 2; // Thicker lines for single data points
+
+            // For single data points, adjust chart configuration to use full width
+            if (isSinglePoint) {
+              console.log(
+                '📊 Single data point detected - adjusting chart for full width display'
+              );
+
+              // Create multiple data points to spread across the width
+              const singleDate = this.dateList[0] || 'Data Point';
+              const spreadLabels = [singleDate, '', '', '', '', '', '', '']; // 8 labels to spread across width
+
+              // Modify chart options for single data point
+              chartObject.options.scales.x.min = 0;
+              chartObject.options.scales.x.max = 7; // 8 points (0-7)
+              chartObject.options.scales.x.ticks = {
+                ...chartObject.options.scales.x.ticks,
+                maxTicksLimit: 1,
+                callback: function (value: any) {
+                  return value === 0 ? singleDate : '';
+                }.bind(this),
+              };
+
+              // Use spread labels to force full width
+              chartObject.data.labels = spreadLabels;
+            }
 
             // Inverter for day/month
             const invValKey = inverterData.length
@@ -640,13 +826,41 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
                 ],
                 invLabelKey
               );
+              // Handle single data point by creating horizontal line
+              let processedSeries = series;
+              if (isSinglePoint && series.length === 1) {
+                const singleValue = series[0];
+                processedSeries = [
+                  singleValue,
+                  singleValue,
+                  singleValue,
+                  singleValue,
+                  singleValue,
+                  singleValue,
+                  singleValue,
+                  singleValue,
+                ];
+                console.log(
+                  `📊 Creating horizontal line for inverter ${id} with value: ${singleValue}`
+                );
+              }
+
               chartObject.data.datasets.push({
                 label: id,
-                data: series,
+                data: processedSeries,
                 borderColor: 'rgba(0,0,0,0.8)',
                 backgroundColor: 'rgba(0,0,0,0.8)',
                 yAxisID: 'yLeftMain',
                 type: 'line',
+                tension: 0.1, // Smooth curves
+                pointRadius: Math.max(2, pointRadius - 1), // Slightly smaller for readability
+                pointHoverRadius: Math.max(3, pointRadius), // Hover effect
+                borderWidth: Math.max(1, borderWidth - 1), // Slightly thinner for readability
+                fill: false, // No fill under line
+                pointBorderWidth: 1,
+                pointBackgroundColor: 'rgba(0,0,0,0.8)',
+                pointBorderColor: 'rgba(0,0,0,0.8)',
+                spanGaps: true, // Connect lines across zero values
               });
               this.tableHeadData.push('인버터 발전량 (kWh)');
               this.tableData.push(this.formatPowerData(series)); // 인버터 데이터는 kWh로 포맷
@@ -694,54 +908,76 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
             );
           }
 
-          // Add the 6 temperature lines
-          chartObject.data.datasets.push({
-            label: '어레이 상부',
-            data: arrayUpperList,
-            borderColor: 'rgba(255,99,132,0.8)',
-            backgroundColor: 'rgba(255,99,132,0.8)',
-            yAxisID: 'yRight',
-            type: 'line',
-          });
-          chartObject.data.datasets.push({
-            label: '어레이 중부',
-            data: arrayMiddleList,
-            borderColor: 'rgba(75,192,134,0.8)',
-            backgroundColor: 'rgba(75,192,134,0.8)',
-            yAxisID: 'yRight',
-            type: 'line',
-          });
-          chartObject.data.datasets.push({
-            label: '어레이 하부',
-            data: arrayLowerList,
-            borderColor: 'rgba(54,162,235,0.8)',
-            backgroundColor: 'rgba(54,162,235,0.8)',
-            yAxisID: 'yRight',
-            type: 'line',
-          });
-          chartObject.data.datasets.push({
-            label: '어레이 상부 주변',
-            data: ambientUpperList,
-            borderColor: 'rgba(153,102,255,0.8)',
-            backgroundColor: 'rgba(153,102,255,0.8)',
-            yAxisID: 'yRight',
-            type: 'line',
-          });
-          chartObject.data.datasets.push({
-            label: '어레이 중부 주변',
-            data: ambientMiddleList,
-            borderColor: 'rgba(255,159,64,0.8)',
-            backgroundColor: 'rgba(255,159,64,0.8)',
-            yAxisID: 'yRight',
-            type: 'line',
-          });
-          chartObject.data.datasets.push({
-            label: '어레이 하부 주변',
-            data: ambientLowerList,
-            borderColor: 'rgba(255,205,86,0.8)',
-            backgroundColor: 'rgba(255,205,86,0.8)',
-            yAxisID: 'yRight',
-            type: 'line',
+          // Add the 6 temperature lines with improved styling
+          const temperatureDatasets = [
+            {
+              label: '어레이 상부',
+              data: arrayUpperList,
+              color: 'rgba(255,99,132,0.8)',
+            },
+            {
+              label: '어레이 중부',
+              data: arrayMiddleList,
+              color: 'rgba(75,192,134,0.8)',
+            },
+            {
+              label: '어레이 하부',
+              data: arrayLowerList,
+              color: 'rgba(54,162,235,0.8)',
+            },
+            {
+              label: '주변 상부',
+              data: ambientUpperList,
+              color: 'rgba(255,159,64,0.8)',
+            },
+            {
+              label: '주변 중부',
+              data: ambientMiddleList,
+              color: 'rgba(153,102,255,0.8)',
+            },
+            {
+              label: '주변 하부',
+              data: ambientLowerList,
+              color: 'rgba(255,205,86,0.8)',
+            },
+          ];
+
+          temperatureDatasets.forEach((dataset) => {
+            // Handle single data point by creating horizontal line
+            let processedData = dataset.data;
+            if (isSinglePoint && dataset.data.length === 1) {
+              const singleValue = dataset.data[0];
+              processedData = [
+                singleValue,
+                singleValue,
+                singleValue,
+                singleValue,
+                singleValue,
+                singleValue,
+                singleValue,
+                singleValue,
+              ];
+              console.log(
+                `📊 Creating horizontal line for ${dataset.label} with value: ${singleValue}`
+              );
+            }
+
+            chartObject.data.datasets.push({
+              label: dataset.label,
+              data: processedData,
+              borderColor: dataset.color,
+              backgroundColor: dataset.color,
+              yAxisID: 'yRight',
+              type: 'line',
+              tension: 0.1, // Smooth curves
+              pointRadius: Math.max(2, pointRadius - 1), // Slightly smaller for readability
+              pointHoverRadius: Math.max(3, pointRadius), // Hover effect
+              borderWidth: Math.max(1, borderWidth - 1), // Slightly thinner for readability
+              fill: false, // No fill under line
+              pointBorderWidth: 1,
+              pointBackgroundColor: dataset.color,
+              pointBorderColor: dataset.color,
+            });
           });
 
           // Table entries for temperatures - 온도 데이터는 °C로 포맷
@@ -765,6 +1001,14 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
           console.log('Chart Object:', chartObject);
           console.log('Table Data:', this.tableData);
           console.log('Table Head:', this.tableHeadData);
+
+          // Apply CSS class for single data points
+          const chartElement = this.chartRef.nativeElement;
+          if (isSinglePoint) {
+            chartElement.classList.add('single-data-point');
+          } else {
+            chartElement.classList.remove('single-data-point');
+          }
 
           this.chart = new Chart(this.chartRef.nativeElement, chartObject);
         },
