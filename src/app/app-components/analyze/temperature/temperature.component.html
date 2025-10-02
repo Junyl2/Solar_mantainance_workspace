@@ -121,6 +121,7 @@
                 <mat-form-field appearance="fill">
                   <mat-select
                     id="inv_select"
+                    [(ngModel)]="insNum"
                     (selectionChange)="changeValue($event.value)"
                   >
                     <mat-option *ngFor="let inv of invList" [value]="inv.value">

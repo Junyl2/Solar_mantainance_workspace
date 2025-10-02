@@ -212,6 +212,13 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
           value: i[1],
         }));
         console.log('Mapped invList for dropdown:', this.invList);
+
+        // Set default selection to first available inverter if none is selected
+        if (this.invList.length > 0 && this.insNum === 0) {
+          this.insNum = this.invList[0].value;
+          console.log('Set default inverter selection:', this.insNum);
+        }
+
         this.cdr.detectChanges();
       });
     });
@@ -316,8 +323,8 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
             position: 'left',
             title: { display: true, text: '인버터 발전량 kWh', color: '#000' },
             min: 0,
-            max: 20000,
-            ticks: { stepSize: 200, color: '#000' },
+            max: 100000, // Increased default max to accommodate higher values
+            ticks: { stepSize: 10000, color: '#000' }, // Larger step size for higher values
             grid: { drawOnChartArea: true, color: 'rgba(0,0,0,0.1)' },
           },
           yRight: {
@@ -470,6 +477,43 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
           this.tableHeadData = [];
           this.tableData = [];
 
+          // Calculate dynamic Y-axis scaling for inverter data
+          let maxInverterValue = 0;
+          let minInverterValue = 0;
+
+          // Find max and min values from all inverter data
+          const allInverterData = [...inverterData];
+          for (const data of allInverterData) {
+            const valueKey = this.firstNumberKey(data, [
+              'powerGeneration',
+              'generation',
+              'value',
+              'kwh',
+              'energy',
+              'power',
+            ]);
+            if (valueKey && typeof data[valueKey] === 'number') {
+              maxInverterValue = Math.max(maxInverterValue, data[valueKey]);
+              minInverterValue = Math.min(minInverterValue, data[valueKey]);
+            }
+          }
+
+          // Add 10% padding to the range and ensure minimum range
+          const range = maxInverterValue - minInverterValue;
+          const padding = Math.max(range * 0.1, maxInverterValue * 0.1, 1000); // At least 1000 or 10% of max value
+          const dynamicMax = maxInverterValue + padding;
+          const dynamicMin = Math.max(0, minInverterValue - padding);
+
+          // Calculate appropriate step size based on the range
+          const stepSize = Math.max(
+            1000,
+            Math.ceil((dynamicMax - dynamicMin) / 10 / 1000) * 1000
+          );
+
+          console.log(
+            `Dynamic Y-axis scaling - Max: ${dynamicMax}, Min: ${dynamicMin}, Step: ${stepSize}`
+          );
+
           // Build base chart
           const chartObject: any = {
             type: 'line',
@@ -530,10 +574,10 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
                     text: '인버터 발전량 kWh',
                     color: '#000',
                   },
-                  min: 0,
-                  max: 20000,
+                  min: dynamicMin,
+                  max: dynamicMax,
                   ticks: {
-                    stepSize: 200,
+                    stepSize: stepSize,
                     color: '#000',
                     padding: 10, // Add padding between ticks
                     font: {
