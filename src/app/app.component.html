@@ -1,63 +1,60 @@
-<!--
-<mat-toolbar class="toolbar">
-  <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon"
-          (click)="onMenuToggle()">
-    <mat-icon>menu</mat-icon>
-  </button>
-  <mat-form-field appearance="fill">
-    <mat-label>테마 선택</mat-label>
-    <mat-select (selectionChange)="onThemeChange($event)" [(value)]="theme">
-      <mat-option value="original">Original</mat-option>
-      <mat-option value="light">Light</mat-option>
-      <mat-option value="dark">Dark</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field appearance="fill">
-    <mat-label>레이아웃 선택</mat-label>
-    <mat-select (selectionChange)="onLayoutChange($event)" [(value)]="layout">
-      <mat-option value="original">Original</mat-option>
-      <mat-option value="layout1">Layout1</mat-option>
-      <mat-option value="layout2">Layout2</mat-option>
-      <mat-option value="layout3">Layout3</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <img src="../assets/Images/ontest-logo.png" height="25"/>
-  <span style="margin-left:10px">CAPTURE STAR M</span>
-  <span style="margin-left:10px">용인구성마북 현대홈타운 BIPV</span>
-  <span class="example-spacer"></span>
-  <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
-    <mat-icon>favorite</mat-icon>
-  </button>
-  <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-    <mat-icon>share</mat-icon>
-  </button>
-</mat-toolbar>
--->
-
 <div class="toolbar">
   <div class="toolbar-header flex-row-jspb-act">
     <div class="flex-row-jst-act">
-      <i *ngIf="login == true" class="menu-icon bi bi-list" (click)="onMenuToggle()"></i>
-      <div style="padding-left:10px; font-size:1.2rem; font-weight:bold; cursor:pointer" [routerLink]="['/']">CAPTURE STAR M</div>
-      <div style="padding-left:40px;">{{user?.site?.name || ''}}</div>
+      <i
+        *ngIf="login == true"
+        class="menu-icon bi bi-list"
+        (click)="onMenuToggle()"
+      ></i>
+      <div
+        style="
+          padding-left: 10px;
+          font-size: clamp(1rem, 2vw, 1.2rem);
+          font-weight: bold;
+          cursor: pointer;
+        "
+        [routerLink]="['/']"
+      >
+        CAPTURE STAR M
+      </div>
+      <div class="user-site">{{ user?.site?.name || "" }}</div>
     </div>
     <div *ngIf="login == true" class="flex-row-jed-act">
-      <div style="padding-left:10px; font-size:1.0rem; font-weight:bold; color:RGB(150,150,150);">{{user?.account || ''}}</div>
+      <div
+        style="
+          padding-left: 10px;
+          font-size: clamp(0.9rem, 2vw, 1rem);
+          font-weight: bold;
+          color: RGB(150, 150, 150);
+        "
+      >
+        {{ user?.account || "" }}
+      </div>
       <i class="login bi bi-person pointer" [routerLink]="'/my'"></i>
       <i class="login bi bi-box-arrow-right" (click)="logout()"></i>
     </div>
-
   </div>
 </div>
 
 <mat-drawer-container autosize>
-  <mat-drawer #drawer *ngIf="login == true && themeService.theme == 'original'" class="sidenav-menu" mode="side"
-    [opened]="sidenavOpened">
-
+  <mat-drawer
+    #drawer
+    *ngIf="login == true && themeService.theme == 'original'"
+    class="sidenav-menu"
+    [mode]="isMobileAndTablet ? 'over' : 'side'"
+    [opened]="sidenavOpened"
+  >
     <div class="sidenav-button">
-      <div class="sidenav-text" style="display:flex; vertical-align:middle; align-self:center; margin-left:10px;">MENU
+      <div
+        class="sidenav-text"
+        style="
+          display: flex;
+          vertical-align: middle;
+          align-self: center;
+          margin-left: 10px;
+        "
+      >
+        MENU
       </div>
     </div>
     <mat-divider></mat-divider>
@@ -98,18 +95,31 @@
     </div>
     <mat-divider></mat-divider>
 
-    <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false"
-      style="margin:0; padding:0; border-radius:0; box-shadow:none">
-      <mat-expansion-panel-header style="margin: 0; padding: 0; border-radius: 0;">
+    <mat-expansion-panel
+      (opened)="panelOpenState = true"
+      (closed)="panelOpenState = false"
+      style="margin: 0; padding: 0; border-radius: 0; box-shadow: none"
+    >
+      <mat-expansion-panel-header
+        style="margin: 0; padding: 0; border-radius: 0"
+      >
         <mat-panel-title>
           <div class="sidenav-button">
-            <fa-icon class="sizenav-icon" [icon]="faCloudSunRain" size="1x"></fa-icon>
+            <fa-icon
+              class="sizenav-icon"
+              [icon]="faCloudSunRain"
+              size="1x"
+            ></fa-icon>
             <div class="sidenav-text">기상정보</div>
           </div>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div class="sidenav-button" [routerLink]="['temphumi']">
-        <fa-icon class="sizenav-icon" [icon]="faTemperatureHigh" size="1x"></fa-icon>
+        <fa-icon
+          class="sizenav-icon"
+          [icon]="faTemperatureHigh"
+          size="1x"
+        ></fa-icon>
         <div class="sidenav-text">온도/습도</div>
       </div>
       <div class="sidenav-button" [routerLink]="['wnd']">
@@ -129,28 +139,45 @@
     </div>
     <mat-divider></mat-divider> -->
 
-<!--    <div class="sidenav-button" [routerLink]="['custom']">-->
-<!--      <fa-icon class="sizenav-icon" [icon]="faChartBar" size="1x"></fa-icon>-->
-<!--      <div class="sidenav-text">커스텀콤보차트</div>-->
-<!--    </div>-->
-<!--    <mat-divider></mat-divider>-->
+    <!--    <div class="sidenav-button" [routerLink]="['custom']">-->
+    <!--      <fa-icon class="sizenav-icon" [icon]="faChartBar" size="1x"></fa-icon>-->
+    <!--      <div class="sidenav-text">커스텀콤보차트</div>-->
+    <!--    </div>-->
+    <!--    <mat-divider></mat-divider>-->
 
-    <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false"
-                         style="margin:0; padding:0; border-radius:0; box-shadow:none">
-      <mat-expansion-panel-header style="margin: 0; padding: 0; border-radius: 0;">
+    <mat-expansion-panel
+      (opened)="panelOpenState = true"
+      (closed)="panelOpenState = false"
+      style="margin: 0; padding: 0; border-radius: 0; box-shadow: none"
+    >
+      <mat-expansion-panel-header
+        style="margin: 0; padding: 0; border-radius: 0"
+      >
         <mat-panel-title>
           <div class="sidenav-button">
-            <fa-icon class="sizenav-icon" [icon]="faChartBar" size="1x"></fa-icon>
+            <fa-icon
+              class="sizenav-icon"
+              [icon]="faChartBar"
+              size="1x"
+            ></fa-icon>
             <div class="sidenav-text">분석</div>
           </div>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div class="sidenav-button" [routerLink]="['analyze/environment']">
-        <fa-icon class="sizenav-icon" [icon]="faCloudSunRain" size="1x"></fa-icon>
+        <fa-icon
+          class="sizenav-icon"
+          [icon]="faCloudSunRain"
+          size="1x"
+        ></fa-icon>
         <div class="sidenav-text">환경과 발전량</div>
       </div>
       <div class="sidenav-button" [routerLink]="['analyze/temperature']">
-        <fa-icon class="sizenav-icon" [icon]="faTemperatureHigh" size="1x"></fa-icon>
+        <fa-icon
+          class="sizenav-icon"
+          [icon]="faTemperatureHigh"
+          size="1x"
+        ></fa-icon>
         <div class="sidenav-text">온도와 발전량</div>
       </div>
       <div class="sidenav-button" [routerLink]="['analyze/pr']">
@@ -175,9 +202,14 @@
     </div>
     <mat-divider></mat-divider>
 
-    <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false"
-      style="margin:0; padding:0; border-radius:0; box-shadow:none">
-      <mat-expansion-panel-header style="margin: 0; padding: 0; border-radius: 0;">
+    <mat-expansion-panel
+      (opened)="panelOpenState = true"
+      (closed)="panelOpenState = false"
+      style="margin: 0; padding: 0; border-radius: 0; box-shadow: none"
+    >
+      <mat-expansion-panel-header
+        style="margin: 0; padding: 0; border-radius: 0"
+      >
         <mat-panel-title>
           <div class="sidenav-button">
             <fa-icon class="sizenav-icon" [icon]="faTable" size="1x"></fa-icon>
@@ -194,12 +226,15 @@
         <div class="sidenav-text">옵티마이저 데이터</div>
       </div>
       <div class="sidenav-button" [routerLink]="['download/weather']">
-        <fa-icon class="sizenav-icon" [icon]="faCloudSunRain" size="1x"></fa-icon>
+        <fa-icon
+          class="sizenav-icon"
+          [icon]="faCloudSunRain"
+          size="1x"
+        ></fa-icon>
         <div class="sidenav-text">기상반 데이터</div>
       </div>
     </mat-expansion-panel>
     <mat-divider></mat-divider>
-
   </mat-drawer>
   <router-outlet (activate)="onRouterOutletActivate($event)"></router-outlet>
 </mat-drawer-container>

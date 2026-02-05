@@ -1,11 +1,12 @@
 @font-face {
-  font-family: 'Hahmlet-Bold';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/Hahmlet-Bold.woff2') format('woff2');
+  font-family: "Hahmlet-Bold";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/Hahmlet-Bold.woff2")
+    format("woff2");
   font-weight: normal;
   font-style: normal;
 }
 
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
 
 * {
   padding: 0;
@@ -13,7 +14,9 @@
   line-height: 1.6;
   letter-spacing: -0.04em;
   word-break: keep-all;
-  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto,
+    "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR",
+    "Malgun Gothic", sans-serif;
   color: #222;
 }
 
@@ -25,7 +28,7 @@
 section {
   width: 100%;
   height: 100%;
-  border: 1px solid #E5EAF3;
+  border: 1px solid #e5eaf3;
   float: left;
   background-color: #fff;
   box-sizing: border-box;
@@ -39,22 +42,25 @@ section {
   overflow: hidden;
 }
 
+strong {
+  font-size: clamp(1rem, 2vw, 1.8rem) !important;
+}
+
 .grid {
   display: grid;
-  height:100%;
+  height: 100%;
   grid-template-columns: repeat(6, 1fr);
   gap: 5px;
   grid-auto-rows: minmax(auto, auto);
 }
 
-
 .item1 {
-  background-color: RGB(255,182,30);
-  overflow:hidden;
+  background-color: RGB(255, 182, 30);
+  overflow: hidden;
   display: flex;
-  flex-direction:column;
-  justify-content:space-between;
-  align-items:center;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   grid-column: 1 / 2;
   grid-row: 1;
 }
@@ -63,90 +69,99 @@ section {
   align-items: stretch;
   grid-column: 2 / 7;
   grid-row: 1;
-  height:33%;
+  height: 33%;
 
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 5px;
-  grid-template-rows: repeat(2,1fr);
+  grid-template-rows: repeat(2, 1fr);
 
   .icon {
-    display:inline-block;
-    margin:10px;
+    display: inline-block;
+    margin: 10px;
   }
 
   .label {
-    display:inline-block;
-    margin:10px;
+    display: inline-block;
+    margin: 10px;
   }
 
   .value {
-    display:inline-block;
+    display: inline-block;
   }
 
   .unit {
-    display:inline-block;
+    display: inline-block;
   }
 
   .temp {
     grid-column: 1/2;
-    grid-row:1/2;
+    grid-row: 1/2;
   }
   .humi {
     grid-column: 2/3;
-    grid-row:1/2;
+    grid-row: 1/2;
   }
   .dir {
     grid-column: 3/4;
-    grid-row:1/2;
-
+    grid-row: 1/2;
   }
   .wind {
     grid-column: 1/2;
-    grid-row:2/3;
-
+    grid-row: 2/3;
   }
   .solar {
     grid-column: 2/3;
-    grid-row:2/3;
-
+    grid-row: 2/3;
   }
 }
 
-
-
 .status {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-
 
 // --------------------------
 
 .icon {
-  border:solid;
-  border-radius:15px;
-  padding:5px;
-  background-color:#3366ff;
-  color:white;
-  font-size:3rem;
-  font-weight:bold;
+  border: solid;
+  border-radius: 15px;
+  padding: 5px;
+  background-color: #3366ff;
+  color: white;
+  font-size: 3rem;
+  font-weight: bold;
 }
 
 .label {
-  font-size:0.8rem;
+  font-size: 0.8rem;
 }
 
 .value {
-  font-size:1.4rem;
-  font-weight:bold;
+  font-size: 1.4rem;
+  font-weight: bold;
 }
 
 .unit {
-  font-size:0.8rem;
+  font-size: 0.8rem;
 }
 
 .dashboard-icon {
   max-width: 80px;
+  margin-top: 2rem;
+
+  @media (max-width: 1024px) {
+    max-width: 70px;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 60px;
+    margin-top: 1.5rem;
+  }
+  @media (max-width: 468px) {
+    max-width: 40px;
+    margin-top: 1.5rem;
+  }
 }

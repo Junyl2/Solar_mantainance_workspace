@@ -1,4 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ChangeDetectorRef,
+} from '@angular/core';
 import moment from 'moment';
 import { SemsService } from 'src/app/services/sems-service';
 import { environment } from 'src/environments/environment';
@@ -6,201 +12,178 @@ import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-sunlight-array-map',
   templateUrl: './sunlight-array-map.component.html',
-  styleUrls: ['./sunlight-array-map.component.scss']
+  styleUrls: ['./sunlight-array-map.component.scss'],
 })
 export class SunlightArrayMapComponent implements OnInit {
-
-  @Output() selectedIndexChange: EventEmitter<number>;
+  @Output() selectedIndexChange: EventEmitter<number> =
+    new EventEmitter<number>();
 
   public sites: any[] = [];
   public selectedSiteIndex = 0;
 
-  constructor(private semsService: SemsService) { }
+  constructor(
+    private semsService: SemsService,
+    private cd: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    this.semsService.getSiteMapImage()
-      .subscribe(res => {
-        console.log(res);
+    this.semsService.getSiteMapImage().subscribe((res) => {
+      console.log('API response:', res);
 
-        if (res && res.facility.length > 0) {
-          for (let i = 0; i < res.facility.length; i++) {
-            let facility = { ...res.facility[i] };
-            facility.imageUrl = `assets/site/${res.facility[i].filename}`;
-            this.sites.push(facility);
+      if (res?.facility?.length) {
+        const tempMap = new Map<string, any>();
+
+        res.facility.forEach((facility) => {
+          const baseTitle = facility.title.split('-')[0].trim();
+          if (!tempMap.has(baseTitle)) {
+            tempMap.set(baseTitle, {
+              ...facility,
+              title: baseTitle,
+              imageUrl: `assets/site/${facility.filename}`,
+            });
           }
-        }
+        });
 
-        console.log('1. sites : ');
-        console.log(this.sites);
+        this.sites = Array.from(tempMap.values());
+      }
 
-        // 발전소 모듈 카운트
-        for (let i = 0; i < this.sites.length; i++) {
-          let site = this.sites[i];
-          this.semsService.getHardwareCount(site.id)
-            .subscribe(res => {
-              let resultObject: any = { invList: [], whether1Count: 0, whether2Count: 0, whether3Count: 0, whether4Count: 0, whether5Count: 0, whether6Count: 0, elecCount: 0 }
-              let invObject = {};
+      console.log('Normalized sites:', this.sites);
 
-              // 인버터 세팅
-              // tmp 1 모듈전면 2 모듈후면 3 건물표면 4 공기층
-              // pv 1: Dark Gray 2: Terra Cotta 3: White Gray
-              for (let hardware of res) {
-                if (hardware[0] === 0) {
-                  invObject[hardware[4]] = { inv: [], pv1:[], pv2:[], pv3:[], pv1Object: {}, pv2Object: {}, pv3Object: {},
-                    pvCount: 0, opt: [], tmp: { 1:[], 2:[], 3:[], 4:[] } };
-                  invObject[hardware[4]].inv.push(hardware);
-                }
+      this.sites.forEach((site) => {
+        this.semsService.getHardwareCount(site.id).subscribe((res) => {
+          console.log(
+            `Raw hardwareCount response for site ${site.title}:`,
+            res
+          );
+
+          const resultObject: any = {
+            invList: [],
+            whether1Count: 0,
+            whether2Count: 0,
+            whether3Count: 0,
+            whether4Count: 0,
+            whether5Count: 0,
+            whether6Count: 0,
+            elecCount: 0,
+          };
+
+          const invObject: Record<string, any> = {};
+
+          // Initialize inverters
+          res.forEach((hardware: any) => {
+            if (hardware[0] === 0) {
+              const inverterNumMatch = `${hardware[5]}`.match(/^\d+/);
+              const inverterKey = inverterNumMatch
+                ? inverterNumMatch[0]
+                : hardware[5];
+              const key = `inv-${inverterKey}`;
+              if (!invObject[key]) {
+                invObject[key] = {
+                  inv: [],
+                  pv1: [],
+                  pv2: [],
+                  pv3: [],
+                  pv1Object: {},
+                  pv2Object: {},
+                  pv3Object: {},
+                  pvCount: 0,
+                  opt: [],
+                  tmp: { 1: [], 2: [], 3: [], 4: [] },
+                  displayName: inverterKey,
+                };
               }
+              invObject[key].inv.push(hardware);
+            }
+          });
 
-              // 용량별 PV 세팅
-              for (let hardware of res) {
-                if (hardware[0] === 5 && hardware[1] !== null && hardware[1] !== 0) {
-                  if (hardware[1] === 1) {
-                    if (invObject[hardware[5]] !== undefined) {
-                      invObject[hardware[5]].pv1.push(hardware);
-                    }
-                  } else if (hardware[1] === 2) {
-                    if (invObject[hardware[5]] !== undefined) {
-                      invObject[hardware[5]].pv2.push(hardware);
-                    }
-                  } else if (hardware[1] === 3) {
-                    if (invObject[hardware[5]] !== undefined) {
-                      invObject[hardware[5]].pv3.push(hardware);
-                    }
-                  }
+          // Assign PVs, optimizers, temperature sensors
+          res.forEach((hardware: any) => {
+            const key = `inv-${hardware[5]}`;
+            if (!invObject[key]) return; // skip unknown keys
+
+            switch (hardware[0]) {
+              case 5: // PV
+                if (hardware[1] === 1) invObject[key].pv1.push(hardware);
+                else if (hardware[1] === 2) invObject[key].pv2.push(hardware);
+                else if (hardware[1] === 3) invObject[key].pv3.push(hardware);
+                break;
+              case 3: // Optimizer
+                invObject[key].opt.push(hardware);
+                break;
+              case 4: // Temperature
+                if (hardware[2] && invObject[key].tmp[hardware[2]]) {
+                  invObject[key].tmp[hardware[2]].push(hardware);
                 }
-              }
+                break;
+              case 2:
+                resultObject.whether1Count++;
+                break;
+              case 11:
+                resultObject.whether2Count++;
+                resultObject.whether6Count++;
+                break;
+              case 10:
+                resultObject.whether3Count++;
+                break;
+              case 8:
+                resultObject.whether4Count++;
+                break;
+              case 9:
+                resultObject.whether5Count++;
+                break;
+              case 6:
+                resultObject.elecCount++;
+                break;
+            }
+          });
 
-              // 옵티마이저 세팅
-              for (let hardware of res) {
-                if (hardware[0] === 3) {
-                  if (invObject[hardware[5]] !== undefined) {
-                    invObject[hardware[5]].opt.push(hardware);
-                  }
-                }
-              }
+          // Convert invObject to array
+          resultObject.invList = Object.values(invObject);
 
-              // 온도센서 세팅
-              for (let hardware of res) {
-                if (hardware[0] === 4 && hardware[2] !== 0) {
-                  invObject[hardware[5]].tmp[hardware[2]].push(hardware);
-                }
-              }
+          // Group PV counts
+          resultObject.invList.forEach((inv: any) => {
+            let tempCount = 0;
+            ['pv1', 'pv2', 'pv3'].forEach((pvKey) => {
+              const obj: any = {};
+              inv[pvKey].forEach((item: any) => {
+                obj[item[3]] = (obj[item[3]] || 0) + 1;
+                tempCount++;
+              });
+              inv[`${pvKey}Object`] = Object.keys(obj).length ? obj : { 0: 0 };
+              if (!Object.keys(obj).length) tempCount++; // ensure pvCount >=1
+            });
+            inv.pvCount = tempCount || 1;
+          });
 
-              for(let i in invObject) {
-                resultObject.invList.push(invObject[i]);
-              }
+          // Ensure at least one dummy inverter if empty
+          if (!resultObject.invList.length) {
+            resultObject.invList.push({
+              inv: [],
+              pv1Object: { 0: 0 },
+              pv2Object: { 0: 0 },
+              pv3Object: { 0: 0 },
+              pvCount: 1,
+              opt: [],
+              tmp: { 1: [], 2: [], 3: [], 4: [] },
+            });
+          }
 
-              // PV 용량별 개수 GROUP BY
-              for(let i of resultObject.invList) {
-                let tempObject1 = {}
-                let tempObject2 = {}
-                let tempObject3 = {}
-                let tempCount = 0;
+          site.resultObject = resultObject;
+          this.cd.detectChanges();
 
-                for (let j of i.pv1) {
-                  if (tempObject1[j[3]] === undefined) {
-                    tempObject1[j[3]] = 1;
-                    tempCount += 1;
-                  } else {
-                    tempObject1[j[3]] += 1;
-                  }
-                }
+          console.log(
+            `Normalized inverter data for site: ${site.title}`,
+            resultObject.invList
+          );
+        });
+      });
 
-                for (let j of i.pv2) {
-                  if (tempObject2[j[3]] === undefined) {
-                    tempObject2[j[3]] = 1;
-                    tempCount += 1;
-                  } else {
-                    tempObject2[j[3]] += 1;
-                  }
-                }
-
-                for (let j of i.pv3) {
-                  if (tempObject3[j[3]] === undefined) {
-                    tempObject3[j[3]] = 1;
-                    tempCount += 1;
-                  } else {
-                    tempObject3[j[3]] += 1;
-                  }
-                }
-
-                if (Object.keys(tempObject1).length === 0) {
-                  i.pv1Object = {0: 0};
-                  tempCount += 1;
-                } else {
-                  i.pv1Object = tempObject1;
-                }
-
-                if (Object.keys(tempObject2).length === 0) {
-                  i.pv2Object = {0: 0};
-                  tempCount += 1;
-                } else {
-                  i.pv2Object = tempObject2;
-                }
-
-                if (Object.keys(tempObject3).length === 0) {
-                  i.pv3Object = {0: 0};
-                  tempCount += 1;
-                } else {
-                  i.pv3Object = tempObject3;
-                }
-
-                i.pvCount = tempCount;
-              }
-
-              // 기상반 세팅
-              for (let hardware of res) {
-                if (hardware[0] === 2) {
-                  resultObject.whether1Count++;
-                }
-
-                if (hardware[0] === 11) {
-                  resultObject.whether2Count++;
-                }
-
-                if (hardware[0] === 10) {
-                  resultObject.whether3Count++;
-                }
-
-                if (hardware[0] === 8) {
-                  resultObject.whether4Count++;
-                }
-
-                if (hardware[0] === 9) {
-                  resultObject.whether5Count++;
-                }
-
-                if (hardware[0] === 11) {
-                  resultObject.whether6Count++;
-                }
-
-                if (hardware[0] === 6) {
-                  resultObject.elecCount++;
-                }
-              }
-
-              site.resultObject = resultObject;
-            })
-        }
-
-        console.log('2. sites : ');
-        console.log(this.sites);
-
-      })
+      console.log('2. sites:', this.sites);
+    });
   }
 
   myTabSelectedIndexChange(index: number) {
     this.selectedSiteIndex = index;
     console.log(this.sites[index]);
-  }
-}
-
-function sortFunction(a, b) {
-  if (a[0] === b[0]) {
-    return 0;
-  }
-  else {
-    return (a[0] < b[0]) ? -1 : 1;
   }
 }

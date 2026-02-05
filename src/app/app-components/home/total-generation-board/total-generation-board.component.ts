@@ -1,8 +1,7 @@
-import {Component, OnInit, Input} from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 // Service
-import {ThemeService} from "../../../services/theme-service";
-
+import { ThemeService } from '../../../services/theme-service';
 
 import {
   faChargingStation,
@@ -10,58 +9,96 @@ import {
   faMeh,
   faFrown,
 } from '@fortawesome/free-solid-svg-icons';
-import {SemsService} from 'src/app/services/sems-service';
-import {Config} from "../home.component";
+import { SemsService } from 'src/app/services/sems-service';
+import { Config } from '../home.component';
 import { timer, Subscription, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-total-generation-board',
   templateUrl: './total-generation-board.component.html',
-  styleUrls: ['./total-generation-board.component.scss']
+  styleUrls: ['./total-generation-board.component.scss'],
 })
 export class TotalGenerationBoardComponent implements OnInit {
-
-  @Input() theme: string = "light";
+  @Input() theme: string = 'light';
   private timer: Observable<number>;
   private subscription: Subscription;
   date: Date = new Date();
   data: any = {
-    'DAILY': null,
-    'WEEKLY': null,
-    'MONTHLY': null,
-    'DAILY_AVG': null,
-    'WEEKLY_AVG': null,
-    'MONTHLY_AVG': null,
+    DAILY: null,
+    WEEKLY: null,
+    MONTHLY: null,
+    DAILY_AVG: null,
+    WEEKLY_AVG: null,
+    MONTHLY_AVG: null,
   };
   dateFormat = {
-    'DAILY': 'yyyy-MM-dd',
-    'YEARLY': 'yyyy',
-    'MONTHLY': 'yyyy-MM'
-  }
-  @Input() config: Config = {title: '', subTitle: '', api1: '', api2: '',colorIndex: 0, barChartFieldName: '', fieldName: '', unit: ''};
+    DAILY: 'yyyy-MM-dd',
+    YEARLY: 'yyyy',
+    MONTHLY: 'yyyy-MM',
+  };
+  @Input() config: Config = {
+    title: '',
+    subTitle: '',
+    api1: '',
+    api2: '',
+    colorIndex: 0,
+    barChartFieldName: '',
+    fieldName: '',
+    unit: '',
+  };
 
-  constructor(public themeService: ThemeService,
-              private semsService: SemsService
-  ) {
-
-  }
+  constructor(
+    public themeService: ThemeService,
+    private semsService: SemsService
+  ) {}
 
   ngOnInit(): void {
-    // this.date = new Date('2022-08-01 15:00');
-    this.timer = timer(0, 10000);
-    this.subscription = this.timer.subscribe(n => {
+    // ===== MOCK DATA BLOCK START - REMOVE WHEN BACKEND IS READY =====
+    /* this.loadMockData(); */
+    // ===== MOCK DATA BLOCK END - REMOVE WHEN BACKEND IS READY =====
+
+    // ===== REAL API CALL BLOCK - ENABLE WHEN BACKEND IS READY =====
+   this.timer = timer(0, 10000);
+    this.subscription = this.timer.subscribe(() => {
       this.getTotalData();
     });
-
+    // ===== REAL API CALL BLOCK END =====
   }
+
+  // ===== MOCK DATA BLOCK START - REMOVE WHEN BACKEND IS READY =====
+ /*  private loadMockData(): void {
+    this.config = {
+      title: '발전량',
+      subTitle: '발전 테스트',
+      api1: '',
+      api2: '',
+      colorIndex: 0,
+      barChartFieldName: '',
+      fieldName: 'capacity',
+      unit: 'kWh',
+    };
+
+    this.data = {
+      DAILY: { summary: [{ capacity: 0 }], compValue: 0, compValue2: 0 },
+      WEEKLY: { summary: [{ capacity: 320.2 }], compValue: 70, compValue2: 85 },
+      MONTHLY: { summary: [{ capacity: 1200.8 }], compValue: 65, compValue2: 50 },
+      DAILY_AVG: null,
+      WEEKLY_AVG: null,
+      MONTHLY_AVG: null,
+    };
+  } */
+  // ===== MOCK DATA BLOCK END - REMOVE WHEN BACKEND IS READY =====
 
   public getTotalData() {
     this.date = new Date();
-    this.semsService.getInvertorStatGeneration(this.date, this.config.api2)
-      .subscribe(res => {
+    this.semsService
+      .getInvertorStatGeneration(this.date, this.config.api2)
+      .subscribe((res) => {
         let fName: any = this.config.fieldName;
         for (let values of res) {
-          if (['DAILY_AVG', 'WEEKLY_AVG', 'MONTHLY_AVG'].includes(values.name)) {
+          if (
+            ['DAILY_AVG', 'WEEKLY_AVG', 'MONTHLY_AVG'].includes(values.name)
+          ) {
             if (values.summary.length > 0) {
               let v: any = {};
               let count = 0;
@@ -82,14 +119,38 @@ export class TotalGenerationBoardComponent implements OnInit {
           this.data[values.name] = values;
         }
 
-        this.data['DAILY'].compValue = this.getCompValue('DAILY', 'DAILY_LAST', fName);
-        this.data['DAILY'].compValue2 = this.getCompValue('DAILY', 'DAILY_AVG', fName);
-        this.data['WEEKLY'].compValue = this.getCompValue('WEEKLY', 'WEEKLY_LAST', fName);
-        this.data['WEEKLY'].compValue2 = this.getCompValue('WEEKLY', 'WEEKLY_AVG', fName);
-        this.data['MONTHLY'].compValue = this.getCompValue('MONTHLY', 'MONTHLY_LAST', fName);
-        this.data['MONTHLY'].compValue2 = this.getCompValue('MONTHLY', 'MONTHLY_AVG', fName);
+        this.data['DAILY'].compValue = this.getCompValue(
+          'DAILY',
+          'DAILY_LAST',
+          fName
+        );
+        this.data['DAILY'].compValue2 = this.getCompValue(
+          'DAILY',
+          'DAILY_AVG',
+          fName
+        );
+        this.data['WEEKLY'].compValue = this.getCompValue(
+          'WEEKLY',
+          'WEEKLY_LAST',
+          fName
+        );
+        this.data['WEEKLY'].compValue2 = this.getCompValue(
+          'WEEKLY',
+          'WEEKLY_AVG',
+          fName
+        );
+        this.data['MONTHLY'].compValue = this.getCompValue(
+          'MONTHLY',
+          'MONTHLY_LAST',
+          fName
+        );
+        this.data['MONTHLY'].compValue2 = this.getCompValue(
+          'MONTHLY',
+          'MONTHLY_AVG',
+          fName
+        );
         console.log(this.data);
-      })
+      });
   }
 
   private getCompValue(current: string, last: string, fName: any) {

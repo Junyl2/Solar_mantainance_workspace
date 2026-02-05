@@ -1,7 +1,8 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef  } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef , ElementRef } from '@angular/core';
 import {SemsService} from "../../../services/sems-service";
 import {ActivatedRoute} from "@angular/router";
 import { Chart, registerables } from 'chart.js';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import moment from "moment";
 import * as XLSX from "xlsx";
 
@@ -11,7 +12,13 @@ import * as XLSX from "xlsx";
   styleUrls: ['./temperature.component.scss']
 })
 export class TemperatureComponent implements OnInit, AfterViewInit {
-  @ViewChild('chart_temperature', {static: true}) chart;
+   @ViewChild('chart_temperature', {static: true}) chartRef: ElementRef;
+
+  chart: Chart;
+  isMobile = false;
+  isTablet = false;
+
+
 
   invList = [];
   colorArray: any = ['rgba(54, 162, 235, 0.8)', 'rgba(255, 99, 132, 0.8)', 'rgba(75,192,134,0.8)',
@@ -29,27 +36,72 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
   insNum = 0;
   dateList: any = [];
 
-  constructor(private semsService: SemsService) {
+constructor(
+  private semsService: SemsService,
+  private breakpointObserver: BreakpointObserver,
+  private cdr: ChangeDetectorRef
+) {
     Chart.register(...registerables);
   }
 
-  ngOnInit(): void {
-    this.getAnalyzeTemperatureInvList();
-    this.radio_input1_click();
-    this.createChart();
+  updateChartAspectRatio() {
+    if (!this.chart) return;
+
+    this.chart.options.aspectRatio = this.isMobile ? 0.6 : this.isTablet ? 1.5 : 2.5;
+    this.chart.update();
   }
 
-  ngAfterViewInit(): void {
+
+  ngOnInit(): void {
+    this.radio_input1_click();
   }
+
+ ngAfterViewInit(): void {
+  this.getAnalyzeTemperatureInvList();
+
+  this.breakpointObserver.observe([
+    '(max-width: 767px)',
+    '(min-width: 768px) and (max-width: 1024px)'
+  ]).subscribe(result => {
+    if (result.breakpoints['(max-width: 767px)']) {
+      this.isMobile = true;
+      this.isTablet = false;
+    } else if (result.breakpoints['(min-width: 768px) and (max-width: 1024px)']) {
+      this.isTablet = true;
+      this.isMobile = false;
+    } else {
+      this.isMobile = false;
+      this.isTablet = false;
+    }
+
+    if(this.chart) {
+      this.updateChartAspectRatio();
+    }
+  });
+
+  this.createChart();
+}
 
   getAnalyzeTemperatureInvList() {
-    this.semsService.getAnalyzeTemperatureInvList().subscribe(res => {
-      console.log(res);
-      for (let i of res) {
-        this.invList.push({viewValue: i[0], value: i[1]})
-      }
+  this.semsService.getAnalyzeTemperatureInvList().subscribe(res => {
+    console.log("Original response:", res);
+
+    // Filter only 202 and 204
+    const filtered = res.filter(i => i[1] === 202 || i[1] === 204);
+    console.log("Filtered list:", filtered);
+
+    // Defer updating the bound property
+    setTimeout(() => {
+      this.invList = filtered.map(i => ({
+        viewValue: i[0],
+        value: i[1]
+      }));
+      this.cdr.detectChanges();
     });
-  }
+  });
+}
+
+
 
   createChart() {
     this.chart = new Chart('chart_temperature', {
@@ -64,7 +116,7 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
         ]
       },
       options: {
-        aspectRatio: 2.5,
+        aspectRatio: this.isMobile ? 0.6 : this.isTablet ? 1.5 : 2.5,
         scales: {
           y1: { type: 'linear', display: true, title: {display: true, text: '인버터 발전량', color: 'rgba(0,0,0,0.8)'}, position: 'left' },
           y3: { type: 'linear', display: true, title: {display: true, text: '모듈 후면 °C', color: 'rgba(153, 102, 255, 0.8)'}, position: 'right' },
@@ -166,12 +218,19 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
       endDate = moment(this.endMonthDate).add(1, 'days').format('YYYYMMDD');
     }
 
+
+
     this.semsService.getAnalyzeTemperatureInfo(gbn, this.insNum.toString(), startDate, endDate).subscribe(res => {
       console.log(res);
 
       this.tableHeadData = [];
       this.tableData = [];
       this.chart.destroy();
+
+
+
+    // Update aspect ratio on new chart
+    this.updateChartAspectRatio();
 
       let chartObject: any = {
         type: 'line',
@@ -185,7 +244,8 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
           ]
         },
         options: {
-          aspectRatio: 2.5,
+                  aspectRatio: this.isMobile ? 0.6 : this.isTablet ? 1.5 : 2.5,
+
           scales: {
             y1: { type: 'linear', display: true, title: {display: true, text: '인버터 발전량 kWh', color: 'rgba(0,0,0,0.8)'}, position: 'left', min: 0 },
             y3: { type: 'linear', display: true, title: {display: true, text: '모듈 후면 °C', color: 'rgba(153, 102, 255, 0.8)'}, position: 'right', min: 0 },
@@ -194,6 +254,8 @@ export class TemperatureComponent implements OnInit, AfterViewInit {
           }
         },
       }
+       // create new chart with updated data
+    this.chart = new Chart(this.chartRef.nativeElement, chartObject);
 
       let invNameList = [];
       let temp1List = [];

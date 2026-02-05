@@ -120,12 +120,12 @@ export class BarChartComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (!changes['labels'].isFirstChange()) {
-      if (changes['labels'].previousValue != changes['labels'].currentValue) {
-        this.labels = changes['labels'].currentValue
-        this.chart.data.labels = this.labels
-        this.chart.update()
+      ngOnChanges(changes: SimpleChanges) {
+    if (changes['labels'] && !changes['labels'].isFirstChange()) {
+      if (changes['labels'].previousValue !== changes['labels'].currentValue) {
+        this.labels = changes['labels'].currentValue;
+        this.chart.data.labels = this.labels;
+        this.chart.update();
       }
     }
   }
